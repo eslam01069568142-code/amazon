@@ -33,16 +33,12 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
 
-  // Mock Price Stats
   const parsePrice = (p: string) => parseFloat(p.replace(/[^0-9.]/g, '')) || 0;
   const currPriceNum = parsePrice(product.price);
-  const origPriceNum = product.originalPrice ? parsePrice(product.originalPrice) : currPriceNum * 1.2;
-  const discountPercent = Math.round(((origPriceNum - currPriceNum) / origPriceNum) * 100);
-  
-  // Calculate lowest and highest prices (mock data based on current price)
-  const lowestPriceNum = Math.floor(currPriceNum * 0.7);
-  const highestPriceNum = Math.floor(origPriceNum * 1.1);
-  const currencyStr = product.price.replace(/[0-9.,]/g, '').trim() || 'جنية';
+  const origPriceNum = product.originalPrice ? parsePrice(product.originalPrice) : null;
+  const discountPercent = (origPriceNum && origPriceNum > currPriceNum) 
+    ? Math.round(((origPriceNum - currPriceNum) / origPriceNum) * 100) 
+    : null;
 
   // Format Description into paragraphs
   const descriptionParagraphs = product.description.split('\n').filter(p => p.trim() !== '');
@@ -104,42 +100,37 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <div className="product-hero-info">
 
             {/* Product Title */}
-            <h1 style={{
-              fontSize: '1.6rem',
-              fontWeight: 700,
-              color: '#111827',
-              lineHeight: 1.4,
-              wordBreak: 'break-word',
-              marginBottom: '0.25rem'
-            }}>
+            <h1 className="product-title-text">
               {product.title}
             </h1>
 
             {/* Pricing */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-                <span style={{ fontSize: '2.25rem', fontWeight: 800, color: '#111827' }}>
-                  {currPriceNum.toLocaleString()}
-                </span>
-                <span style={{ fontSize: '1rem', color: '#6b7280', fontWeight: 500 }}>{currencyStr}</span>
-              </div>
-              {product.originalPrice && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ color: '#9ca3af', textDecoration: 'line-through', fontSize: '1rem' }}>
-                    {origPriceNum.toLocaleString()} {currencyStr}
+              {product.originalPrice && origPriceNum && origPriceNum > currPriceNum && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <span style={{ color: '#9ca3af' }} className="product-price-label">
+                    السعر السابق: <span style={{ textDecoration: 'line-through' }}>{product.originalPrice}</span>
                   </span>
-                  <span style={{
-                    backgroundColor: '#fee2e2',
-                    color: '#b91c1c',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '0.375rem',
-                    fontSize: '0.85rem',
-                    fontWeight: 700
-                  }}>
-                    خصم {discountPercent}%
-                  </span>
+                  {discountPercent && (
+                    <span style={{
+                      backgroundColor: '#fee2e2',
+                      color: '#b91c1c',
+                      padding: '0.2rem 0.4rem',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 700
+                    }}>
+                      خصم {discountPercent}%
+                    </span>
+                  )}
                 </div>
               )}
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span className="product-price-label">السعر الحالي:</span>
+                <span className="product-price-current">
+                  {product.price}
+                </span>
+              </div>
             </div>
 
             {/* Amazon CTA */}
@@ -169,29 +160,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* Price Statistics */}
-        <div style={{ marginTop: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Tag size={22} color="#3b82f6" />
-            تحليل الأسعار
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-            <div style={{ backgroundColor: '#fff', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-              <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>أقل سعر سجلناه</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#16a34a' }}>{lowestPriceNum.toLocaleString()} {currencyStr}</div>
-            </div>
-            <div style={{ backgroundColor: '#fff', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-              <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>أعلى سعر سجلناه</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ef4444' }}>{highestPriceNum.toLocaleString()} {currencyStr}</div>
-            </div>
-            <div style={{ backgroundColor: '#fff', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-              <div style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>نسبة الخصم الحالية</div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1e293b' }}>
-                {product.originalPrice ? `-${discountPercent}%` : 'لا يوجد خصم'}
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Product Description */}
         <div style={{ marginTop: '2rem', backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
