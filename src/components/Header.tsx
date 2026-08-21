@@ -6,9 +6,23 @@ import styles from './Header.module.css';
 import { supabaseAdmin } from '@/data/db';
 import { unstable_cache } from 'next/cache';
 
+import { createClient } from '@supabase/supabase-js';
+
 const getCachedCategories = unstable_cache(
   async () => {
-    const { data } = await supabaseAdmin
+    // Create a scoped client that bypasses Next.js aggressive fetch cache for the raw query.
+    // The result is still safely cached by unstable_cache above.
+    const supabaseAdminLocal = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        global: {
+          fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+        }
+      }
+    );
+    
+    const { data } = await supabaseAdminLocal
       .from('sections')
       .select('id, title, type, category, enabled, order_index')
       .eq('type', 'products_by_category')

@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       order: data.order_index,
     };
 
-    revalidateTag('sections', 'max');
+    revalidateTag('sections', { expire: 0 });
     revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, section });
   } catch {
