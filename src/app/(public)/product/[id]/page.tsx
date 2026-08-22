@@ -1,8 +1,22 @@
 import { getDb } from '@/data/db';
 import { notFound } from 'next/navigation';
 import ImageGallery from '@/components/ImageGallery';
-import { ShoppingCart, ShieldCheck, Clock, Tag } from 'lucide-react';
+import ProductCard from '@/components/ProductCard';
+import { ShoppingCart, ShieldCheck, Clock } from 'lucide-react';
 import Link from 'next/link';
+
+// Simple deterministic PRNG based on a string seed
+function getSeededRandom(seedStr: string) {
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = Math.imul(31, h) + seedStr.charCodeAt(i) | 0;
+  let seed = h;
+  return function() {
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -43,37 +57,40 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   // Format Description into paragraphs
   const descriptionParagraphs = product.description.split('\n').filter(p => p.trim() !== '');
 
-  // Similar Products — category-first, then any other products
-  // Affiliate URLs are built from db.settings.trackingId (Admin Dashboard setting)
-  const MAX_SIMILAR = 4;
+  // ── 1. "المنتجات المرتبطة بهذه السلعة" (Same Category) ──
+  const relatedProducts = db.products
+    .filter(p => p.id !== product.id && p.category === product.category)
+    .slice(0, 8);
 
-  // 1. Same category (excluding current product)
-  const sameCat = db.products.filter(p => p.id !== product.id && p.category === product.category);
-  // 2. Other categories as fallback
-  const otherCat = db.products.filter(p => p.id !== product.id && p.category !== product.category);
-  // Merge: same-category first, then others, capped at MAX_SIMILAR
-  const rawSimilar = [...sameCat, ...otherCat].slice(0, MAX_SIMILAR);
+  // ── 2. "منتجات مشابهة قد تهمك" (Deterministic PRNG Product ID Seed) ──
+  const similarRandom = getSeededRandom(product.id);
+  const shuffledForSimilar = [...db.products.filter(p => p.id !== product.id)];
+  for (let i = shuffledForSimilar.length - 1; i > 0; i--) {
+    const j = Math.floor(similarRandom() * (i + 1));
+    [shuffledForSimilar[i], shuffledForSimilar[j]] = [shuffledForSimilar[j], shuffledForSimilar[i]];
+  }
+  const similarProducts = shuffledForSimilar.slice(0, 8);
 
-  // Build affiliate URL for each similar product using the store's trackingId
-  const similarProducts = rawSimilar.map(p => {
-    const simUrl = new URL(p.originalUrl);
-    if (trackingId) simUrl.searchParams.set('tag', trackingId);
-    return {
-      id: p.id,
-      title: p.title,
-      price: p.price,
-      originalPrice: p.originalPrice,
-      img: p.image,
-      affiliateHref: simUrl.toString(),
-      storeLink: `/product/${p.id}`,
-    };
+  // ── 3. "منتجات قد تعجبك أيضًا" (Deterministic PRNG Product ID + 'liked' Seed, favor high rating) ──
+  const likedRandom = getSeededRandom(product.id + 'liked');
+  const validProductsForLiked = db.products.filter(p => p.id !== product.id);
+  validProductsForLiked.sort((a, b) => {
+    const rA = parseFloat(a.rating) || 0;
+    const rB = parseFloat(b.rating) || 0;
+    return rB - rA;
   });
+  const topRated = validProductsForLiked.slice(0, 30);
+  for (let i = topRated.length - 1; i > 0; i--) {
+    const j = Math.floor(likedRandom() * (i + 1));
+    [topRated[i], topRated[j]] = [topRated[j], topRated[i]];
+  }
+  const likedProducts = topRated.slice(0, 8);
 
 
   return (
     <div dir="rtl" className="bg-gray-50 min-h-screen pb-16">
       
-      {/* Breadcrumb - Full Width Background */}
+      {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200 py-3 px-4">
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-500 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-blue-600 transition-colors">الرئيسية</Link>
@@ -86,12 +103,12 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
       <div className="product-page-wrapper">
 
-        {/* ── PRODUCT HERO: two columns on desktop, stacked on mobile ── */}
+        {/* ── PRODUCT HERO ── */}
         <div className="product-hero">
 
           {/* Gallery column */}
           <div className="product-hero-gallery">
-            <div style={{ maxWidth: '480px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '480px', margin: '0 auto', width: '100%' }}>
               <ImageGallery images={allImages} title={product.title} />
             </div>
           </div>
@@ -160,8 +177,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-
-
         {/* Product Description */}
         <div style={{ marginTop: '2rem', backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
@@ -181,59 +196,40 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* Similar / Recommended Products */}
-        {similarProducts.length > 0 && (
-          <div style={{ marginTop: '2.5rem', paddingBottom: '3rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.25rem' }}>
-              منتجات قد تعجبك أيضاً
-            </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.25rem' }}>
-              {similarProducts.map(sim => {
-                const simParsePrice = (p: string) => parseFloat(p.replace(/[^0-9.]/g, '')) || 0;
-                const simCurr = simParsePrice(sim.price);
-                const simOrig = sim.originalPrice ? simParsePrice(sim.originalPrice) : null;
-                const simDiscount = simOrig && simOrig > simCurr
-                  ? Math.round(((simOrig - simCurr) / simOrig) * 100)
-                  : null;
-                return (
-                  <div key={sim.id} style={{ background: '#fff', borderRadius: '0.75rem', border: '1px solid var(--border-color)', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'box-shadow 0.2s', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-                    {/* Image → links to product page in the store */}
-                    <Link href={sim.storeLink} style={{ display: 'block' }}>
-                      <div style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f8fafc', padding: '1rem' }}>
-                        <img src={sim.img} alt={sim.title} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
-                      </div>
-                    </Link>
-                    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
-                      <Link href={sim.storeLink} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <h3 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b', lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, margin: 0 }}>
-                          {sim.title}
-                        </h3>
-                      </Link>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontWeight: 800, color: 'var(--danger-color)', fontSize: '1.05rem' }}>{sim.price}</span>
-                        {sim.originalPrice && (
-                          <span style={{ color: '#9ca3af', textDecoration: 'line-through', fontSize: '0.82rem' }}>{sim.originalPrice}</span>
-                        )}
-                        {simDiscount && (
-                          <span style={{ backgroundColor: '#fee2e2', color: '#b91c1c', padding: '0.1rem 0.4rem', borderRadius: '0.25rem', fontSize: '0.72rem', fontWeight: 700 }}>-{simDiscount}%</span>
-                        )}
-                      </div>
-                      {/* Affiliate CTA uses the store's configured tracking ID */}
-                      <a
-                        href={sim.affiliateHref}
-                        target="_blank"
-                        rel="nofollow noopener noreferrer"
-                        style={{ display: 'block', textAlign: 'center', backgroundColor: 'var(--amazon-orange)', color: '#111', padding: '0.55rem 0.75rem', borderRadius: '0.5rem', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none', marginTop: 'auto' }}
-                      >
-                        شراء من Amazon
-                      </a>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {/* Recommendation Sections */}
+        <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+          
+          {/* Section 1 */}
+          {relatedProducts.length > 0 && (
+            <section>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem' }}>المنتجات المرتبطة بهذه السلعة</h2>
+              <div className="grid grid-cols-4">
+                {relatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
+              </div>
+            </section>
+          )}
+
+          {/* Section 2 */}
+          {similarProducts.length > 0 && (
+            <section>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem' }}>منتجات مشابهة قد تهمك</h2>
+              <div className="grid grid-cols-4">
+                {similarProducts.map(p => <ProductCard key={p.id} product={p} />)}
+              </div>
+            </section>
+          )}
+
+          {/* Section 3 */}
+          {likedProducts.length > 0 && (
+            <section>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem' }}>منتجات قد تعجبك أيضًا</h2>
+              <div className="grid grid-cols-4">
+                {likedProducts.map(p => <ProductCard key={p.id} product={p} />)}
+              </div>
+            </section>
+          )}
+
+        </div>
 
       </div>
     </div>

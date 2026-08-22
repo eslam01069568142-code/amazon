@@ -1,14 +1,34 @@
 import ProductCard from '@/components/ProductCard';
 import { getDb } from '@/data/db';
-import { Tag, Zap, ArrowLeft } from 'lucide-react';
+import { Tag, Zap, ArrowLeft, Clock } from 'lucide-react';
 import Link from 'next/link';
+
+// Simple deterministic PRNG based on a string seed
+function getSeededRandom(seedStr: string) {
+  let h = 0;
+  for (let i = 0; i < seedStr.length; i++) h = Math.imul(31, h) + seedStr.charCodeAt(i) | 0;
+  let seed = h;
+  return function() {
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+}
+
+// Helper to parse price string to number for comparison
+function parsePrice(priceStr: string | undefined): number {
+  if (!priceStr) return 0;
+  // Remove currency symbols, commas, and arabic text, keeping only digits and dots
+  const numericStr = priceStr.replace(/[^\d.]/g, '');
+  return numericStr ? parseFloat(numericStr) : 0;
+}
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const resolvedParams = await searchParams;
   const db = await getDb();
 
   // ── 1. Category Page View ──
-  // When a user clicks on a category in the header dropdown or "View All" button
   if (resolvedParams.category) {
     const categoryInfo = db.sections.find(s => s.type === 'products_by_category' && s.category === resolvedParams.category);
     const categoryName = categoryInfo ? categoryInfo.title : resolvedParams.category;
@@ -38,41 +58,69 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
   // ── 2. Homepage View ──
 
-  const enabledSections = db.sections
-    .filter(s => s.enabled)
+  const enabledSections = db.sections.filter(s => s.enabled);
+  const banners = enabledSections.filter(s => s.type === 'banner').sort((a, b) => a.order - b.order);
+  
+  // -- A. Automatic Daily Deals --
+  // Use Africa/Cairo time to generate a stable seed for the current calendar day
+  const dailySeed = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Cairo' });
+  const random = getSeededRandom(dailySeed);
+  
+  // Separate discounted vs non-discounted products
+  const discountedProducts: typeof db.products = [];
+  const normalProducts: typeof db.products = [];
+  
+  db.products.forEach(p => {
+    const pPrice = parsePrice(p.price);
+    const pOrig = parsePrice(p.originalPrice);
+    if (pPrice > 0 && pOrig > pPrice) {
+      discountedProducts.push(p);
+    } else if (pPrice > 0) {
+      normalProducts.push(p);
+    }
+  });
+  
+  // Deterministic shuffle using the PRNG
+  const shuffle = (array: typeof db.products) => {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+  
+  const shuffledDiscounted = shuffle(discountedProducts);
+  let finalDailyDeals = [...shuffledDiscounted];
+  
+  // Target between 4 and 8 products (also determined by the seed)
+  const targetCount = Math.floor(random() * 5) + 4; // 4 to 8
+  
+  if (finalDailyDeals.length < targetCount) {
+    const shuffledNormal = shuffle(normalProducts);
+    finalDailyDeals = finalDailyDeals.concat(shuffledNormal);
+  }
+  finalDailyDeals = finalDailyDeals.slice(0, targetCount);
+
+  // -- B. Automatic New Arrivals --
+  const newArrivals = [...db.products]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 12);
+
+  // -- C. Automatic Category Sections --
+  const categorySections = enabledSections
+    .filter(s => s.type === 'products_by_category')
     .sort((a, b) => a.order - b.order);
 
-  // 2a. Fetch Banners
-  const banners = enabledSections.filter(s => s.type === 'banner');
-
-  // 2b. Fetch Active Daily Deals
-  const now = new Date();
-  const activeDeals = db.dailyDeals.filter(d => {
-    if (!d.enabled) return false;
-    if (d.startDate && new Date(d.startDate) > now) return false;
-    if (d.endDate && new Date(d.endDate) < now) return false;
-    return true;
-  }).sort((a, b) => a.order - b.order);
-
-  const dailyDealProducts = activeDeals.map(deal => {
-    const prod = db.products.find(p => p.id === deal.productId);
-    if (!prod) return null;
-    return {
-      ...prod,
-      originalPrice: deal.offerPrice ? prod.price : (prod.originalPrice || prod.price),
-      price: deal.offerPrice || prod.price,
-    };
-  }).filter((p): p is NonNullable<typeof p> => p !== null);
-
-  // 2c. Prepare Homepage Sections (Excluding Categories and Banners which are handled separately)
-  const homepageSections = enabledSections.filter(s => 
-    s.type !== 'products_by_category' && s.type !== 'banner'
-  ).sort((a,b) => a.order - b.order);
+  // -- D. Manual/Promotional Sections --
+  const manualSections = enabledSections
+    .filter(s => s.type !== 'products_by_category' && s.type !== 'banner' && s.type !== 'daily_deals' && s.type !== 'new_arrivals')
+    .sort((a, b) => a.order - b.order);
 
   return (
     <div className="container animate-fade-in">
       
-      {/* ── Banners ── */}
+      {/* 1. Banners */}
       {banners.map(section => (
         <section key={section.id} className="section" style={{ paddingBottom: '2rem' }}>
           <div style={{
@@ -91,28 +139,63 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       ))}
 
-      {/* ── Homepage Sections ── */}
-      {homepageSections.map(section => {
-        
-        // 1. Daily Deals Special Case
-        if (section.type === 'daily_deals') {
-          if (dailyDealProducts.length === 0) return null;
-          return (
-            <section key={section.id} className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                <Zap size={28} color="#eab308" />
-                <h2 className="text-2xl" style={{ margin: 0 }}>{section.title}</h2>
-              </div>
-              <div className="grid grid-cols-4">
-                {dailyDealProducts.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            </section>
-          );
-        }
+      {/* 2. Daily Deals */}
+      {finalDailyDeals.length > 0 && (
+        <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            <Zap size={28} color="#eab308" />
+            <h2 className="text-2xl" style={{ margin: 0 }}>عروض اليوم</h2>
+          </div>
+          <div className="grid grid-cols-4">
+            {finalDailyDeals.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
 
-        // 2. Standard Products Resolution
+      {/* 3. New Arrivals */}
+      {newArrivals.length > 0 && (
+        <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            <Clock size={28} color="var(--accent-color)" />
+            <h2 className="text-2xl" style={{ margin: 0 }}>وصل حديثاً</h2>
+          </div>
+          <div className="grid grid-cols-4">
+            {newArrivals.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 4. Automatic Category Sections */}
+      {categorySections.map(section => {
+        const catProducts = db.products.filter(p => p.category === section.category).slice(0, 8);
+        if (catProducts.length === 0) return null; // Only render if > 0 products
+        
+        return (
+          <section key={section.id} className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 className="text-2xl" style={{ margin: 0 }}>{section.title}</h2>
+              <Link 
+                href={`/?category=${section.category}`} 
+                style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none' }}
+              >
+                عرض الكل <ArrowLeft size={16} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-4">
+              {catProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+
+      {/* 5. Existing Manual/Promotional Sections */}
+      {manualSections.map(section => {
         let sectionProducts: any[] = [];
         
         if (section.type === 'manual_products') {
@@ -123,10 +206,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           if (section.category) {
             sectionProducts = db.products.filter(p => p.category === section.category).slice(0, 8);
           }
-        } else if (section.type === 'new_arrivals') {
-          sectionProducts = [...db.products].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 8);
         } else if (section.type === 'best_sellers' || section.type === 'recommended') {
-          // No real sales/recommendation data exists yet, so hide it gracefully as instructed.
           sectionProducts = [];
         } else if (section.type === 'all_products') {
           sectionProducts = db.products.slice(0, 16);

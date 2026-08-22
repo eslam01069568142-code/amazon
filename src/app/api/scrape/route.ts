@@ -10,6 +10,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid urls array' }, { status: 400 });
     }
 
+    // Pre-fetch existing categories for matching
+    const { data: existingCategories } = await supabaseAdmin
+      .from('sections')
+      .select('id, title, category')
+      .eq('type', 'products_by_category');
+    
+    const categoryMap = new Map<string, string>();
+    if (existingCategories) {
+      for (const cat of existingCategories) {
+        if (cat.title) {
+          const normalized = cat.title.trim().toLowerCase().replace(/\s+/g, ' ');
+          categoryMap.set(normalized, cat.category);
+        }
+      }
+    }
+
     const newProducts: Product[] = [];
 
     for (const url of urls) {
@@ -126,6 +142,50 @@ export async function POST(req: Request) {
         });
         const description = descriptionArr.join('\n') || 'لا يوجد وصف متاح.';
 
+        // Automatic Amazon Category Extraction
+        let finalCategoryTitle = '';
+        const breadcrumbs: string[] = [];
+        $('#wayfinding-breadcrumbs_container ul li span.a-list-item a').each((i, el) => {
+          const text = $(el).text().trim().replace(/\s+/g, ' ');
+          if (text) breadcrumbs.push(text);
+        });
+
+        if (breadcrumbs.length > 0) {
+          let lastCrumb = breadcrumbs[breadcrumbs.length - 1];
+          // If the last breadcrumb is identical to the title or too similar, fallback to the previous one
+          if (title.toLowerCase().includes(lastCrumb.toLowerCase()) && breadcrumbs.length > 1) {
+            lastCrumb = breadcrumbs[breadcrumbs.length - 2];
+          }
+          finalCategoryTitle = lastCrumb;
+        }
+
+        let assignedCategoryId = '';
+        if (finalCategoryTitle) {
+          const normalizedTitle = finalCategoryTitle.toLowerCase();
+          if (categoryMap.has(normalizedTitle)) {
+            assignedCategoryId = categoryMap.get(normalizedTitle)!;
+          } else {
+            // Create a new store category dynamically
+            const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
+            const { error: catErr } = await supabaseAdmin.from('sections').insert({
+              type: 'products_by_category',
+              category: newCatId,
+              title: finalCategoryTitle,
+              enabled: true,
+              order_index: 99
+            });
+            if (!catErr) {
+              assignedCategoryId = newCatId;
+              categoryMap.set(normalizedTitle, newCatId);
+            }
+          }
+        }
+
+        // Fallback to client-provided category, or empty string (uncategorized)
+        if (!assignedCategoryId) {
+          assignedCategoryId = category || '';
+        }
+
         const product: Product = {
           id: 'prod_' + Math.random().toString(36).substr(2, 9),
           originalUrl: url.trim(),
@@ -136,7 +196,7 @@ export async function POST(req: Request) {
           image: mainImage,
           images,
           rating,
-          category: category || 'General',
+          category: assignedCategoryId,
           createdAt: new Date().toISOString()
         };
 
