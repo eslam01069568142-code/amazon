@@ -17,43 +17,64 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="card">
       <Link href={`/product/${product.id}`} style={{ display: 'block' }}>
-        <div style={{ height: '240px', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
+        <div style={{ height: '180px', padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
           <img 
             src={product.image} 
             alt={product.title} 
             style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
           />
         </div>
-        <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.6rem', flex: 1 }}>
-          <h3 className="text-lg" style={{ 
+        <div style={{ padding: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', flex: 1 }}>
+          <h3 style={{ 
+            fontSize: '0.9rem',
             display: '-webkit-box', 
             WebkitLineClamp: 2, 
             WebkitBoxOrient: 'vertical', 
             overflow: 'hidden',
             lineHeight: 1.4,
             height: '2.8em',
-            margin: 0
+            margin: 0,
+            color: 'var(--text-primary)',
+            fontWeight: 600
           }}>
             {product.title}
           </h3>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#eab308' }}>
-            <Star size={16} fill="currentColor" />
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{product.rating}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#eab308', marginTop: '0.2rem' }}>
+            <Star size={14} fill="currentColor" />
+            <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{product.rating}</span>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.2rem' }}>
             {showOriginalPrice && (
-              <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
                 السعر السابق: <span style={{ textDecoration: 'line-through' }}>{product.originalPrice}</span>
               </span>
             )}
-            <div style={{ fontWeight: 800, color: 'var(--danger-color)', fontSize: '1.25rem' }}>
+            <div style={{ fontWeight: 800, color: 'var(--danger-color)', fontSize: '1.1rem' }}>
                {product.price}
             </div>
           </div>
           
-          <button className="btn btn-primary" style={{ width: '100%', marginTop: 'auto' }}>
+          {/* Subtle Amazon Branding Badge */}
+          <div style={{
+            alignSelf: 'flex-start',
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            color: '#475569',
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            padding: '0.1rem 0.4rem',
+            borderRadius: '0.25rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.2rem',
+            marginTop: '0.2rem'
+          }}>
+            <span style={{ color: 'var(--amazon-orange)' }}>a</span> Amazon
+          </div>
+          
+          <button className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.5rem', fontSize: '0.85rem' }}>
             عرض التفاصيل
           </button>
         </div>
