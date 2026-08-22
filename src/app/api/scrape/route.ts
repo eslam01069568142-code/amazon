@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import { supabaseAdmin, Product } from '@/data/db';
+import { revalidateTag } from 'next/cache';
 
 export async function POST(req: Request) {
   try {
@@ -266,6 +267,7 @@ export async function POST(req: Request) {
         console.error('Supabase insert error:', error);
         return NextResponse.json({ success: false, error: 'حدث خطأ أثناء حفظ المنتج في قاعدة البيانات.' }, { status: 500 });
       }
+      revalidateTag('sections', { expire: 0 });
       return NextResponse.json({ success: true, count: newProducts.length, products: newProducts });
     } else {
       return NextResponse.json({ success: false, error: 'لم يتم العثور على بيانات صالحة لإضافة المنتج. قد يكون الرابط محميًا من Amazon أو تعذر استخراج البيانات.' }, { status: 400 });

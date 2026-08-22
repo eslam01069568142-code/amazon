@@ -1,4 +1,5 @@
 import ProductCard from '@/components/ProductCard';
+import ProductCarousel from '@/components/ProductCarousel';
 import { getDb } from '@/data/db';
 import { Tag, Zap, ArrowLeft, Clock } from 'lucide-react';
 import Link from 'next/link';
@@ -169,27 +170,23 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       )}
 
-      {/* 4. Automatic Category Sections */}
+      {/* 4. Automatic Category Sections — Carousel */}
       {categorySections.map(section => {
-        const catProducts = db.products.filter(p => p.category === section.category).slice(0, 8);
-        if (catProducts.length === 0) return null; // Only render if > 0 products
-        
+        const catProducts = db.products.filter(p => p.category === section.category).slice(0, 20);
+        if (catProducts.length === 0) return null;
+
         return (
           <section key={section.id} className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 className="text-2xl" style={{ margin: 0 }}>{section.title}</h2>
-              <Link 
-                href={`/?category=${section.category}`} 
-                style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none' }}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
+              <span />
+              <Link
+                href={`/?category=${section.category}`}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none', marginBottom: '0.5rem' }}
               >
                 عرض الكل <ArrowLeft size={16} />
               </Link>
             </div>
-            <div className="grid grid-cols-4">
-              {catProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <ProductCarousel title={section.title} products={catProducts} />
           </section>
         );
       })}
