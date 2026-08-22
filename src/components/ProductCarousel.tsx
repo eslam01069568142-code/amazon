@@ -64,11 +64,13 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
 
   return (
     <section style={{ position: 'relative', marginBottom: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>
-          {title}
-        </h2>
-      </div>
+      {title && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>
+            {title}
+          </h2>
+        </div>
+      )}
 
       <div style={{ position: 'relative' }}>
         {/* Navigation Layer - Perfectly aligns with the 180px image area */}
@@ -141,7 +143,6 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
           .carousel-item {
             flex: 0 0 calc(25% - 0.75rem);
             scroll-snap-align: start;
-            min-width: 200px;
           }
           @media (max-width: 1024px) {
             .carousel-item {

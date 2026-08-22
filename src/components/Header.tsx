@@ -5,7 +5,7 @@ import CategorySlider from './CategorySlider';
 import styles from './Header.module.css';
 import { supabaseAdmin } from '@/data/db';
 import { unstable_cache } from 'next/cache';
-
+import SearchBar from './SearchBar';
 import { createClient } from '@supabase/supabase-js';
 
 const getCachedCategories = unstable_cache(
@@ -25,10 +25,20 @@ const getCachedCategories = unstable_cache(
     const { data } = await supabaseAdminLocal
       .from('sections')
       .select('id, title, type, category, enabled, order_index')
-      .eq('type', 'products_by_category')
       .eq('enabled', true)
+      .not('category', 'is', null)
       .order('order_index', { ascending: true });
-    return data || [];
+      
+    // Deduplicate by category ID to ensure we show all unique categories
+    const uniqueCategories: any[] = [];
+    const seen = new Set();
+    for (const row of data || []) {
+      if (row.category && !seen.has(row.category)) {
+        seen.add(row.category);
+        uniqueCategories.push(row);
+      }
+    }
+    return uniqueCategories;
   },
   ['header-sections'],
   { tags: ['sections'] }
@@ -59,15 +69,7 @@ export default async function Header() {
         <div className="container">
           <h1 className={styles.heroTitle}>قارن واكتشف أفضل الأسعار من أمازون مصر</h1>
           
-          <div className={styles.searchContainer}>
-            <input 
-              type="text" 
-              placeholder="ابحث عن منتج، ماركة، أو فئة..." 
-              className={styles.searchInput}
-            />
-            <Search className={styles.searchIcon} size={24} />
-            <button className={styles.searchButton}>بحث</button>
-          </div>
+          <SearchBar />
         </div>
       </div>
       

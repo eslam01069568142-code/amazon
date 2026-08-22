@@ -25,9 +25,36 @@ function parsePrice(priceStr: string | undefined): number {
   return numericStr ? parseFloat(numericStr) : 0;
 }
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }) {
   const resolvedParams = await searchParams;
   const db = await getDb();
+
+  // ── 0. Search View ──
+  if (resolvedParams.q) {
+    const { searchProducts } = await import('@/lib/search');
+    const filtered = searchProducts(db.products, resolvedParams.q);
+    
+    return (
+      <div className="container animate-fade-in">
+        <section className="section" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+          <h2 className="text-2xl" style={{ marginBottom: '2rem' }}>
+            نتائج البحث عن: "{resolvedParams.q}"
+          </h2>
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-secondary)' }}>
+              لم يتم العثور على أي منتجات مطابقة لبحثك.
+            </div>
+          ) : (
+            <div className="grid grid-cols-4">
+              {filtered.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
 
   // ── 1. Category Page View ──
   if (resolvedParams.category) {
@@ -147,11 +174,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
             <Zap size={28} color="#eab308" />
             <h2 className="text-2xl" style={{ margin: 0 }}>عروض اليوم</h2>
           </div>
-          <div className="grid grid-cols-4">
-            {finalDailyDeals.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <ProductCarousel title="" products={finalDailyDeals} />
         </section>
       )}
 
@@ -162,11 +185,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
             <Clock size={28} color="var(--accent-color)" />
             <h2 className="text-2xl" style={{ margin: 0 }}>وصل حديثاً</h2>
           </div>
-          <div className="grid grid-cols-4">
-            {newArrivals.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <ProductCarousel title="" products={newArrivals} />
         </section>
       )}
 
@@ -224,11 +243,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
                 </Link>
               )}
             </div>
-            <div className="grid grid-cols-4">
-              {sectionProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <ProductCarousel title="" products={sectionProducts} />
           </section>
         );
       })}
