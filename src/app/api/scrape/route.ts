@@ -5,10 +5,15 @@ import { revalidateTag } from 'next/cache';
 
 export async function POST(req: Request) {
   try {
-    const { urls, category } = await req.json();
+    const body = await req.json();
+    const targetCategory = body.category;
     
-    if (!urls || !Array.isArray(urls)) {
-      return NextResponse.json({ error: 'Invalid urls array' }, { status: 400 });
+    // Support both single url and array of urls for backward compatibility,
+    // but the new client will send a single `url` to avoid Vercel timeouts.
+    const urlList = body.url ? [body.url] : (body.urls || []);
+    
+    if (!urlList || urlList.length === 0) {
+      return NextResponse.json({ error: 'Invalid url provided' }, { status: 400 });
     }
 
     // Pre-fetch existing categories for matching
@@ -28,12 +33,29 @@ export async function POST(req: Request) {
     }
 
     const newProducts: Product[] = [];
+    const results = []; // For returning detailed status
 
-    for (const url of urls) {
-      if (!url.trim()) continue;
+    for (const url of urlList) {
+      const cleanUrl = url.trim();
+      if (!cleanUrl) continue;
       
       try {
-        const response = await fetch(url.trim(), {
+        // Extract ASIN to check for duplicates
+        const asinMatch = cleanUrl.match(/(?:dp|o|asin|product|aw\/d)\/([a-zA-Z0-9]{10})/i);
+        const asin = asinMatch ? asinMatch[1] : null;
+        const productId = asin ? `prod_${asin}` : `prod_${Math.random().toString(36).substr(2, 9)}`;
+
+        if (asin) {
+          const { data: existingProd } = await supabaseAdmin.from('products').select('id').eq('id', productId).single();
+          if (existingProd) {
+            results.push({ url: cleanUrl, success: false, status: 'Duplicate', error: 'Product already exists' });
+            // If processing single URL, return immediately
+            if (urlList.length === 1) return NextResponse.json({ success: false, status: 'Duplicate', error: 'المنتج موجود بالفعل' });
+            continue;
+          }
+        }
+
+        const response = await fetch(cleanUrl, {
           headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
             'Accept-Language': 'ar-EG,ar;q=0.9,en-US;q=0.8,en;q=0.7'
@@ -41,27 +63,31 @@ export async function POST(req: Request) {
         });
         
         if (!response.ok) {
-          console.error(`Failed to fetch ${url}: ${response.status}`);
+          const errorMsg = `Failed to fetch: ${response.status}`;
+          results.push({ url: cleanUrl, success: false, status: 'Failed', error: errorMsg });
+          if (urlList.length === 1) return NextResponse.json({ success: false, status: 'Failed', error: errorMsg });
           continue;
         }
 
         const html = await response.text();
         const $ = cheerio.load(html);
 
-        // Amazon specific selectors (these can be brittle and may need updates)
-        const title = $('#productTitle').text().trim() || 'منتج غير معروف';
+        const title = $('#productTitle').text().trim();
+        if (!title || title === '') {
+          const errorMsg = 'Failed to extract product data (possible CAPTCHA)';
+          results.push({ url: cleanUrl, success: false, status: 'Failed', error: errorMsg });
+          if (urlList.length === 1) return NextResponse.json({ success: false, status: 'Failed', error: errorMsg });
+          continue;
+        }
         
         let images: string[] = [];
         let mainImage = '';
-
-        // Helper to extract base ID to prevent duplicates
-        const getBaseId = (url: string) => {
-          const match = url.match(/\/I\/([^._]+)/);
-          return match ? match[1] : url;
+        const getBaseId = (imgUrl: string) => {
+          const match = imgUrl.match(/\/I\/([^._]+)/);
+          return match ? match[1] : imgUrl;
         };
         const seenIds = new Set<string>();
 
-        // 1. Try colorImages script block (most reliable for gallery)
         const scriptContent = $('script').filter((i, el) => $(el).html()?.includes('colorImages') || false).html();
         if (scriptContent) {
           const match = scriptContent.match(/'colorImages':\s*\{'initial':\s*(\[.*?\])\}/);
@@ -72,44 +98,32 @@ export async function POST(req: Request) {
                 const hiRes = img.hiRes || img.large || img.thumb;
                 if (hiRes) {
                   const id = getBaseId(hiRes);
-                  if (!seenIds.has(id)) {
-                    seenIds.add(id);
-                    images.push(hiRes);
-                  }
+                  if (!seenIds.has(id)) { seenIds.add(id); images.push(hiRes); }
                 }
               }
             } catch(e) {}
           }
         }
 
-        // 2. Fallback to altImages thumbnails
         if (images.length === 0) {
           $('#altImages ul li.item img').each((i, el) => {
             let src = $(el).attr('src');
             if (src) {
               src = src.replace(/\._[A-Z0-9_]+\./, '._AC_SL1500_.');
               const id = getBaseId(src);
-              if (!seenIds.has(id)) {
-                seenIds.add(id);
-                images.push(src);
-              }
+              if (!seenIds.has(id)) { seenIds.add(id); images.push(src); }
             }
           });
         }
 
-        // 3. Fallback to data-a-dynamic-image
         if (images.length === 0) {
           const dynamicImageStr = $('#landingImage').attr('data-a-dynamic-image') || $('.a-dynamic-image').attr('data-a-dynamic-image');
           if (dynamicImageStr) {
             try {
               const parsedImages = JSON.parse(dynamicImageStr);
-              const urls = Object.keys(parsedImages);
-              for (const url of urls) {
-                const id = getBaseId(url);
-                if (!seenIds.has(id)) {
-                  seenIds.add(id);
-                  images.push(url);
-                }
+              for (const imgUrl of Object.keys(parsedImages)) {
+                const id = getBaseId(imgUrl);
+                if (!seenIds.has(id)) { seenIds.add(id); images.push(imgUrl); }
               }
             } catch(e) {}
           }
@@ -122,34 +136,38 @@ export async function POST(req: Request) {
         }
 
         mainImage = images[0] || '';
+        if (!mainImage) {
+          const errorMsg = 'Failed to extract images';
+          results.push({ url: cleanUrl, success: false, status: 'Failed', error: errorMsg });
+          if (urlList.length === 1) return NextResponse.json({ success: false, status: 'Failed', error: errorMsg });
+          continue;
+        }
 
-        // Price (try different selectors)
         let price = $('.a-price .a-offscreen').first().text().trim();
         if (!price) price = $('#corePriceDisplay_desktop_feature_div .a-price .a-offscreen').first().text().trim();
-        if (!price) price = 'غير متوفر';
+        if (!price) price = 'Price unavailable';
 
-        // Original Price — only use what Amazon actually shows (struck-through price)
-        // Do NOT invent or calculate a fake original price
         let originalPrice = $('.a-text-price .a-offscreen').first().text().trim();
 
-        // Rating
         const rating = $('#acrPopover').attr('title') || 'لا يوجد تقييم';
+        const reviewsMatch = $('#acrCustomerReviewText').first().text().trim();
+        const reviews = reviewsMatch || '';
 
-        // Description / Bullet points
         const descriptionArr: string[] = [];
+        
+        const brand = $('#bylineInfo').first().text().trim() || $('#brand').first().text().trim() || '';
+        if (brand) {
+          descriptionArr.push(`العلامة التجارية: ${brand.replace('Brand: ', '').replace('Visit the ', '')}`);
+        }
+        
         $('#feature-bullets ul li span.a-list-item').each((i, el) => {
           const text = $(el).text().trim();
           if (text) descriptionArr.push(text);
         });
-        const description = descriptionArr.join('\n') || 'لا يوجد وصف متاح.';
+        
+        let description = descriptionArr.join('\n') || 'لا يوجد وصف متاح.';
+        if (reviews) description += `\n\nعدد التقييمات: ${reviews}`;
 
-        // Validation: Prevent inserting invalid/dummy products (e.g. from CAPTCHA/bot pages)
-        if (!title || title === 'منتج غير معروف' || !mainImage) {
-          console.error(`Skipping ${url} - Failed to extract valid product data (possible CAPTCHA/Robot check).`);
-          continue;
-        }
-
-        // Automatic Amazon Category Extraction
         let finalCategoryTitle = '';
         const breadcrumbs: string[] = [];
         $('#wayfinding-breadcrumbs_container ul li span.a-list-item a, .a-breadcrumb ul li span.a-list-item a').each((i, el) => {
@@ -159,19 +177,17 @@ export async function POST(req: Request) {
 
         if (breadcrumbs.length > 0) {
           const breadcrumbsText = breadcrumbs.join(' ').toLowerCase();
-          
-          if (breadcrumbsText.includes('صحة') || breadcrumbsText.includes('جمال') || breadcrumbsText.includes('تجميل') || breadcrumbsText.includes('عناية') || breadcrumbsText.includes('مكياج') || breadcrumbsText.includes('شامبو') || breadcrumbsText.includes('عطر') || breadcrumbsText.includes('مزيل عرق') || breadcrumbsText.includes('حمام') || breadcrumbsText.includes('شعر') || breadcrumbsText.includes('بشرة')) {
+          if (breadcrumbsText.includes('صحة') || breadcrumbsText.includes('جمال') || breadcrumbsText.includes('تجميل') || breadcrumbsText.includes('عناية') || breadcrumbsText.includes('مكياج') || breadcrumbsText.includes('شامبو') || breadcrumbsText.includes('عطر')) {
             finalCategoryTitle = 'الصحة والجمال';
-          } else if (breadcrumbsText.includes('الكترونيات') || breadcrumbsText.includes('هاتف') || breadcrumbsText.includes('سماعات') || breadcrumbsText.includes('موبايل') || breadcrumbsText.includes('تلفزيون') || breadcrumbsText.includes('شاشة') || breadcrumbsText.includes('جوال')) {
+          } else if (breadcrumbsText.includes('الكترونيات') || breadcrumbsText.includes('هاتف') || breadcrumbsText.includes('سماعات') || breadcrumbsText.includes('موبايل') || breadcrumbsText.includes('تلفزيون') || breadcrumbsText.includes('شاشة')) {
             finalCategoryTitle = 'الالكترونيات';
-          } else if (breadcrumbsText.includes('لاب') || breadcrumbsText.includes('كمبيوتر') || breadcrumbsText.includes('حاسوب') || breadcrumbsText.includes('اكسسوارات') || breadcrumbsText.includes('ماوس') || breadcrumbsText.includes('كيبورد')) {
+          } else if (breadcrumbsText.includes('لاب') || breadcrumbsText.includes('كمبيوتر') || breadcrumbsText.includes('حاسوب') || breadcrumbsText.includes('اكسسوارات') || breadcrumbsText.includes('ماوس')) {
             finalCategoryTitle = 'لابات\\اكسسورات';
           } else if (breadcrumbsText.includes('منزل') || breadcrumbsText.includes('مطبخ') || breadcrumbsText.includes('تنظيف') || breadcrumbsText.includes('ديكور') || breadcrumbsText.includes('أثاث')) {
             finalCategoryTitle = 'أدوات منزلية';
-          } else if (breadcrumbsText.includes('ملابس') || breadcrumbsText.includes('أزياء') || breadcrumbsText.includes('فاشون') || breadcrumbsText.includes('موضة') || breadcrumbsText.includes('حذاء') || breadcrumbsText.includes('ساعة') || breadcrumbsText.includes('مجوهرات') || breadcrumbsText.includes('شنط')) {
+          } else if (breadcrumbsText.includes('ملابس') || breadcrumbsText.includes('أزياء') || breadcrumbsText.includes('فاشون') || breadcrumbsText.includes('موضة') || breadcrumbsText.includes('حذاء') || breadcrumbsText.includes('ساعة')) {
             finalCategoryTitle = 'فاشون';
           } else {
-            // Use the top level Amazon category if it exists
             finalCategoryTitle = breadcrumbs[0];
           }
         }
@@ -182,30 +198,17 @@ export async function POST(req: Request) {
           if (categoryMap.has(normalizedTitle)) {
             assignedCategoryId = categoryMap.get(normalizedTitle)!;
           } else {
-            // Create a new store category dynamically
             const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
             const newSectionId = 'sec_' + Math.random().toString(36).substr(2, 9);
             const { error: catErr } = await supabaseAdmin.from('sections').insert({
-              id: newSectionId,
-              type: 'products_by_category',
-              category: newCatId,
-              title: finalCategoryTitle,
-              enabled: true,
-              order_index: 99
+              id: newSectionId, type: 'products_by_category', category: newCatId, title: finalCategoryTitle, enabled: true, order_index: 99
             });
-            if (!catErr) {
-              assignedCategoryId = newCatId;
-              categoryMap.set(normalizedTitle, newCatId);
-            }
+            if (!catErr) { assignedCategoryId = newCatId; categoryMap.set(normalizedTitle, newCatId); }
           }
         }
 
-        // Fallback to client-provided category, or empty string (uncategorized)
-        if (!assignedCategoryId) {
-          assignedCategoryId = category || '';
-        }
-
-        // Final protection: ensure a product never has an empty category
+        if (!assignedCategoryId) assignedCategoryId = targetCategory || '';
+        
         if (!assignedCategoryId) {
           const defaultCategoryTitle = 'عام';
           if (categoryMap.has(defaultCategoryTitle)) {
@@ -214,23 +217,15 @@ export async function POST(req: Request) {
             const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
             const newSectionId = 'sec_' + Math.random().toString(36).substr(2, 9);
             const { error: catErr } = await supabaseAdmin.from('sections').insert({
-              id: newSectionId,
-              type: 'products_by_category',
-              category: newCatId,
-              title: defaultCategoryTitle,
-              enabled: true,
-              order_index: 999
+              id: newSectionId, type: 'products_by_category', category: newCatId, title: defaultCategoryTitle, enabled: true, order_index: 999
             });
-            if (!catErr) {
-              assignedCategoryId = newCatId;
-              categoryMap.set(defaultCategoryTitle, newCatId);
-            }
+            if (!catErr) { assignedCategoryId = newCatId; categoryMap.set(defaultCategoryTitle, newCatId); }
           }
         }
 
         const product: Product = {
-          id: 'prod_' + Math.random().toString(36).substr(2, 9),
-          originalUrl: url.trim(),
+          id: productId,
+          originalUrl: cleanUrl,
           title,
           description,
           price,
@@ -243,12 +238,40 @@ export async function POST(req: Request) {
         };
 
         newProducts.push(product);
+        results.push({ url: cleanUrl, success: true, status: 'Success' });
+        
+        // If single URL, we can insert immediately
+        if (urlList.length === 1) {
+          const row = {
+            id: product.id,
+            original_url: product.originalUrl,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            original_price: product.originalPrice,
+            image: product.image,
+            images: product.images || [],
+            rating: product.rating,
+            category: product.category,
+            created_at: product.createdAt,
+          };
+          const { error } = await supabaseAdmin.from('products').insert([row]);
+          if (error) {
+            return NextResponse.json({ success: false, status: 'Failed', error: 'Database insert error' }, { status: 500 });
+          }
+          revalidateTag('sections', { expire: 0 });
+          return NextResponse.json({ success: true, status: 'Success', product });
+        }
+
       } catch (err) {
-        console.error(`Error processing ${url}:`, err);
+        console.error(`Error processing ${cleanUrl}:`, err);
+        results.push({ url: cleanUrl, success: false, status: 'Failed', error: 'Internal processing error' });
+        if (urlList.length === 1) return NextResponse.json({ success: false, status: 'Failed', error: 'Internal processing error' }, { status: 500 });
       }
     }
 
-    if (newProducts.length > 0) {
+    // Bulk insert fallback if processed array (not recommended due to timeout, but supported)
+    if (newProducts.length > 0 && urlList.length > 1) {
       const rows = newProducts.map(p => ({
         id: p.id,
         original_url: p.originalUrl,
@@ -262,16 +285,11 @@ export async function POST(req: Request) {
         category: p.category,
         created_at: p.createdAt,
       }));
-      const { error } = await supabaseAdmin.from('products').insert(rows);
-      if (error) {
-        console.error('Supabase insert error:', error);
-        return NextResponse.json({ success: false, error: 'حدث خطأ أثناء حفظ المنتج في قاعدة البيانات.' }, { status: 500 });
-      }
+      await supabaseAdmin.from('products').insert(rows);
       revalidateTag('sections', { expire: 0 });
-      return NextResponse.json({ success: true, count: newProducts.length, products: newProducts });
-    } else {
-      return NextResponse.json({ success: false, error: 'لم يتم العثور على بيانات صالحة لإضافة المنتج. قد يكون الرابط محميًا من Amazon أو تعذر استخراج البيانات.' }, { status: 400 });
     }
+
+    return NextResponse.json({ success: true, results, count: newProducts.length });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

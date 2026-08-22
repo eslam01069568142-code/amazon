@@ -171,18 +171,45 @@ export default function AdminDashboard() {
   };
 
   // ── Products ──
+  const [scrapeStatus, setScrapeStatus] = useState<{ url: string; status: 'Processing' | 'Success' | 'Failed' | 'Duplicate'; message?: string }[]>([]);
+
   const handleScrape = async () => {
     if (!urls.trim()) return;
     setScrapeLoading(true); setMessage('');
     const urlArray = urls.split('\n').filter(u => u.trim() !== '');
     const targetCategory = scrapeCategory || categorySections[0]?.category || 'General';
-    const res = await fetch('/api/scrape', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ urls: urlArray, category: targetCategory }),
-    });
-    const data = await res.json();
-    if (data.success) { msg(`✅ تم سحب وإضافة ${data.count} منتج بنجاح`); setUrls(''); fetchProducts(); }
-    else msg(`❌ ${data.error || 'حدث خطأ أثناء السحب'}`);
+    
+    const initialStatus = urlArray.map(url => ({ url, status: 'Processing' as const }));
+    setScrapeStatus(initialStatus);
+
+    let successCount = 0;
+    const newStatus = [...initialStatus];
+
+    for (let i = 0; i < urlArray.length; i++) {
+      const url = urlArray[i];
+      try {
+        const res = await fetch('/api/scrape', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, category: targetCategory }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          newStatus[i].status = 'Success';
+          successCount++;
+        } else {
+          newStatus[i].status = data.status || 'Failed';
+          newStatus[i].message = data.error || 'حدث خطأ';
+        }
+      } catch (err) {
+        newStatus[i].status = 'Failed';
+        newStatus[i].message = 'Network error';
+      }
+      setScrapeStatus([...newStatus]);
+    }
+    
+    msg(`تم الانتهاء: نجاح ${successCount} من ${urlArray.length}`);
+    setUrls('');
+    fetchProducts();
     setScrapeLoading(false);
   };
 
@@ -345,9 +372,42 @@ export default function AdminDashboard() {
               <option value="">-- اختر الفئة --</option>
               {categorySections.map(c => <option key={c.id} value={c.category}>{c.title}</option>)}
             </select>
-            <button style={btnPrimary} onClick={handleScrape} disabled={scrapeLoading}>
+            <button style={btnPrimary} onClick={handleScrape} disabled={scrapeLoading || !urls.trim()}>
               {scrapeLoading ? 'جاري الاستيراد...' : 'استيراد المنتجات'}
             </button>
+            
+            {scrapeStatus.length > 0 && (
+              <div style={{ marginTop: '1.5rem', background: '#fff', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', maxHeight: '300px', overflowY: 'auto' }}>
+                <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem' }}>حالة الاستيراد ({scrapeStatus.filter(s => s.status === 'Success').length} نجاح / {scrapeStatus.length} إجمالي):</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {scrapeStatus.map((s, idx) => (
+                    <div key={idx} style={{ 
+                      padding: '0.6rem 0.8rem', 
+                      borderRadius: '0.25rem', 
+                      fontSize: '0.85rem',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      background: s.status === 'Processing' ? '#f8fafc' : s.status === 'Success' ? '#f0fdf4' : s.status === 'Duplicate' ? '#fffbeb' : '#fef2f2',
+                      border: `1px solid ${s.status === 'Processing' ? '#e2e8f0' : s.status === 'Success' ? '#bbf7d0' : s.status === 'Duplicate' ? '#fef3c7' : '#fecaca'}`
+                    }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', maxWidth: '75%', overflow: 'hidden' }}>
+                        <span style={{ direction: 'ltr', textAlign: 'left', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', color: '#475569' }}>
+                          {s.url}
+                        </span>
+                        {s.message && <span style={{ color: s.status === 'Failed' ? '#dc2626' : '#d97706', fontWeight: 600 }}>{s.message}</span>}
+                      </div>
+                      <div>
+                        {s.status === 'Processing' && <span style={{ color: '#64748b', fontWeight: 600 }}>جاري المعالجة...</span>}
+                        {s.status === 'Success' && <span style={{ color: '#166534', fontWeight: 700 }}>✅ نجاح</span>}
+                        {s.status === 'Failed' && <span style={{ color: '#991b1b', fontWeight: 700 }}>❌ فشل</span>}
+                        {s.status === 'Duplicate' && <span style={{ color: '#b45309', fontWeight: 700 }}>⚠️ مكرر</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

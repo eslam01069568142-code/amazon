@@ -10,26 +10,12 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get('category') || '';
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [mounted, setMounted] = useState(false);
   const [coords, setCoords] = useState({ top: 0, right: 0 });
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
-        buttonRef.current && !buttonRef.current.contains(event.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleToggle = () => {
@@ -78,23 +64,29 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
           </button>
           
           {mounted && dropdownOpen && createPortal(
-            <div 
-              className={styles.dropdownMenu}
-              ref={dropdownRef}
-              style={{ position: 'absolute', top: coords.top, right: coords.right, marginTop: 0 }}
-            >
-              {sections.map((sec) => (
-                <Link 
-                  key={sec.id} 
-                  href={`/?category=${sec.category}`}
-                  className={styles.dropdownItem}
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  {renderIcon(sec.category)}
-                  <span>{sec.title}</span>
-                </Link>
-              ))}
-            </div>,
+            <>
+              {/* Invisible overlay to catch clicks outside the dropdown */}
+              <div 
+                style={{ position: 'fixed', inset: 0, zIndex: 999 }}
+                onClick={(e) => { e.stopPropagation(); setDropdownOpen(false); }}
+              />
+              <div 
+                className={styles.dropdownMenu}
+                style={{ position: 'absolute', top: coords.top, right: coords.right, marginTop: 0, zIndex: 1000 }}
+              >
+                {sections.map((sec) => (
+                  <Link 
+                    key={sec.id} 
+                    href={`/?category=${sec.category}`}
+                    className={styles.dropdownItem}
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    {renderIcon(sec.category)}
+                    <span>{sec.title}</span>
+                  </Link>
+                ))}
+              </div>
+            </>,
             document.body
           )}
         </div>
