@@ -142,6 +142,12 @@ export async function POST(req: Request) {
         });
         const description = descriptionArr.join('\n') || 'لا يوجد وصف متاح.';
 
+        // Validation: Prevent inserting invalid/dummy products (e.g. from CAPTCHA/bot pages)
+        if (!title || title === 'منتج غير معروف' || !mainImage || !price || price === 'غير متوفر') {
+          console.error(`Skipping ${url} - Failed to extract valid product data (possible CAPTCHA/Robot check).`);
+          continue;
+        }
+
         // Automatic Amazon Category Extraction
         let finalCategoryTitle = '';
         const breadcrumbs: string[] = [];
