@@ -21,10 +21,26 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
   const handleToggle = () => {
     if (!dropdownOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const rightDistance = document.documentElement.clientWidth - rect.right;
+      const viewportWidth = document.documentElement.clientWidth;
+      const dropdownWidth = 240; // max expected width of the dropdown
+      const margin = 10; // Safe margin from screen edges
+
+      // Distance from the right edge of the viewport to the right edge of the button
+      let calculatedRight = viewportWidth - rect.right;
+
+      // Ensure the dropdown doesn't overflow the left edge of the screen
+      if (calculatedRight + dropdownWidth > viewportWidth - margin) {
+        calculatedRight = viewportWidth - dropdownWidth - margin;
+      }
+
+      // Ensure the dropdown doesn't overflow the right edge of the screen
+      if (calculatedRight < margin) {
+        calculatedRight = margin;
+      }
+
       setCoords({
         top: rect.bottom + window.scrollY + 8,
-        right: rightDistance
+        right: calculatedRight
       });
     }
     setDropdownOpen(!dropdownOpen);
