@@ -179,7 +179,8 @@ export default function AdminDashboard() {
     const urlArray = urls.split('\n').filter(u => u.trim() !== '');
     const targetCategory = scrapeCategory || categorySections[0]?.category || 'General';
     
-    const initialStatus = urlArray.map(url => ({ url, status: 'Processing' as const }));
+    type StatusItem = { url: string; status: 'Processing' | 'Success' | 'Failed' | 'Duplicate'; message?: string };
+    const initialStatus: StatusItem[] = urlArray.map(url => ({ url, status: 'Processing' }));
     setScrapeStatus(initialStatus);
 
     let successCount = 0;
