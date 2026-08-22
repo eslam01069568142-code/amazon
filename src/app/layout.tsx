@@ -22,7 +22,7 @@ export default async function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <head>
-        {fbp && (
+        {fbp ? (
           <Script id="facebook-pixel" strategy="afterInteractive">
             {`
               !function(f,b,e,v,n,t,s)
@@ -37,7 +37,7 @@ export default async function RootLayout({
               fbq('track', 'PageView');
             `}
           </Script>
-        )}
+        ) : null}
       </head>
       <body className={cairo.className}>{children}</body>
     </html>
