@@ -1,5 +1,5 @@
 'use client';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import type { Product } from '@/data/db';
@@ -12,14 +12,50 @@ interface ProductCarouselProps {
 export default function ProductCarousel({ title, products }: ProductCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const [showArrows, setShowArrows] = useState(false);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    
+    const isScrollable = scrollWidth > clientWidth;
+    setShowArrows(isScrollable);
+
+    if (!isScrollable) {
+      setAtStart(true);
+      setAtEnd(true);
+      return;
+    }
+
+    const absScrollLeft = Math.abs(scrollLeft);
+    if (absScrollLeft <= 2) {
+      setAtStart(true);
+      setAtEnd(false);
+    } else if (absScrollLeft + clientWidth >= scrollWidth - 2) {
+      setAtStart(false);
+      setAtEnd(true);
+    } else {
+      setAtStart(false);
+      setAtEnd(false);
+    }
+  };
+
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('resize', handleScroll);
+    return () => window.removeEventListener('resize', handleScroll);
+  }, [products]);
+
   const scrollNext = () => {
-    if (scrollRef.current) {
+    if (!atEnd && scrollRef.current) {
       scrollRef.current.scrollBy({ left: -600, behavior: 'smooth' });
     }
   };
 
   const scrollPrev = () => {
-    if (scrollRef.current) {
+    if (!atStart && scrollRef.current) {
       scrollRef.current.scrollBy({ left: 600, behavior: 'smooth' });
     }
   };
@@ -36,7 +72,7 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
 
       <div style={{ position: 'relative' }}>
         {/* Navigation Layer - Perfectly aligns with the 180px image area */}
-        {products.length > 4 && (
+        {showArrows && (
           <div style={{
             position: 'absolute',
             top: 0,
@@ -52,11 +88,13 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
             {/* Right Arrow (Previous in RTL) */}
             <button 
               onClick={scrollPrev}
+              disabled={atStart}
               style={{
-                pointerEvents: 'auto', // Make the button itself clickable
+                pointerEvents: atStart ? 'none' : 'auto',
+                opacity: atStart ? 0.5 : 1,
                 width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#fff', 
                 border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', color: '#475569'
+                cursor: atStart ? 'default' : 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', color: '#475569'
               }}
               aria-label="السابق"
             >
@@ -65,11 +103,13 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
             {/* Left Arrow (Next in RTL) */}
             <button 
               onClick={scrollNext}
+              disabled={atEnd}
               style={{
-                pointerEvents: 'auto',
+                pointerEvents: atEnd ? 'none' : 'auto',
+                opacity: atEnd ? 0.5 : 1,
                 width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#fff', 
                 border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', color: '#475569'
+                cursor: atEnd ? 'default' : 'pointer', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', color: '#475569'
               }}
               aria-label="التالي"
             >
@@ -80,6 +120,7 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
 
       <div 
         ref={scrollRef}
+        onScroll={handleScroll}
         style={{ 
           display: 'flex', 
           gap: '1rem', 
