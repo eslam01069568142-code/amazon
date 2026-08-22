@@ -2,6 +2,7 @@ import { getDb } from '@/data/db';
 import { notFound } from 'next/navigation';
 import ImageGallery from '@/components/ImageGallery';
 import ProductCard from '@/components/ProductCard';
+import ProductCarousel from '@/components/ProductCarousel';
 import { ShoppingCart, ShieldCheck, Clock } from 'lucide-react';
 import Link from 'next/link';
 
@@ -53,6 +54,28 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const discountPercent = (origPriceNum && origPriceNum > currPriceNum) 
     ? Math.round(((origPriceNum - currPriceNum) / origPriceNum) * 100) 
     : null;
+
+  const formatPrice = (priceStr: string) => {
+    if (!priceStr) return null;
+    const match = priceStr.match(/([\d,]+)\.(\d{2})/);
+    if (match && match.index !== undefined) {
+      const full = match[0];
+      const intPart = match[1];
+      const fracPart = match[2];
+      const before = priceStr.substring(0, match.index);
+      const after = priceStr.substring(match.index + full.length);
+      return (
+        <>
+          {before}{intPart}
+          <span style={{ fontSize: '0.65em', color: '#ffffff', verticalAlign: 'sub', margin: '0 2px' }}>
+            {fracPart}
+          </span>
+          {after}
+        </>
+      );
+    }
+    return priceStr;
+  };
 
   // Format Description into paragraphs
   const descriptionParagraphs = product.description.split('\n').filter(p => p.trim() !== '');
@@ -145,7 +168,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <span className="product-price-label">السعر الحالي:</span>
                 <span className="product-price-current">
-                  {product.price}
+                  {formatPrice(product.price)}
                 </span>
               </div>
             </div>
@@ -199,35 +222,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         {/* Recommendation Sections */}
         <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           
-          {/* Section 1 */}
-          {relatedProducts.length > 0 && (
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem' }}>المنتجات المرتبطة بهذه السلعة</h2>
-              <div className="grid grid-cols-4">
-                {relatedProducts.map(p => <ProductCard key={p.id} product={p} />)}
-              </div>
-            </section>
-          )}
-
-          {/* Section 2 */}
-          {similarProducts.length > 0 && (
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem' }}>منتجات مشابهة قد تهمك</h2>
-              <div className="grid grid-cols-4">
-                {similarProducts.map(p => <ProductCard key={p.id} product={p} />)}
-              </div>
-            </section>
-          )}
-
-          {/* Section 3 */}
-          {likedProducts.length > 0 && (
-            <section>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.5rem' }}>منتجات قد تعجبك أيضًا</h2>
-              <div className="grid grid-cols-4">
-                {likedProducts.map(p => <ProductCard key={p.id} product={p} />)}
-              </div>
-            </section>
-          )}
+          <ProductCarousel title="المنتجات المرتبطة بهذه السلعة" products={relatedProducts} />
+          <ProductCarousel title="منتجات مشابهة قد تهمك" products={similarProducts} />
+          <ProductCarousel title="منتجات قد تعجبك أيضًا" products={likedProducts} />
 
         </div>
 

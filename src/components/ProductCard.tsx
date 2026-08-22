@@ -14,6 +14,28 @@ export default function ProductCard({ product }: ProductCardProps) {
   const origPriceNum = product.originalPrice ? parsePrice(product.originalPrice) : null;
   const showOriginalPrice = origPriceNum && origPriceNum > currPriceNum;
   
+  const formatPrice = (priceStr: string) => {
+    if (!priceStr) return null;
+    const match = priceStr.match(/([\d,]+)\.(\d{2})/);
+    if (match && match.index !== undefined) {
+      const full = match[0];
+      const intPart = match[1];
+      const fracPart = match[2];
+      const before = priceStr.substring(0, match.index);
+      const after = priceStr.substring(match.index + full.length);
+      return (
+        <>
+          {before}{intPart}
+          <span style={{ fontSize: '0.65em', color: '#ffffff', verticalAlign: 'sub', margin: '0 2px' }}>
+            {fracPart}
+          </span>
+          {after}
+        </>
+      );
+    }
+    return priceStr;
+  };
+
   return (
     <div className="card">
       <Link href={`/product/${product.id}`} style={{ display: 'block' }}>
@@ -52,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </span>
             )}
             <div style={{ fontWeight: 800, color: 'var(--danger-color)', fontSize: '1.1rem' }}>
-               {product.price}
+               {formatPrice(product.price)}
             </div>
           </div>
           
