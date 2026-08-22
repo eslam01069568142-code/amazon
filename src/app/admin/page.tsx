@@ -182,7 +182,7 @@ export default function AdminDashboard() {
     });
     const data = await res.json();
     if (data.success) { msg(`✅ تم سحب وإضافة ${data.count} منتج بنجاح`); setUrls(''); fetchProducts(); }
-    else msg('❌ حدث خطأ أثناء السحب');
+    else msg(`❌ ${data.error || 'حدث خطأ أثناء السحب'}`);
     setScrapeLoading(false);
   };
 

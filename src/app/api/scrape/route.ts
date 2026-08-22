@@ -143,7 +143,7 @@ export async function POST(req: Request) {
         const description = descriptionArr.join('\n') || 'لا يوجد وصف متاح.';
 
         // Validation: Prevent inserting invalid/dummy products (e.g. from CAPTCHA/bot pages)
-        if (!title || title === 'منتج غير معروف' || !mainImage || !price || price === 'غير متوفر') {
+        if (!title || title === 'منتج غير معروف' || !mainImage) {
           console.error(`Skipping ${url} - Failed to extract valid product data (possible CAPTCHA/Robot check).`);
           continue;
         }
@@ -151,18 +151,28 @@ export async function POST(req: Request) {
         // Automatic Amazon Category Extraction
         let finalCategoryTitle = '';
         const breadcrumbs: string[] = [];
-        $('#wayfinding-breadcrumbs_container ul li span.a-list-item a').each((i, el) => {
+        $('#wayfinding-breadcrumbs_container ul li span.a-list-item a, .a-breadcrumb ul li span.a-list-item a').each((i, el) => {
           const text = $(el).text().trim().replace(/\s+/g, ' ');
           if (text) breadcrumbs.push(text);
         });
 
         if (breadcrumbs.length > 0) {
-          let lastCrumb = breadcrumbs[breadcrumbs.length - 1];
-          // If the last breadcrumb is identical to the title or too similar, fallback to the previous one
-          if (title.toLowerCase().includes(lastCrumb.toLowerCase()) && breadcrumbs.length > 1) {
-            lastCrumb = breadcrumbs[breadcrumbs.length - 2];
+          const breadcrumbsText = breadcrumbs.join(' ').toLowerCase();
+          
+          if (breadcrumbsText.includes('صحة') || breadcrumbsText.includes('جمال') || breadcrumbsText.includes('تجميل') || breadcrumbsText.includes('عناية') || breadcrumbsText.includes('مكياج') || breadcrumbsText.includes('شامبو') || breadcrumbsText.includes('عطر') || breadcrumbsText.includes('مزيل عرق') || breadcrumbsText.includes('حمام') || breadcrumbsText.includes('شعر') || breadcrumbsText.includes('بشرة')) {
+            finalCategoryTitle = 'الصحة والجمال';
+          } else if (breadcrumbsText.includes('الكترونيات') || breadcrumbsText.includes('هاتف') || breadcrumbsText.includes('سماعات') || breadcrumbsText.includes('موبايل') || breadcrumbsText.includes('تلفزيون') || breadcrumbsText.includes('شاشة') || breadcrumbsText.includes('جوال')) {
+            finalCategoryTitle = 'الالكترونيات';
+          } else if (breadcrumbsText.includes('لاب') || breadcrumbsText.includes('كمبيوتر') || breadcrumbsText.includes('حاسوب') || breadcrumbsText.includes('اكسسوارات') || breadcrumbsText.includes('ماوس') || breadcrumbsText.includes('كيبورد')) {
+            finalCategoryTitle = 'لابات\\اكسسورات';
+          } else if (breadcrumbsText.includes('منزل') || breadcrumbsText.includes('مطبخ') || breadcrumbsText.includes('تنظيف') || breadcrumbsText.includes('ديكور') || breadcrumbsText.includes('أثاث')) {
+            finalCategoryTitle = 'أدوات منزلية';
+          } else if (breadcrumbsText.includes('ملابس') || breadcrumbsText.includes('أزياء') || breadcrumbsText.includes('فاشون') || breadcrumbsText.includes('موضة') || breadcrumbsText.includes('حذاء') || breadcrumbsText.includes('ساعة') || breadcrumbsText.includes('مجوهرات') || breadcrumbsText.includes('شنط')) {
+            finalCategoryTitle = 'فاشون';
+          } else {
+            // Use the top level Amazon category if it exists
+            finalCategoryTitle = breadcrumbs[0];
           }
-          finalCategoryTitle = lastCrumb;
         }
 
         let assignedCategoryId = '';
@@ -173,7 +183,9 @@ export async function POST(req: Request) {
           } else {
             // Create a new store category dynamically
             const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
+            const newSectionId = 'sec_' + Math.random().toString(36).substr(2, 9);
             const { error: catErr } = await supabaseAdmin.from('sections').insert({
+              id: newSectionId,
               type: 'products_by_category',
               category: newCatId,
               title: finalCategoryTitle,
@@ -190,6 +202,29 @@ export async function POST(req: Request) {
         // Fallback to client-provided category, or empty string (uncategorized)
         if (!assignedCategoryId) {
           assignedCategoryId = category || '';
+        }
+
+        // Final protection: ensure a product never has an empty category
+        if (!assignedCategoryId) {
+          const defaultCategoryTitle = 'عام';
+          if (categoryMap.has(defaultCategoryTitle)) {
+            assignedCategoryId = categoryMap.get(defaultCategoryTitle)!;
+          } else {
+            const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
+            const newSectionId = 'sec_' + Math.random().toString(36).substr(2, 9);
+            const { error: catErr } = await supabaseAdmin.from('sections').insert({
+              id: newSectionId,
+              type: 'products_by_category',
+              category: newCatId,
+              title: defaultCategoryTitle,
+              enabled: true,
+              order_index: 999
+            });
+            if (!catErr) {
+              assignedCategoryId = newCatId;
+              categoryMap.set(defaultCategoryTitle, newCatId);
+            }
+          }
         }
 
         const product: Product = {
@@ -227,10 +262,14 @@ export async function POST(req: Request) {
         created_at: p.createdAt,
       }));
       const { error } = await supabaseAdmin.from('products').insert(rows);
-      if (error) console.error('Supabase insert error:', error);
+      if (error) {
+        console.error('Supabase insert error:', error);
+        return NextResponse.json({ success: false, error: 'حدث خطأ أثناء حفظ المنتج في قاعدة البيانات.' }, { status: 500 });
+      }
+      return NextResponse.json({ success: true, count: newProducts.length, products: newProducts });
+    } else {
+      return NextResponse.json({ success: false, error: 'لم يتم العثور على بيانات صالحة لإضافة المنتج. قد يكون الرابط محميًا من Amazon أو تعذر استخراج البيانات.' }, { status: 400 });
     }
-
-    return NextResponse.json({ success: true, count: newProducts.length, products: newProducts });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
