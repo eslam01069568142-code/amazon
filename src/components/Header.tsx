@@ -41,7 +41,7 @@ const getCachedCategories = unstable_cache(
     return uniqueCategories;
   },
   ['header-sections'],
-  { tags: ['sections'] }
+  { tags: ['sections'], revalidate: 60 } // Revalidate every 60s to prevent permanent empty cache
 );
 
 export default async function Header() {

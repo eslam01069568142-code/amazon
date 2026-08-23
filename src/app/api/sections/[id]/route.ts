@@ -35,7 +35,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       order: data.order_index,
     };
 
-    revalidateTag('sections', { expire: 0 });
+    revalidateTag('sections', 'max');
     revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, section });
   } catch {
@@ -48,7 +48,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     const { id } = await params;
     const { error } = await supabaseAdmin.from('sections').delete().eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    revalidateTag('sections', { expire: 0 });
+    revalidateTag('sections', 'max');
     revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch {

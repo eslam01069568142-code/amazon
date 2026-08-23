@@ -259,7 +259,7 @@ export async function POST(req: Request) {
           if (error) {
             return NextResponse.json({ success: false, status: 'Failed', error: 'Database insert error' }, { status: 500 });
           }
-          revalidateTag('sections', { expire: 0 });
+          revalidateTag('sections', 'max');
           return NextResponse.json({ success: true, status: 'Success', product });
         }
 
@@ -286,7 +286,7 @@ export async function POST(req: Request) {
         created_at: p.createdAt,
       }));
       await supabaseAdmin.from('products').insert(rows);
-      revalidateTag('sections', { expire: 0 });
+      revalidateTag('sections', 'max');
     }
 
     return NextResponse.json({ success: true, results, count: newProducts.length });
