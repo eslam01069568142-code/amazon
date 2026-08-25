@@ -137,6 +137,10 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     "image": allImages,
     "description": product.metaDescription || product.description.substring(0, 200),
     "sku": product.id,
+    "brand": {
+      "@type": "Brand",
+      "name": "غير محدد"
+    },
     "offers": {
       "@type": "Offer",
       "url": `https://bkamelnaharda.vercel.app/product/${product.id}`,

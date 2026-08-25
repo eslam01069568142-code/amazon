@@ -18,9 +18,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Add categories
   const categories = new Set(db.products.map((p) => p.category).filter(Boolean));
   categories.forEach((category) => {
+    // Find the latest product date in this category
+    const categoryProducts = db.products.filter(p => p.category === category);
+    let latestDate = new Date(0); // Epoch start
+    
+    categoryProducts.forEach(p => {
+      try {
+        if (p.createdAt) {
+          const parsed = new Date(p.createdAt);
+          if (!isNaN(parsed.getTime()) && parsed > latestDate) {
+            latestDate = parsed;
+          }
+        }
+      } catch(e) {}
+    });
+    
+    // Fallback to current date if no valid dates found
+    if (latestDate.getTime() === 0) {
+      latestDate = new Date();
+    }
+
     sitemapEntries.push({
       url: `${baseUrl}/?category=${encodeURIComponent(category)}`,
-      lastModified: new Date(),
+      lastModified: latestDate,
       changeFrequency: 'daily',
       priority: 0.8,
     });
@@ -46,6 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Add static pages
+  /*
   ['about', 'contact', 'privacy', 'terms', 'shipping', 'return'].forEach((page) => {
     sitemapEntries.push({
       url: `${baseUrl}/${page}`,
@@ -54,6 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     });
   });
+  */
 
   return sitemapEntries;
 }
