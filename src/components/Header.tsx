@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, ShoppingCart } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Suspense } from 'react';
 import CategorySlider from './CategorySlider';
 import styles from './Header.module.css';
@@ -7,6 +7,7 @@ import { supabaseAdmin } from '@/data/db';
 import { unstable_cache } from 'next/cache';
 import SearchBar from './SearchBar';
 import { createClient } from '@supabase/supabase-js';
+import Image from 'next/image';
 
 const getCachedCategories = unstable_cache(
   async () => {
@@ -58,8 +59,7 @@ export default async function Header() {
       <div className="container">
         <div className={styles.topBar}>
           <Link href="/" className={styles.logo}>
-            <ShoppingCart size={32} />
-            <span>بكام النهاردة</span>
+            <Image src="/logo.png" alt="Bkam El-Naharda Logo" width={40} height={40} style={{ objectFit: 'contain' }} priority />
           </Link>
         </div>
       </div>

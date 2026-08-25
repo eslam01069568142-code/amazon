@@ -175,21 +175,38 @@ export async function POST(req: Request) {
           if (text) breadcrumbs.push(text);
         });
 
-        if (breadcrumbs.length > 0) {
-          const breadcrumbsText = breadcrumbs.join(' ').toLowerCase();
-          if (breadcrumbsText.includes('صحة') || breadcrumbsText.includes('جمال') || breadcrumbsText.includes('تجميل') || breadcrumbsText.includes('عناية') || breadcrumbsText.includes('مكياج') || breadcrumbsText.includes('شامبو') || breadcrumbsText.includes('عطر')) {
-            finalCategoryTitle = 'الصحة والجمال';
-          } else if (breadcrumbsText.includes('الكترونيات') || breadcrumbsText.includes('هاتف') || breadcrumbsText.includes('سماعات') || breadcrumbsText.includes('موبايل') || breadcrumbsText.includes('تلفزيون') || breadcrumbsText.includes('شاشة')) {
-            finalCategoryTitle = 'الالكترونيات';
-          } else if (breadcrumbsText.includes('لاب') || breadcrumbsText.includes('كمبيوتر') || breadcrumbsText.includes('حاسوب') || breadcrumbsText.includes('اكسسوارات') || breadcrumbsText.includes('ماوس')) {
-            finalCategoryTitle = 'لابات\\اكسسورات';
-          } else if (breadcrumbsText.includes('منزل') || breadcrumbsText.includes('مطبخ') || breadcrumbsText.includes('تنظيف') || breadcrumbsText.includes('ديكور') || breadcrumbsText.includes('أثاث')) {
-            finalCategoryTitle = 'أدوات منزلية';
-          } else if (breadcrumbsText.includes('ملابس') || breadcrumbsText.includes('أزياء') || breadcrumbsText.includes('فاشون') || breadcrumbsText.includes('موضة') || breadcrumbsText.includes('حذاء') || breadcrumbsText.includes('ساعة')) {
-            finalCategoryTitle = 'فاشون';
-          } else {
-            finalCategoryTitle = breadcrumbs[0];
+        const textToAnalyze = title.toLowerCase();
+        
+        // --- SMART CATEGORIZATION ENGINE ---
+        const RULES = [
+          { name: 'سماعات وإكسسواراتها', keywords: ['سماعة', 'سماعات', 'earbuds', 'headphone', 'headset', 'earphone', 'airpods', 'soundcore', 'جراب سماعة', 'حافظة سماعة', 'airpods case', 'جراب ايربودز', 'جراب soundcore', 'جراب ساوند كور', 'حافظة سيليكون لسماعات', 'جراب سيليكون متوافق مع انكر', 'حافظة من السيليكون لسماعات', 'فري بودز', 'freebuds'], negative: [] },
+          { name: 'أكسسوارات الموبايل', keywords: ['جراب موبايل', 'جراب هاتف', 'جراب ايفون', 'جراب سامسونج', 'حافظة هاتف', 'واقي شاشة للموبايل', 'كابل مخصص للهاتف', 'iphone', 'samsung'], negative: ['سماعة', 'سماعات', 'soundcore', 'airpods', 'earbuds', 'ميكروفون', 'lavalier', 'microphone', 'selfie', 'سيلفي', 'tripod', 'ring light', 'رينج لايت', 'camera', 'كاميرا'] },
+          { name: 'إكسسوارات السيارات', keywords: ['سيارة', 'سيارات', 'شاحن سيارة', 'حامل موبايل للسيارة', 'مكنسة سيارة', 'car mount', 'car charger', 'car accessories'], negative: ['لعبة', 'أطفال', 'دفع', 'ركوب'] },
+          { name: 'إكسسوارات التصوير', keywords: ['تصوير', 'tripod', 'كاميرا', 'اضاءة تصوير', 'رينج لايت', 'ring light', 'ميكروفون', 'lavalier', 'microphone', 'عصا سيلفي', 'سيلفي ستك', 'selfie stick', 'selfie tripod', 'حامل سيلفي', 'حامل ثلاثي للتصوير', 'حامل كاميرا', 'ثلاثي القوائم', 'سيلفي', 'camera accessories', 'photography accessories', 'selfie light', 'إضاءة سيلفي', 'camera light', 'photography light', 'video light', 'webcam', 'كاميرا ويب'], negative: ['سماعة', 'سماعات', 'earbuds', 'headphone', 'headset', 'earphone'] },
+          { name: 'لابات وإكسسوارات', keywords: ['لاب', 'كمبيوتر', 'حاسوب', 'اكسسوارات كمبيوتر', 'ماوس', 'كيبورد', 'laptop', 'mouse', 'computer accessories', 'stand'], negative: ['ميكروفون', 'lavalier', 'microphone', 'webcam', 'كاميرا ويب', 'selfie light', 'إضاءة سيلفي', 'ring light', 'رينج لايت'] },
+          { name: 'المستلزمات الرياضية', keywords: ['نظارة موتوسيكل', 'موتوكروس', 'motocross', 'motorcycle goggles', 'cycling glasses', 'ski goggles', 'sports goggles', 'racing goggles', 'نظارات سباقات', 'نظارات الدراجات', 'نظارات التزلج', 'معدات رياضية', 'إكسسوارات رياضية'], negative: [] },
+          { name: 'الصحة والجمال', keywords: ['صحة', 'جمال', 'تجميل', 'عناية', 'مكياج', 'شامبو', 'عطر', 'مزيل عرق', 'واقي', 'شمس', 'بشرة', 'skincare', 'beauty'], negative: [] },
+          { name: 'أدوات منزلية', keywords: ['منزل', 'مطبخ', 'تنظيف', 'ديكور', 'أثاث', 'برطمان', 'علب', 'موزع مياه', 'مكيف', 'زيت', 'طبخ', 'طعام'], negative: [] },
+          { name: 'فاشون', keywords: ['ملابس', 'أزياء', 'فاشون', 'موضة', 'حذاء', 'ساعة', 'نظارة', 'نظارات', 'قميص', 'بنطلون'], negative: ['موتوسيكل', 'دراجات', 'تزلج', 'سباقات', 'motocross', 'cycling', 'ski', 'sports'] },
+          { name: 'دمى وألعاب', keywords: ['لعبة', 'ألعاب', 'أطفال', 'ركوب', 'لعب', 'سيارات أطفال'], negative: [] },
+          { name: 'الإلكترونيات', keywords: ['تلفزيون', 'شاشة', 'رسيفر', 'باور بانك', 'إلكترونيات', 'موبايل', 'هاتف', 'بلوتوث', 'bluetooth', 'speaker', 'مكبر صوت', 'receiver'], negative: ['جراب', 'حافظة', 'ميكروفون', 'earbuds', 'شاحن سيارة', 'سماعة'] }
+        ];
+
+        if (textToAnalyze.includes('جراب') && (textToAnalyze.includes('ساوند كور') || textToAnalyze.includes('soundcore') || textToAnalyze.includes('سماعات') || textToAnalyze.includes('سماعة') || textToAnalyze.includes('ايربودز'))) {
+          finalCategoryTitle = 'سماعات وإكسسواراتها';
+        } else {
+          for (const rule of RULES) {
+            const hasPositive = rule.keywords.some(k => textToAnalyze.includes(k));
+            const hasNegative = rule.negative.some(k => textToAnalyze.includes(k));
+            if (hasPositive && !hasNegative) {
+              finalCategoryTitle = rule.name;
+              break;
+            }
           }
+        }
+
+        if (!finalCategoryTitle && breadcrumbs.length > 0) {
+          finalCategoryTitle = breadcrumbs[0];
         }
 
         let assignedCategoryId = '';

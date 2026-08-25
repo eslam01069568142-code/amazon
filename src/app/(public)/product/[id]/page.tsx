@@ -5,6 +5,7 @@ import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
 import { ShoppingCart, ShieldCheck, Clock } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
 // Simple deterministic PRNG based on a string seed
 function getSeededRandom(seedStr: string) {
@@ -19,14 +20,33 @@ function getSeededRandom(seedStr: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const db = await getDb();
   const product = db.products.find(p => p.id === resolvedParams.id);
   if (!product) return { title: 'Product Not Found' };
+  
+  const desc = product.metaDescription || product.description.substring(0, 160) || `تسوق ${product.title} بأفضل سعر في مصر على بكام النهاردة.`;
+  const imgUrl = (product.images && product.images.length > 0) ? product.images[0] : product.image;
+
   return {
-    title: `${product.title} | Bkam El-Naharda`,
-    description: product.metaDescription || product.description.substring(0, 160)
+    title: `${product.title} | بكام النهاردة`,
+    description: desc,
+    alternates: {
+      canonical: `/product/${product.id}`,
+    },
+    openGraph: {
+      title: `${product.title} | بكام النهاردة`,
+      description: desc,
+      url: `/product/${product.id}`,
+      images: imgUrl ? [{ url: imgUrl }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.title} | بكام النهاردة`,
+      description: desc,
+      images: imgUrl ? [imgUrl] : undefined,
+    }
   };
 }
 
@@ -110,8 +130,51 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const likedProducts = topRated.slice(0, 8);
 
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.title,
+    "image": allImages,
+    "description": product.metaDescription || product.description.substring(0, 200),
+    "sku": product.id,
+    "offers": {
+      "@type": "Offer",
+      "url": `https://bkamelnaharda.vercel.app/product/${product.id}`,
+      "priceCurrency": "EGP",
+      "price": currPriceNum,
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "الرئيسية",
+        "item": "https://bkamelnaharda.vercel.app/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": product.category,
+        "item": `https://bkamelnaharda.vercel.app/?category=${encodeURIComponent(product.category)}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.title,
+        "item": `https://bkamelnaharda.vercel.app/product/${product.id}`
+      }
+    ]
+  };
+
   return (
     <div dir="rtl" className="bg-gray-50 min-h-screen pb-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200 py-3 px-4">

@@ -3,7 +3,39 @@ import ProductCarousel from '@/components/ProductCarousel';
 import { getDb } from '@/data/db';
 import { Tag, Zap, ArrowLeft, Clock } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }): Promise<Metadata> {
+  const resolvedParams = await searchParams;
+  
+  if (resolvedParams.category) {
+    return {
+      title: `${resolvedParams.category} | بكام النهاردة`,
+      description: `اكتشف وقارن أفضل أسعار وعروض ${resolvedParams.category} في مصر على بكام النهاردة.`,
+      alternates: {
+        canonical: `/?category=${encodeURIComponent(resolvedParams.category)}`,
+      },
+      openGraph: {
+        title: `${resolvedParams.category} | بكام النهاردة`,
+        description: `اكتشف وقارن أفضل أسعار وعروض ${resolvedParams.category} في مصر على بكام النهاردة.`,
+        url: `/?category=${encodeURIComponent(resolvedParams.category)}`,
+      }
+    };
+  }
+  
+  if (resolvedParams.q) {
+    return {
+      title: `نتائج البحث عن: ${resolvedParams.q} | بكام النهاردة`,
+      robots: { index: false, follow: true }
+    };
+  }
+
+  return {
+    alternates: {
+      canonical: '/',
+    }
+  };
+}
 // Simple deterministic PRNG based on a string seed
 function getSeededRandom(seedStr: string) {
   let h = 0;
