@@ -1,4 +1,5 @@
 import { getDb } from '@/data/db';
+import { getAmazonProductUrl } from '@/utils/amazon';
 import { notFound } from 'next/navigation';
 import ImageGallery from '@/components/ImageGallery';
 import ProductCard from '@/components/ProductCard';
@@ -61,10 +62,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
   // Construct the smart link
   const trackingId = db.settings.trackingId;
-  const affiliateUrl = new URL(product.originalUrl);
-  if (trackingId) {
-    affiliateUrl.searchParams.set('tag', trackingId);
-  }
+  const affiliateUrl = getAmazonProductUrl(product, trackingId);
 
   const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
 
@@ -242,7 +240,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
             {/* Amazon CTA */}
             <a
-              href={affiliateUrl.toString()}
+              href={affiliateUrl}
               target="_blank"
               rel="nofollow noopener noreferrer"
               className="btn-amazon"
