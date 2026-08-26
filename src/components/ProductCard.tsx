@@ -40,68 +40,46 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="card">
-      <Link href={`/product/${product.id}`} style={{ display: 'block' }}>
-        <div style={{ height: '180px', padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' }}>
+    <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Link href={`/product/${product.id}`} style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none' }}>
+        <div style={{ height: '150px', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderBottom: '1px solid #f1f5f9' }}>
           <img 
             src={product.image} 
             alt={product.title} 
             style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
           />
         </div>
-        <div style={{ padding: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', flex: 1 }}>
+        <div style={{ padding: '0.65rem', display: 'flex', flexDirection: 'column', gap: '0.3rem', flexGrow: 1, backgroundColor: '#fff' }}>
           <h3 style={{ 
-            fontSize: '0.9rem',
+            fontSize: '0.85rem',
             display: '-webkit-box', 
             WebkitLineClamp: 2, 
             WebkitBoxOrient: 'vertical', 
             overflow: 'hidden',
-            lineHeight: 1.4,
-            height: '2.8em',
+            lineHeight: 1.35,
+            height: '2.7em',
             margin: 0,
-            color: 'var(--text-primary)',
+            color: '#1e293b',
             fontWeight: 600
           }}>
             {product.title}
           </h3>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#eab308', marginTop: '0.2rem' }}>
-            <Star size={14} fill="currentColor" />
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{product.rating}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#eab308', marginTop: '0.1rem' }}>
+            <Star size={12} fill="currentColor" />
+            <span style={{ color: '#64748b', fontSize: '0.75rem' }}>{product.rating}</span>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.4rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: 'auto', paddingTop: '0.4rem' }}>
             {showOriginalPrice && (
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
                 <span style={{ textDecoration: 'line-through' }}>{product.originalPrice}</span>
               </span>
             )}
-            <div style={{ color: 'var(--danger-color)', lineHeight: '1.1' }}>
+            <div style={{ color: '#b91c1c', lineHeight: '1.1' }}>
                {formatPrice(product.price)}
             </div>
           </div>
-          
-          {/* Subtle Amazon Branding Badge */}
-          <div style={{
-            alignSelf: 'flex-start',
-            backgroundColor: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            color: '#475569',
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            padding: '0.1rem 0.4rem',
-            borderRadius: '0.25rem',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.2rem',
-            marginTop: '0.2rem'
-          }}>
-            <span style={{ color: 'var(--amazon-orange)' }}>a</span> Amazon
-          </div>
-          
-          <button className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.5rem', fontSize: '0.85rem' }}>
-            عرض التفاصيل
-          </button>
         </div>
       </Link>
     </div>

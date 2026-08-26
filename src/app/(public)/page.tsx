@@ -204,52 +204,95 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       ))}
 
-      {/* 1.5 Featured Categories */}
-      {featuredCategories.length > 0 && (
-        <section className="section" style={{ paddingTop: '1.5rem', paddingBottom: '1rem' }}>
-          <h2 className="text-xl" style={{ marginBottom: '1rem' }}>تسوق حسب القسم</h2>
-          <div style={{ 
-            display: 'flex', 
-            gap: '1rem', 
-            overflowX: 'auto', 
-            paddingBottom: '0.5rem',
-            scrollbarWidth: 'none', // Firefox
-            msOverflowStyle: 'none', // IE and Edge
-            WebkitOverflowScrolling: 'touch'
-          }} className="featured-categories-scroll">
-            <style dangerouslySetInnerHTML={{__html: `
-              .featured-categories-scroll::-webkit-scrollbar { display: none; }
-              .featured-category-link { transition: transform 0.2s; }
-              .featured-category-link:hover { transform: translateY(-3px); }
-            `}} />
-            {featuredCategories.map(cat => (
-              <Link 
-                key={cat.id} 
-                href={`/?category=${cat.category}`}
-                className="featured-category-link"
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
-                  textDecoration: 'none', color: 'inherit',
-                  flexShrink: 0, width: '90px'
-                }}
-              >
-                <div style={{
-                  width: '75px', height: '75px', borderRadius: '50%', overflow: 'hidden',
-                  backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0'
-                }}>
-                  {cat.image ? (
-                    <img src={cat.image} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <Tag size={32} color="#94a3b8" />
-                  )}
+      {/* 1.5 Shop by Category (8 Parent Categories) */}
+      {(() => {
+        const parentCategories = enabledSections.filter(s => s.type === 'products_by_category' && !s.parentId).slice(0, 8);
+        if (parentCategories.length === 0) return null;
+        
+        return (
+          <section className="section" style={{ paddingTop: '1.5rem', paddingBottom: '1rem' }}>
+            <h2 className="text-xl" style={{ marginBottom: '1rem', fontWeight: 700 }}>تسوق حسب الفئة</h2>
+            <div className="shop-by-category-fixed-grid">
+              <style dangerouslySetInnerHTML={{__html: `
+                .shop-by-category-fixed-grid {
+                  display: grid;
+                  grid-template-columns: repeat(4, 200px);
+                  justify-content: start;
+                  gap: 1.25rem;
+                }
+                @media (max-width: 768px) {
+                  .shop-by-category-fixed-grid {
+                    grid-template-columns: repeat(3, 170px);
+                    gap: 1rem;
+                  }
+                }
+                @media (max-width: 480px) {
+                  .shop-by-category-fixed-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 0.75rem;
+                  }
+                }
+                .category-square-card {
+                  position: relative;
+                  width: 100%;
+                  height: 85px;
+                  border-radius: 0.75rem;
+                  overflow: hidden;
+                  background-color: #f1f5f9;
+                  display: block;
+                  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+                  transition: transform 0.2s ease, box-shadow 0.2s ease;
+                }
+                .category-square-card:hover {
+                  transform: translateY(-4px);
+                  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.15);
+                }
+                .category-square-img {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+                .category-square-overlay {
+                  position: absolute;
+                  inset: 0;
+                  background: rgba(0,0,0,0.45);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 1rem;
+                  transition: background 0.2s ease;
+                }
+                .category-square-card:hover .category-square-overlay {
+                  background: rgba(0,0,0,0.55);
+                }
+                .category-square-title {
+                  color: white;
+                  font-weight: 700;
+                  font-size: 1.1rem;
+                  text-align: center;
+                  line-height: 1.3;
+                  margin: 0;
+                  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+                }
+              `}} />
+              {parentCategories.map(cat => (
+                <div key={cat.id}>
+                  <Link href={`/?category=${cat.category}`} className="category-square-card">
+                    {cat.image ? (
+                      <img src={cat.image} alt={cat.title} className="category-square-img" />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #cbd5e1, #94a3b8)' }} />
+                    )}
+                    <div className="category-square-overlay">
+                      <h3 className="category-square-title">{cat.title}</h3>
+                    </div>
+                  </Link>
                 </div>
-                <span style={{ fontWeight: 600, textAlign: 'center', fontSize: '0.85rem', lineHeight: '1.2' }}>{cat.title}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* 2. Daily Deals */}
       {finalDailyDeals.length > 0 && (
@@ -273,8 +316,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       )}
 
-      {/* 4. Automatic Category Sections — Carousel */}
-      {categorySections.map(section => {
+      {/* 4. Automatic Category Sections — Carousel (Limited to 4 to avoid clutter) */}
+      {categorySections.slice(0, 4).map(section => {
         const childCats = db.sections.filter(c => c.parentId === section.category).map(c => c.category);
         const validCats = [section.category, ...childCats];
         const catProducts = db.products.filter(p => p.category && validCats.includes(p.category)).slice(0, 20);

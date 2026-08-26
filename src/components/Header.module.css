@@ -158,7 +158,8 @@
   border: 1px solid rgba(0,0,0,0.05);
   border-radius: 0.5rem;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  width: 700px;
+  width: max-content;
+  min-width: 400px;
   max-width: 95vw;
   display: flex;
   overflow: hidden;
@@ -167,7 +168,8 @@
 }
 
 .megaMenuSidebar {
-  width: 35%;
+  width: 180px;
+  flex-shrink: 0;
   background-color: #f8fafc;
   border-left: 1px solid #e2e8f0;
   padding: 1rem 0;
@@ -176,13 +178,14 @@
 }
 
 .megaMenuContent {
-  width: 65%;
+  width: 250px;
   padding: 1.5rem;
   background-color: white;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1rem;
-  align-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
@@ -196,50 +199,42 @@
   .megaMenuSidebar {
     width: 100%;
     border-left: none;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 0.5rem 0;
+    padding: 0;
   }
   
   .megaMenuContent {
-    width: 100%;
-    padding: 1rem;
+    display: none; /* Mobile content is handled inline via accordion */
   }
 }
 
 .megaMenuParent {
   font-weight: 700;
-  font-size: 0.95rem;
-  color: #334155;
-  padding: 0.75rem 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  font-size: 1.05rem;
+  color: #1e293b;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  display: block;
   text-decoration: none;
-  cursor: pointer;
+  border-bottom: 2px solid #e2e8f0;
   transition: all 0.2s ease;
-  border-right: 3px solid transparent;
 }
 
-.megaMenuParent:hover, .megaMenuParent.active {
-  background-color: white;
+.megaMenuParent:hover {
   color: var(--accent-color);
-  border-right-color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
 }
 
 .megaMenuChild {
-  padding: 0.5rem;
+  padding: 0.35rem 0;
   color: #475569;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.9rem;
   transition: all 0.2s ease;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
+  display: block;
 }
 
 .megaMenuChild:hover {
-  background-color: #f1f5f9;
   color: var(--accent-color);
   transform: translateX(-4px);
 }

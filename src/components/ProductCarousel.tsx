@@ -125,11 +125,11 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
         onScroll={handleScroll}
         style={{ 
           display: 'flex', 
-          gap: '1rem', 
+          gap: '0.75rem', 
           overflowX: 'auto', 
           scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none', /* Firefox */
-          msOverflowStyle: 'none',  /* IE/Edge */
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
           paddingBottom: '0.5rem',
           margin: '0 -0.25rem',
           padding: '0 0.25rem'
@@ -141,22 +141,27 @@ export default function ProductCarousel({ title, products }: ProductCarouselProp
             display: none;
           }
           .carousel-item {
-            flex: 0 0 calc(25% - 0.75rem);
+            flex: 0 0 calc(16.666% - 0.625rem); /* ~6 items on large desktop */
             scroll-snap-align: start;
+          }
+          @media (max-width: 1200px) {
+            .carousel-item {
+              flex: 0 0 calc(20% - 0.6rem); /* ~5 items on normal desktop */
+            }
           }
           @media (max-width: 1024px) {
             .carousel-item {
-              flex: 0 0 calc(33.333% - 0.66rem);
+              flex: 0 0 calc(25% - 0.562rem); /* 4 items on tablet landscape */
             }
           }
           @media (max-width: 768px) {
             .carousel-item {
-              flex: 0 0 calc(50% - 0.5rem);
+              flex: 0 0 calc(33.333% - 0.5rem); /* 3 items on tablet portrait */
             }
           }
           @media (max-width: 480px) {
             .carousel-item {
-              flex: 0 0 85%;
+              flex: 0 0 calc(45% - 0.337rem); /* ~2.2 items on mobile */
             }
           }
         `}} />

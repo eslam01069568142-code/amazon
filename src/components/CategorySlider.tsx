@@ -26,7 +26,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
     if (!dropdownOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const viewportWidth = document.documentElement.clientWidth;
-      const dropdownWidth = 700; // max expected width of the dropdown on desktop
+      const dropdownWidth = 430; // max expected width of the dropdown on desktop
       const margin = 10;
 
       let calculatedRight = viewportWidth - rect.right;
@@ -76,24 +76,55 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
               zIndex: 1000 
             }}
           >
-            {/* Sidebar: Parent Categories */}
+            {/* Desktop: Parent Sidebar / Mobile: Accordion */}
             <div className={styles.megaMenuSidebar}>
-              {sections.map((parent) => (
-                <div
-                  key={parent.id}
-                  className={`${styles.megaMenuParent} ${activeParentId === parent.id ? styles.active : ''}`}
-                  onMouseEnter={() => window.innerWidth > 768 && setActiveParentId(parent.id)}
-                  onClick={() => window.innerWidth <= 768 && setActiveParentId(parent.id)}
-                >
-                  <Link href={`/?category=${parent.category}`} onClick={() => setDropdownOpen(false)} style={{ color: 'inherit', textDecoration: 'none', flexGrow: 1 }}>
-                    {parent.title}
-                  </Link>
-                  <ChevronLeft size={16} style={{ color: activeParentId === parent.id ? 'var(--accent-color)' : '#94a3b8' }} />
+              {sections.map((parent: any) => (
+                <div key={parent.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div
+                    className={`${styles.megaMenuParent} ${activeParentId === parent.id ? styles.active : ''}`}
+                    onMouseEnter={() => window.innerWidth > 768 && setActiveParentId(parent.id)}
+                    onClick={(e) => {
+                      if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        setActiveParentId(activeParentId === parent.id ? null : parent.id);
+                      }
+                    }}
+                    style={{ borderBottom: window.innerWidth <= 768 ? '1px solid #e2e8f0' : 'none', marginBottom: 0, paddingBottom: window.innerWidth <= 768 ? '0.75rem' : '0.5rem', paddingRight: '1rem', paddingLeft: '1rem' }}
+                  >
+                    <Link href={`/?category=${parent.category}`} onClick={() => window.innerWidth > 768 && setDropdownOpen(false)} style={{ color: 'inherit', textDecoration: 'none', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      {parent.title}
+                      {window.innerWidth <= 768 ? (
+                         <ChevronDown size={16} style={{ color: '#94a3b8', transform: activeParentId === parent.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                      ) : (
+                         <ChevronLeft size={16} style={{ color: activeParentId === parent.id ? 'var(--accent-color)' : '#94a3b8' }} />
+                      )}
+                    </Link>
+                  </div>
+                  
+                  {/* Mobile Children Accordion */}
+                  {window.innerWidth <= 768 && activeParentId === parent.id && (
+                    <div style={{ padding: '0.5rem 1rem', backgroundColor: '#f1f5f9' }}>
+                      {parent.children && parent.children.length > 0 ? (
+                        parent.children.map((child: any) => (
+                          <Link
+                            key={child.id}
+                            href={`/?category=${child.category}`}
+                            className={styles.megaMenuChild}
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            {child.title}
+                          </Link>
+                        ))
+                      ) : (
+                        <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>لا توجد فئات فرعية</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
 
-            {/* Content: Subcategories */}
+            {/* Desktop: Children Content */}
             <div className={styles.megaMenuContent}>
               {activeParent?.children && activeParent.children.length > 0 ? (
                 activeParent.children.map((child: any) => (
