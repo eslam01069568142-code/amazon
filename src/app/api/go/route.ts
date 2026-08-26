@@ -52,22 +52,12 @@ export async function GET(req: NextRequest) {
       return new NextResponse('Product not found', { status: 404 });
     }
 
-    const asin = await extractAsinFromUrl(product.original_url);
-
-    if (asin) {
-      // Safely build the clean Amazon URL with the correct tracking ID
-      const targetUrl = trackingId 
-        ? `https://www.amazon.eg/dp/${asin}?tag=${trackingId}`
-        : `https://www.amazon.eg/dp/${asin}`;
-      
-      return NextResponse.redirect(targetUrl, 302);
+    if (product && product.original_url) {
+      // Safely redirect to the exact original URL as requested by the site owner.
+      // We do not append or replace tracking tags, nor do we rebuild the URL.
+      return NextResponse.redirect(product.original_url, 302);
     } else {
-      // Unsafe fallback prevented: DO NOT redirect to original_url if ASIN is not found.
-      console.error(`[EXCEPTION] ASIN not found for Product: ${id} - Original URL: ${product.original_url}`);
-      return new NextResponse(`Sorry, the Amazon link for this product could not be verified securely. Product ID: ${id}`, { 
-        status: 400,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-      });
+      return new NextResponse('Product original URL not found', { status: 404 });
     }
 
   } catch (error) {
