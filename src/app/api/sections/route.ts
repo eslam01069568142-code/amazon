@@ -17,6 +17,10 @@ export async function GET() {
     productIds: row.product_ids || [],
     enabled: row.enabled,
     order: row.order_index,
+    parentId: row.parent_id || null,
+    isFeatured: row.is_featured || false,
+    icon: row.icon || null,
+    image: row.image || null,
   }));
   return NextResponse.json(sections);
 }
@@ -42,6 +46,10 @@ export async function POST(req: Request) {
       product_ids: body.productIds || [],
       enabled: body.enabled !== undefined ? body.enabled : true,
       order_index: body.order !== undefined ? body.order : nextOrder,
+      parent_id: body.parentId || null,
+      is_featured: body.isFeatured || false,
+      icon: body.icon || null,
+      image: body.image || null,
     };
 
     const { data, error } = await supabaseAdmin.from('sections').insert(row).select().single();
@@ -55,6 +63,10 @@ export async function POST(req: Request) {
       productIds: data.product_ids || [],
       enabled: data.enabled,
       order: data.order_index,
+      parentId: data.parent_id || null,
+      isFeatured: data.is_featured || false,
+      icon: data.icon || null,
+      image: data.image || null,
     };
 
     revalidateTag('sections', 'max');

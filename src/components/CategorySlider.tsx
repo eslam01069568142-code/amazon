@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { LayoutGrid, Home, Smartphone, User, Tag, ChevronDown, List } from 'lucide-react';
+import { ChevronDown, List, ChevronLeft } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './Header.module.css';
@@ -10,32 +10,28 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get('category') || '';
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeParentId, setActiveParentId] = useState<string | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [mounted, setMounted] = useState(false);
   const [coords, setCoords] = useState({ top: 0, right: 0 });
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (sections.length > 0) {
+      setActiveParentId(sections[0].id);
+    }
+  }, [sections]);
 
   const handleToggle = () => {
     if (!dropdownOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const viewportWidth = document.documentElement.clientWidth;
-      const dropdownWidth = 240; // max expected width of the dropdown
-      const margin = 10; // Safe margin from screen edges
+      const dropdownWidth = 700; // max expected width of the dropdown on desktop
+      const margin = 10;
 
-      // Distance from the right edge of the viewport to the right edge of the button
       let calculatedRight = viewportWidth - rect.right;
-
-      // Ensure the dropdown doesn't overflow the left edge of the screen
       if (calculatedRight + dropdownWidth > viewportWidth - margin) {
-        calculatedRight = viewportWidth - dropdownWidth - margin;
-      }
-
-      // Ensure the dropdown doesn't overflow the right edge of the screen
-      if (calculatedRight < margin) {
-        calculatedRight = margin;
+        calculatedRight = Math.max(margin, viewportWidth - dropdownWidth - margin);
       }
 
       setCoords({
@@ -46,77 +42,78 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
     setDropdownOpen(!dropdownOpen);
   };
 
-  const renderIcon = (catId: string) => {
-    switch (catId) {
-      case 'Electronics': return <Smartphone size={18} />;
-      case 'Mens': return <User size={18} />;
-      default: return <Tag size={18} />;
-    }
-  };
+  const activeParent = sections.find(s => s.id === activeParentId) || sections[0];
 
   return (
-    <nav className={styles.sliderNav}>
-      <div className={styles.sliderContainer}>
-        
-        {/* 1. Categories Dropdown */}
-        <div className={styles.categoryDropdownWrapper}>
-          <button 
-            ref={buttonRef}
-            className={`${styles.categoryPill} ${currentCategory && currentCategory !== '' ? styles.activePill : ''}`}
-            onClick={handleToggle}
+    <>
+      <button 
+        ref={buttonRef}
+        className={`${styles.categoryPill} ${dropdownOpen ? styles.activePill : ''}`}
+        onClick={handleToggle}
+      >
+        <List size={20} />
+        <span>تصفح الفئات</span>
+        <ChevronDown size={16} style={{ marginLeft: '-4px', transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+      </button>
+
+      <Link href="/" className={`${styles.categoryPill} ${currentCategory === '' ? styles.activePill : ''}`}>
+        الرئيسية
+      </Link>
+      
+      {mounted && dropdownOpen && createPortal(
+        <>
+          <div 
+            style={{ position: 'fixed', inset: 0, zIndex: 999 }}
+            onClick={(e) => { e.stopPropagation(); setDropdownOpen(false); }}
+          />
+          <div 
+            className={styles.dropdownMenu}
+            style={{ 
+              position: 'absolute', 
+              top: coords.top, 
+              right: window.innerWidth > 768 ? coords.right : '1rem', 
+              left: window.innerWidth > 768 ? 'auto' : '1rem',
+              zIndex: 1000 
+            }}
           >
-            <List size={20} />
-            <span>الفئات</span>
-            <ChevronDown size={16} style={{ marginLeft: '-4px', transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-          </button>
-          
-          {mounted && dropdownOpen && createPortal(
-            <>
-              {/* Invisible overlay to catch clicks outside the dropdown */}
-              <div 
-                style={{ position: 'fixed', inset: 0, zIndex: 999 }}
-                onClick={(e) => { e.stopPropagation(); setDropdownOpen(false); }}
-              />
-              <div 
-                className={styles.dropdownMenu}
-                style={{ position: 'absolute', top: coords.top, right: coords.right, marginTop: 0, zIndex: 1000 }}
-              >
-                {sections.map((sec) => (
-                  <Link 
-                    key={sec.id} 
-                    href={`/?category=${sec.category}`}
-                    className={styles.dropdownItem}
+            {/* Sidebar: Parent Categories */}
+            <div className={styles.megaMenuSidebar}>
+              {sections.map((parent) => (
+                <div
+                  key={parent.id}
+                  className={`${styles.megaMenuParent} ${activeParentId === parent.id ? styles.active : ''}`}
+                  onMouseEnter={() => window.innerWidth > 768 && setActiveParentId(parent.id)}
+                  onClick={() => window.innerWidth <= 768 && setActiveParentId(parent.id)}
+                >
+                  <Link href={`/?category=${parent.category}`} onClick={() => setDropdownOpen(false)} style={{ color: 'inherit', textDecoration: 'none', flexGrow: 1 }}>
+                    {parent.title}
+                  </Link>
+                  <ChevronLeft size={16} style={{ color: activeParentId === parent.id ? 'var(--accent-color)' : '#94a3b8' }} />
+                </div>
+              ))}
+            </div>
+
+            {/* Content: Subcategories */}
+            <div className={styles.megaMenuContent}>
+              {activeParent?.children && activeParent.children.length > 0 ? (
+                activeParent.children.map((child: any) => (
+                  <Link
+                    key={child.id}
+                    href={`/?category=${child.category}`}
+                    className={styles.megaMenuChild}
                     onClick={() => setDropdownOpen(false)}
                   >
-                    {renderIcon(sec.category)}
-                    <span>{sec.title}</span>
+                    {child.title}
                   </Link>
-                ))}
-              </div>
-            </>,
-            document.body
-          )}
-        </div>
-
-        {/* 2. Home */}
-        <Link 
-          href="/"
-          className={`${styles.categoryPill} ${currentCategory === '' ? styles.activePill : ''}`}
-        >
-          <Home size={20} />
-          <span>الرئيسية</span>
-        </Link>
-
-        {/* 3. All Products (Currently mapping to Home as well, since Home displays all sections, but conceptually it could be a different view. We map it to Home without category params) */}
-        <Link 
-          href="/"
-          className={`${styles.categoryPill}`}
-        >
-          <LayoutGrid size={20} />
-          <span>كل المنتجات</span>
-        </Link>
-        
-      </div>
-    </nav>
+                ))
+              ) : (
+                <div style={{ color: '#94a3b8', fontSize: '0.9rem', gridColumn: '1 / -1' }}>لا توجد فئات فرعية</div>
+              )}
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
   );
 }

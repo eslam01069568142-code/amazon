@@ -92,7 +92,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
   if (resolvedParams.category) {
     const categoryInfo = db.sections.find(s => s.type === 'products_by_category' && s.category === resolvedParams.category);
     const categoryName = categoryInfo ? categoryInfo.title : resolvedParams.category;
-    const filtered = db.products.filter(p => p.category === resolvedParams.category);
+    
+    // Include child categories
+    const childCats = db.sections.filter(c => c.parentId === resolvedParams.category).map(c => c.category);
+    const validCats = [resolvedParams.category, ...childCats];
+    const filtered = db.products.filter(p => p.category && validCats.includes(p.category));
     
     return (
       <div className="container animate-fade-in">
@@ -120,6 +124,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
   const enabledSections = db.sections.filter(s => s.enabled);
   const banners = enabledSections.filter(s => s.type === 'banner').sort((a, b) => a.order - b.order);
+  const featuredCategories = enabledSections.filter(s => s.isFeatured).sort((a, b) => a.order - b.order);
   
   // -- A. Automatic Daily Deals --
   // Use Africa/Cairo time to generate a stable seed for the current calendar day
@@ -199,6 +204,53 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       ))}
 
+      {/* 1.5 Featured Categories */}
+      {featuredCategories.length > 0 && (
+        <section className="section" style={{ paddingTop: '1.5rem', paddingBottom: '1rem' }}>
+          <h2 className="text-xl" style={{ marginBottom: '1rem' }}>تسوق حسب القسم</h2>
+          <div style={{ 
+            display: 'flex', 
+            gap: '1rem', 
+            overflowX: 'auto', 
+            paddingBottom: '0.5rem',
+            scrollbarWidth: 'none', // Firefox
+            msOverflowStyle: 'none', // IE and Edge
+            WebkitOverflowScrolling: 'touch'
+          }} className="featured-categories-scroll">
+            <style dangerouslySetInnerHTML={{__html: `
+              .featured-categories-scroll::-webkit-scrollbar { display: none; }
+              .featured-category-link { transition: transform 0.2s; }
+              .featured-category-link:hover { transform: translateY(-3px); }
+            `}} />
+            {featuredCategories.map(cat => (
+              <Link 
+                key={cat.id} 
+                href={`/?category=${cat.category}`}
+                className="featured-category-link"
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
+                  textDecoration: 'none', color: 'inherit',
+                  flexShrink: 0, width: '90px'
+                }}
+              >
+                <div style={{
+                  width: '75px', height: '75px', borderRadius: '50%', overflow: 'hidden',
+                  backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0'
+                }}>
+                  {cat.image ? (
+                    <img src={cat.image} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <Tag size={32} color="#94a3b8" />
+                  )}
+                </div>
+                <span style={{ fontWeight: 600, textAlign: 'center', fontSize: '0.85rem', lineHeight: '1.2' }}>{cat.title}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 2. Daily Deals */}
       {finalDailyDeals.length > 0 && (
         <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
@@ -223,7 +275,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
       {/* 4. Automatic Category Sections — Carousel */}
       {categorySections.map(section => {
-        const catProducts = db.products.filter(p => p.category === section.category).slice(0, 20);
+        const childCats = db.sections.filter(c => c.parentId === section.category).map(c => c.category);
+        const validCats = [section.category, ...childCats];
+        const catProducts = db.products.filter(p => p.category && validCats.includes(p.category)).slice(0, 20);
         if (catProducts.length === 0) return null;
 
         return (

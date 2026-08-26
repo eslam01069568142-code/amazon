@@ -47,6 +47,10 @@ export interface Section {
   productIds?: string[];
   enabled: boolean;
   order: number;
+  parentId?: string;
+  icon?: string;
+  image?: string;
+  isFeatured?: boolean;
 }
 
 export interface DailyDeal {
@@ -107,6 +111,10 @@ function rowToSection(row: any): Section {
     productIds: row.product_ids || [],
     enabled: row.enabled,
     order: row.order_index,
+    parentId: row.parent_id,
+    icon: row.icon,
+    image: row.image,
+    isFeatured: row.is_featured,
   };
 }
 
@@ -160,6 +168,10 @@ export function sectionToRow(s: Section) {
     product_ids: s.productIds || [],
     enabled: s.enabled,
     order_index: s.order,
+    parent_id: s.parentId,
+    icon: s.icon,
+    image: s.image,
+    is_featured: s.isFeatured,
   };
 }
 

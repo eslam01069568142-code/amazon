@@ -25,15 +25,18 @@ export default function ProductCard({ product }: ProductCardProps) {
       const after = priceStr.substring(match.index + full.length);
       return (
         <>
-          {before}{intPart}
-          <span style={{ fontSize: '0.65em', color: '#ffffff', verticalAlign: 'sub', margin: '0 2px' }}>
-            {fracPart}
+          {before}
+          <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>{intPart}</span>
+          <span style={{ fontSize: '0.65em', verticalAlign: 'super', margin: '0 2px' }}>
+            .{fracPart}
           </span>
           {after}
         </>
       );
     }
-    return priceStr;
+    return (
+      <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>{priceStr}</span>
+    );
   };
 
   return (
@@ -67,13 +70,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{product.rating}</span>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: '0.4rem' }}>
             {showOriginalPrice && (
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                السعر السابق: <span style={{ textDecoration: 'line-through' }}>{product.originalPrice}</span>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                <span style={{ textDecoration: 'line-through' }}>{product.originalPrice}</span>
               </span>
             )}
-            <div style={{ fontWeight: 800, color: 'var(--danger-color)', fontSize: '1.1rem' }}>
+            <div style={{ color: 'var(--danger-color)', lineHeight: '1.1' }}>
                {formatPrice(product.price)}
             </div>
           </div>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 // ── types ──────────────────────────────────────────────────────────────
 interface SocialLink { platform: string; url: string; }
-interface Section { id: string; title: string; type: string; category?: string; productIds?: string[]; enabled: boolean; order: number; }
+interface Section { id: string; title: string; type: string; category?: string; productIds?: string[]; enabled: boolean; order: number; isFeatured?: boolean; parentId?: string; image?: string; icon?: string; }
 interface DailyDeal { id: string; productId: string; offerPrice?: string; startDate?: string; endDate?: string; enabled: boolean; order: number; }
 
 const PLATFORMS = [
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
 
   // Product Categories
   const [addingCategory, setAddingCategory] = useState(false);
-  const [newCategory, setNewCategory] = useState<Partial<Section>>({ title: '', type: 'products_by_category', enabled: true });
+  const [newCategory, setNewCategory] = useState<Partial<Section>>({ title: '', type: 'products_by_category', enabled: true, isFeatured: false, parentId: '', image: '', icon: '' });
   const [editingCategory, setEditingCategory] = useState<Section | null>(null);
 
   // ── Categories specifically (computed from sections) ──
@@ -172,8 +172,9 @@ export default function AdminDashboard() {
 
   // ── Products ──
   const [scrapeStatus, setScrapeStatus] = useState<{ url: string; status: 'Processing' | 'Success' | 'Failed' | 'Duplicate'; message?: string }[]>([]);
+  const [previewProduct, setPreviewProduct] = useState<any>(null);
 
-  const handleScrape = async () => {
+  const handleScrape = async (isPreview = false) => {
     if (!urls.trim()) return;
     setScrapeLoading(true); setMessage('');
     const urlArray = urls.split('\n').filter(u => u.trim() !== '');
@@ -191,10 +192,15 @@ export default function AdminDashboard() {
       try {
         const res = await fetch('/api/scrape', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, category: targetCategory }),
+          body: JSON.stringify({ url, category: targetCategory, preview: isPreview }),
         });
         const data = await res.json();
         if (data.success) {
+          if (isPreview) {
+            setPreviewProduct(data.product);
+            setScrapeLoading(false);
+            return;
+          }
           newStatus[i].status = 'Success';
           successCount++;
         } else {
@@ -247,14 +253,19 @@ export default function AdminDashboard() {
   const addCategory = async () => {
     if (!newCategory.title?.trim()) return msg('أدخل اسم الفئة');
     const generatedCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
-    const body = { ...newCategory, category: generatedCatId, type: 'products_by_category' };
+    const body = { 
+      ...newCategory, 
+      category: generatedCatId, 
+      type: 'products_by_category',
+      parentId: newCategory.parentId || null 
+    };
     const res = await fetch('/api/sections', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
     });
     if (res.ok) {
       const data = await res.json();
       setSections(s => [...s, data.section]);
-      setNewCategory({ title: '', type: 'products_by_category', enabled: true });
+      setNewCategory({ title: '', type: 'products_by_category', enabled: true, isFeatured: false, parentId: '', image: '', icon: '' });
       setAddingCategory(false); msg('✅ تم إضافة الفئة');
       router.refresh();
     }
@@ -360,8 +371,76 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* ── 1. Categories (إدارة تصنيفات المنتجات) ── */}
+      <CollapsePanel title="إدارة تصنيفات المنتجات" icon="🗂️" defaultOpen>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {categorySections.map(sec => (
+            <div key={sec.id}>
+              {editingCategory?.id === sec.id ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <input style={inputStyle} value={editingCategory.title} onChange={e => setEditingCategory({ ...editingCategory, title: e.target.value })} placeholder="اسم الفئة" />
+                  
+                  <select style={inputStyle} value={editingCategory.parentId || ''} onChange={e => setEditingCategory({ ...editingCategory, parentId: e.target.value })}>
+                    <option value="">-- بدون فئة أب (فئة رئيسية) --</option>
+                    {categorySections.filter(c => c.id !== sec.id && !c.parentId).map(c => (
+                      <option key={c.id} value={c.id}>{c.title}</option>
+                    ))}
+                  </select>
+
+                  <input style={inputStyle} value={editingCategory.image || ''} onChange={e => setEditingCategory({ ...editingCategory, image: e.target.value })} placeholder="رابط صورة الفئة (اختياري، للرئيسية)" />
+                  <input style={inputStyle} value={editingCategory.icon || ''} onChange={e => setEditingCategory({ ...editingCategory, icon: e.target.value })} placeholder="أيقونة الفئة (اختياري، إيموجي أو نص)" />
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', userSelect: 'none' }}>
+                    <input type="checkbox" checked={editingCategory.isFeatured || false} onChange={e => setEditingCategory({ ...editingCategory, isFeatured: e.target.checked })} />
+                    <span style={{ fontWeight: 600 }}>إظهار في قسم "تسوق حسب الفئات" (Featured)</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}><button style={btnPrimary} onClick={() => saveEditSection(editingCategory)}>حفظ</button><button style={btnGhost} onClick={() => setEditingCategory(null)}>إلغاء</button></div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                  <span style={{ fontWeight: 700, flex: 1 }}>
+                    {sec.icon && <span style={{ marginLeft: '0.5rem' }}>{sec.icon}</span>}
+                    {sec.title}
+                    {sec.parentId && <span style={{ color: '#64748b', fontSize: '0.85rem', marginRight: '0.5rem' }}> ← تابعة لـ {categorySections.find(c => c.id === sec.parentId)?.title}</span>}
+                  </span>
+                  <span style={BADGE(sec.enabled)}>{sec.enabled ? 'مفعّل' : 'معطّل'}</span>
+                  {sec.isFeatured && <span style={{ ...BADGE(true), background: '#fef3c7', color: '#92400e' }}>مميزة</span>}
+                  <button style={btnGhost} onClick={() => setEditingCategory(sec)}>تعديل</button>
+                  <button style={{ ...btnGhost, background: sec.enabled ? '#fef9c3' : '#dcfce7' }} onClick={() => toggleSection(sec)}>{sec.enabled ? 'تعطيل' : 'تفعيل'}</button>
+                  <button style={btnDanger} onClick={() => deleteSection(sec.id)}>حذف</button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {addingCategory ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', background: '#f0f9ff', borderRadius: 'var(--radius-md)', border: '1px solid #bae6fd' }}>
+              <input style={inputStyle} value={newCategory.title} onChange={e => setNewCategory({ ...newCategory, title: e.target.value })} placeholder="اسم الفئة" />
+              
+              <select style={inputStyle} value={newCategory.parentId || ''} onChange={e => setNewCategory({ ...newCategory, parentId: e.target.value })}>
+                <option value="">-- بدون فئة أب (فئة رئيسية) --</option>
+                {categorySections.filter(c => !c.parentId).map(c => (
+                  <option key={c.id} value={c.id}>{c.title}</option>
+                ))}
+              </select>
+
+              <input style={inputStyle} value={newCategory.image || ''} onChange={e => setNewCategory({ ...newCategory, image: e.target.value })} placeholder="رابط صورة الفئة (اختياري، للرئيسية)" />
+              <input style={inputStyle} value={newCategory.icon || ''} onChange={e => setNewCategory({ ...newCategory, icon: e.target.value })} placeholder="أيقونة الفئة (اختياري، إيموجي أو نص)" />
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', userSelect: 'none' }}>
+                <input type="checkbox" checked={newCategory.isFeatured || false} onChange={e => setNewCategory({ ...newCategory, isFeatured: e.target.checked })} />
+                <span style={{ fontWeight: 600 }}>إظهار في قسم "تسوق حسب الفئات" (Featured)</span>
+              </label>
+              <div style={{ display: 'flex', gap: '0.5rem' }}><button style={btnPrimary} onClick={addCategory}>إضافة</button><button style={btnGhost} onClick={() => setAddingCategory(false)}>إلغاء</button></div>
+            </div>
+          ) : (
+            <button style={{ ...btnPrimary, alignSelf: 'flex-start' }} onClick={() => setAddingCategory(true)}>＋ إضافة فئة</button>
+          )}
+        </div>
+      </CollapsePanel>
+
       {/* ── Products (المنتجات) ── */}
-      <CollapsePanel title="المنتجات" icon="🛒" defaultOpen>
+      <CollapsePanel title="المنتجات" icon="🛒">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
@@ -373,9 +452,34 @@ export default function AdminDashboard() {
               <option value="">-- اختر الفئة --</option>
               {categorySections.map(c => <option key={c.id} value={c.category}>{c.title}</option>)}
             </select>
-            <button style={btnPrimary} onClick={handleScrape} disabled={scrapeLoading || !urls.trim()}>
-              {scrapeLoading ? 'جاري الاستيراد...' : 'استيراد المنتجات'}
-            </button>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button style={{ ...btnGhost, flex: 1 }} onClick={() => handleScrape(true)} disabled={scrapeLoading || !urls.trim() || urls.split('\n').filter(u => u.trim()).length > 1}>
+                {scrapeLoading ? 'جاري المعالجة...' : 'معاينة (رابط واحد فقط)'}
+              </button>
+              <button style={{ ...btnPrimary, flex: 1 }} onClick={() => handleScrape(false)} disabled={scrapeLoading || !urls.trim()}>
+                {scrapeLoading ? 'جاري الاستيراد...' : 'استيراد وحفظ المنتجات'}
+              </button>
+            </div>
+            
+            {previewProduct && (
+              <div style={{ marginTop: '1.5rem', background: '#f8fafc', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid #cbd5e1' }}>
+                <h4 style={{ margin: '0 0 1rem 0', color: '#1e293b' }}>معاينة المنتج</h4>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <img src={previewProduct.image} alt={previewProduct.title} style={{ width: '80px', height: '80px', objectFit: 'contain', backgroundColor: 'white', borderRadius: '4px', border: '1px solid #e2e8f0' }} />
+                  <div>
+                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>{previewProduct.title}</h5>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#475569' }}>
+                      السعر: <strong style={{ color: '#16a34a' }}>{previewProduct.price}</strong> 
+                      {previewProduct.originalPrice && ` | السعر السابق: ${previewProduct.originalPrice}`}
+                    </p>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.9rem', color: '#475569' }}>
+                      الفئة المقترحة: <strong>{previewProduct.category}</strong>
+                    </p>
+                  </div>
+                </div>
+                <button style={{ ...btnGhost, padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginTop: '1rem' }} onClick={() => setPreviewProduct(null)}>إغلاق المعاينة</button>
+              </div>
+            )}
             
             {scrapeStatus.length > 0 && (
               <div style={{ marginTop: '1.5rem', background: '#fff', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', maxHeight: '300px', overflowY: 'auto' }}>
@@ -455,6 +559,10 @@ export default function AdminDashboard() {
               <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
                 <h3 style={{ margin: '0 0 1rem 0' }}>تعديل المنتج</h3>
                 <label style={{ display: 'block', fontWeight: 600 }}>اسم المنتج</label><input style={{...inputStyle, marginBottom: '0.75rem'}} value={editData.title} onChange={e => setEditData({...editData, title: e.target.value})} />
+                
+                <label style={{ display: 'block', fontWeight: 600 }}>الرابط الأصلي (Original URL)</label>
+                <input style={{...inputStyle, marginBottom: '0.75rem', direction: 'ltr', textAlign: 'left'}} value={editData.originalUrl || ''} onChange={e => setEditData({...editData, originalUrl: e.target.value})} />
+
                 <label style={{ display: 'block', fontWeight: 600 }}>الفئة</label>
                 <select style={{...inputStyle, marginBottom: '0.75rem'}} value={editData.category} onChange={e => setEditData({...editData, category: e.target.value})}>
                   {categorySections.map(c => <option key={c.id} value={c.category}>{c.title}</option>)}
@@ -465,39 +573,6 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
-        </div>
-      </CollapsePanel>
-
-      {/* ── 1. Categories (إدارة تصنيفات المنتجات) ── */}
-      <CollapsePanel title="إدارة تصنيفات المنتجات" icon="🗂️">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {categorySections.map(sec => (
-            <div key={sec.id}>
-              {editingCategory?.id === sec.id ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <input style={inputStyle} value={editingCategory.title} onChange={e => setEditingCategory({ ...editingCategory, title: e.target.value })} placeholder="اسم الفئة" />
-                  <div style={{ display: 'flex', gap: '0.5rem' }}><button style={btnPrimary} onClick={() => saveEditSection(editingCategory)}>حفظ</button><button style={btnGhost} onClick={() => setEditingCategory(null)}>إلغاء</button></div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                  <span style={{ fontWeight: 700, flex: 1 }}>{sec.title}</span>
-                  <span style={BADGE(sec.enabled)}>{sec.enabled ? 'مفعّل' : 'معطّل'}</span>
-                  <button style={btnGhost} onClick={() => setEditingCategory(sec)}>تعديل</button>
-                  <button style={{ ...btnGhost, background: sec.enabled ? '#fef9c3' : '#dcfce7' }} onClick={() => toggleSection(sec)}>{sec.enabled ? 'تعطيل' : 'تفعيل'}</button>
-                  <button style={btnDanger} onClick={() => deleteSection(sec.id)}>حذف</button>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {addingCategory ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem', background: '#f0f9ff', borderRadius: 'var(--radius-md)', border: '1px solid #bae6fd' }}>
-              <input style={inputStyle} value={newCategory.title} onChange={e => setNewCategory({ ...newCategory, title: e.target.value })} placeholder="اسم الفئة" />
-              <div style={{ display: 'flex', gap: '0.5rem' }}><button style={btnPrimary} onClick={addCategory}>إضافة</button><button style={btnGhost} onClick={() => setAddingCategory(false)}>إلغاء</button></div>
-            </div>
-          ) : (
-            <button style={{ ...btnPrimary, alignSelf: 'flex-start' }} onClick={() => setAddingCategory(true)}>＋ إضافة فئة</button>
-          )}
         </div>
       </CollapsePanel>
 

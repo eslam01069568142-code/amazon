@@ -14,6 +14,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (body.productIds !== undefined) updateRow.product_ids = body.productIds;
     if (body.enabled !== undefined) updateRow.enabled = body.enabled;
     if (body.order !== undefined) updateRow.order_index = body.order;
+    if (body.parentId !== undefined) updateRow.parent_id = body.parentId;
+    if (body.isFeatured !== undefined) updateRow.is_featured = body.isFeatured;
+    if (body.icon !== undefined) updateRow.icon = body.icon;
+    if (body.image !== undefined) updateRow.image = body.image;
 
     const { data, error } = await supabaseAdmin
       .from('sections')
@@ -33,6 +37,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       productIds: data.product_ids || [],
       enabled: data.enabled,
       order: data.order_index,
+      parentId: data.parent_id || null,
+      isFeatured: data.is_featured || false,
+      icon: data.icon || null,
+      image: data.image || null,
     };
 
     revalidateTag('sections', 'max');

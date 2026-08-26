@@ -3,10 +3,88 @@ import * as cheerio from 'cheerio';
 import { supabaseAdmin, Product } from '@/data/db';
 import { revalidateTag } from 'next/cache';
 
+const ADJECTIVES_TO_IGNORE = [
+  'elegant', 'stylish', 'premium', 'beautiful', 'amazing', 'best', 'modern', 'trendy', 'luxury', 
+  'أنيق', 'عصري', 'جذاب', 'جميل', 'فاخر', 'رائع', 'ممتاز', 'أفضل', 'حديث', 'new', 'cool', 'popular', 'gift', 'هدية', 'مميز', '2026'
+];
+
+const CATEGORY_MAP = [
+  // Electronics
+  { keywords: ['laptops', 'laptop', 'أجهزة كمبيوتر محمولة', 'كمبيوتر محمول', 'لابتوب', 'لابتوبات', 'notebooks', 'notebook'], child: 'لابتوبات وملحقاتها', parent: 'الإلكترونيات' },
+  { keywords: ['mobile phones', 'cell phones', 'smartphones', 'mobile', 'هواتف خلوية', 'هواتف محمولة', 'موبايلات', 'هواتف ذكية'], child: 'الهواتف وملحقاتها', parent: 'الإلكترونيات' },
+  { keywords: ['headphones', 'earbuds', 'earphones', 'wireless headphones', 'سماعات', 'سماعات أذن', 'سماعات لاسلكية', 'إيربودز'], child: 'السماعات والصوتيات', parent: 'الإلكترونيات' },
+  { keywords: ['chargers', 'charging cables', 'cables', 'usb cables', 'شواحن', 'كابلات', 'أسلاك شحن', 'كابل usb'], child: 'الشواحن والكابلات', parent: 'الإلكترونيات' },
+  { keywords: ['power banks', 'portable chargers', 'power bank', 'باور بانك', 'بنك طاقة', 'شاحن محمول'], child: 'الشحن والطاقة المحمولة', parent: 'الإلكترونيات' },
+  { keywords: ['cameras', 'digital cameras', 'camera accessories', 'photography', 'cameras & photo', 'كاميرات', 'تصوير', 'إكسسوارات التصوير', 'tripod', 'camera bag', 'عدسات', 'حامل كاميرا'], child: 'الكاميرات والتصوير', parent: 'الإلكترونيات' },
+  { keywords: ['smart watches', 'smartwatches', 'wearable technology', 'wearables', 'smartwatch', 'smart watch', 'fitness tracker', 'ساعات ذكية', 'أجهزة ذكية', 'سوار ذكي'], child: 'الساعات والأجهزة الذكية', parent: 'الإلكترونيات' },
+  
+  // Home & Kitchen
+  { keywords: ['kitchen', 'kitchen & dining', 'cooking', 'cookware', 'kitchen tools', 'أدوات مطبخ', 'أدوات المطبخ', 'طبخ', 'أدوات الطبخ', 'أدوات المطبخ والطبخ', 'kitchen utensils'], child: 'أدوات المطبخ والطبخ', parent: 'المنزل والمطبخ' },
+  { keywords: ['home appliances', 'appliances', 'أجهزة منزلية', 'أجهزة كهربائية منزلية'], child: 'الأجهزة المنزلية', parent: 'المنزل والمطبخ' },
+  { keywords: ['home decor', 'decoration', 'ديكور', 'مفروشات'], child: 'ديكور ومفروشات', parent: 'المنزل والمطبخ' },
+  { keywords: ['storage', 'organization', 'home organization', 'storage & organization', 'تنظيم', 'تخزين', 'تنظيم وتخزين'], child: 'تنظيم وتخزين', parent: 'المنزل والمطبخ' },
+
+  // Beauty
+  { keywords: ['skincare', 'skin care', 'facial care', 'العناية بالبشرة', 'العناية بالوجه'], child: 'العناية بالبشرة والجسم', parent: 'الصحة والجمال' },
+  { keywords: ['hair care', 'haircare', 'hair styling', 'hair', 'العناية بالشعر', 'تصفيف الشعر'], child: 'العناية بالشعر', parent: 'الصحة والجمال' },
+  { keywords: ['perfumes', 'fragrance', 'fragrances', 'perfume', 'عطور', 'عطر'], child: 'العطور', parent: 'الصحة والجمال' },
+  { keywords: ['personal care devices', 'beauty devices', 'أجهزة العناية الشخصية'], child: 'أجهزة العناية الشخصية', parent: 'الصحة والجمال' },
+
+  // Fashion
+  { keywords: ["men's clothing", 'men clothing', 'ملابس رجالية'], child: 'ملابس رجالية', parent: 'الأزياء والموضة' },
+  { keywords: ["women's clothing", 'women clothing', 'ملابس نسائية', 'فساتين', 'ملابس حريمي', 'dress'], child: 'ملابس نسائية', parent: 'الأزياء والموضة' },
+  { keywords: ['shoes', 'footwear', 'أحذية'], child: 'أحذية', parent: 'الأزياء والموضة' },
+  { keywords: ['bags', 'handbags', 'backpacks', 'fashion accessories', 'حقائب', 'شنط', 'إكسسوارات'], child: 'حقائب وإكسسوارات', parent: 'الأزياء والموضة' },
+
+  // Sports
+  { keywords: ['sports equipment', 'exercise equipment', 'أجهزة رياضية', 'معدات رياضية', 'gym'], child: 'أجهزة رياضية', parent: 'الرياضة واللياقة' },
+  { keywords: ['sportswear', 'sports clothing', 'ملابس رياضية'], child: 'ملابس رياضية', parent: 'الرياضة واللياقة' },
+  { keywords: ['outdoor', 'camping', 'hiking', 'أنشطة خارجية', 'تخييم'], child: 'مستلزمات الأنشطة الخارجية', parent: 'الرياضة واللياقة' },
+
+  // Toys
+  { keywords: ['kids toys', 'dolls', 'ألعاب أطفال', 'دمى'], child: 'ألعاب أطفال ودمى', parent: 'الألعاب والترفيه' },
+  { keywords: ['educational toys', 'learning toys', 'ألعاب تعليمية'], child: 'ألعاب تعليمية', parent: 'الألعاب والترفيه' },
+  { keywords: ['video games', 'gaming', 'console games', 'ألعاب إلكترونية'], child: 'ألعاب إلكترونية', parent: 'الألعاب والترفيه' },
+  { keywords: ['toys', 'ألعاب'], child: 'ألعاب أطفال ودمى', parent: 'الألعاب والترفيه' },
+
+  // Office
+  { keywords: ['office products', 'office supplies', 'school supplies', 'stationery', 'أدوات مكتبية', 'أدوات مدرسية', 'قرطاسية'], child: 'أدوات مكتبية ومدرسية', parent: 'المنتجات المكتبية' },
+  { keywords: ['printers', 'printer accessories', 'طابعات', 'ملحقات الطابعات'], child: 'طابعات وملحقاتها', parent: 'المنتجات المكتبية' },
+  
+  // Automotive
+  { keywords: ['car accessories', 'إكسسوارات السيارات'], child: 'إكسسوارات السيارات', parent: 'مستلزمات السيارات' },
+  { keywords: ['car electronics', 'إلكترونيات السيارات'], child: 'إلكترونيات السيارات', parent: 'مستلزمات السيارات' },
+  { keywords: ['car care', 'العناية بالسيارة'], child: 'العناية بالسيارة', parent: 'مستلزمات السيارات' },
+  { keywords: ['emergency', 'أدوات ومستلزمات الطوارئ'], child: 'أدوات ومستلزمات الطوارئ', parent: 'مستلزمات السيارات' }
+];
+
+function removeAdjectives(text: string): string {
+  let cleaned = text.toLowerCase();
+  ADJECTIVES_TO_IGNORE.forEach(adj => {
+    const regex = new RegExp(`(?<![a-zA-Z\\u0600-\\u06FF])${adj}(?![a-zA-Z\\u0600-\\u06FF])`, 'gi');
+    cleaned = cleaned.replace(regex, ' ');
+  });
+  return cleaned.replace(/\\s+/g, ' ').trim();
+}
+
+function findCategory(textList: string[]): { parent: string, child: string } | null {
+  for (const text of textList) {
+    if (!text) continue;
+    const cleaned = removeAdjectives(text);
+    for (const mapping of CATEGORY_MAP) {
+      if (mapping.keywords.some(kw => cleaned.includes(kw.toLowerCase()))) {
+        return { parent: mapping.parent, child: mapping.child };
+      }
+    }
+  }
+  return null;
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const targetCategory = body.category;
+    const isPreview = body.preview === true;
     
     // Support both single url and array of urls for backward compatibility,
     // but the new client will send a single `url` to avoid Vercel timeouts.
@@ -19,7 +97,7 @@ export async function POST(req: Request) {
     // Pre-fetch existing categories for matching
     const { data: existingCategories } = await supabaseAdmin
       .from('sections')
-      .select('id, title, category')
+      .select('id, title, category, parent_id')
       .eq('type', 'products_by_category');
     
     const categoryMap = new Map<string, string>();
@@ -53,7 +131,7 @@ export async function POST(req: Request) {
         }
         const productId = asin ? `prod_${asin}` : `prod_${Math.random().toString(36).substr(2, 9)}`;
 
-        if (asin) {
+        if (asin && !isPreview) {
           const { data: existingProd } = await supabaseAdmin.from('products').select('id').eq('id', productId).single();
           if (existingProd) {
             results.push({ url: cleanUrl, success: false, status: 'Duplicate', error: 'Product already exists' });
@@ -179,76 +257,44 @@ export async function POST(req: Request) {
         let description = descriptionArr.join('\n') || 'لا يوجد وصف متاح.';
         if (reviews) description += `\n\nعدد التقييمات: ${reviews}`;
 
-        let finalCategoryTitle = '';
+        // --- SMART CATEGORIZATION ENGINE ---
         const breadcrumbs: string[] = [];
         $('#wayfinding-breadcrumbs_container ul li span.a-list-item a, .a-breadcrumb ul li span.a-list-item a').each((i, el) => {
-          const text = $(el).text().trim().replace(/\s+/g, ' ');
+          const text = $(el).text().trim().replace(/\\s+/g, ' ');
           if (text) breadcrumbs.push(text);
         });
 
-        const textToAnalyze = title.toLowerCase();
+        console.log(`[CATEGORY] Breadcrumbs: ${breadcrumbs.join(' > ')}`);
         
-        // --- SMART CATEGORIZATION ENGINE ---
-        const RULES = [
-          { name: 'سماعات وإكسسواراتها', keywords: ['سماعة', 'سماعات', 'earbuds', 'headphone', 'headset', 'earphone', 'airpods', 'soundcore', 'جراب سماعة', 'حافظة سماعة', 'airpods case', 'جراب ايربودز', 'جراب soundcore', 'جراب ساوند كور', 'حافظة سيليكون لسماعات', 'جراب سيليكون متوافق مع انكر', 'حافظة من السيليكون لسماعات', 'فري بودز', 'freebuds'], negative: [] },
-          { name: 'أكسسوارات الموبايل', keywords: ['جراب موبايل', 'جراب هاتف', 'جراب ايفون', 'جراب سامسونج', 'حافظة هاتف', 'واقي شاشة للموبايل', 'كابل مخصص للهاتف', 'iphone', 'samsung'], negative: ['سماعة', 'سماعات', 'soundcore', 'airpods', 'earbuds', 'ميكروفون', 'lavalier', 'microphone', 'selfie', 'سيلفي', 'tripod', 'ring light', 'رينج لايت', 'camera', 'كاميرا'] },
-          { name: 'إكسسوارات السيارات', keywords: ['سيارة', 'سيارات', 'شاحن سيارة', 'حامل موبايل للسيارة', 'مكنسة سيارة', 'car mount', 'car charger', 'car accessories'], negative: ['لعبة', 'أطفال', 'دفع', 'ركوب'] },
-          { name: 'إكسسوارات التصوير', keywords: ['تصوير', 'tripod', 'كاميرا', 'اضاءة تصوير', 'رينج لايت', 'ring light', 'ميكروفون', 'lavalier', 'microphone', 'عصا سيلفي', 'سيلفي ستك', 'selfie stick', 'selfie tripod', 'حامل سيلفي', 'حامل ثلاثي للتصوير', 'حامل كاميرا', 'ثلاثي القوائم', 'سيلفي', 'camera accessories', 'photography accessories', 'selfie light', 'إضاءة سيلفي', 'camera light', 'photography light', 'video light', 'webcam', 'كاميرا ويب'], negative: ['سماعة', 'سماعات', 'earbuds', 'headphone', 'headset', 'earphone'] },
-          { name: 'لابات وإكسسوارات', keywords: ['لاب', 'كمبيوتر', 'حاسوب', 'اكسسوارات كمبيوتر', 'ماوس', 'كيبورد', 'laptop', 'mouse', 'computer accessories', 'stand'], negative: ['ميكروفون', 'lavalier', 'microphone', 'webcam', 'كاميرا ويب', 'selfie light', 'إضاءة سيلفي', 'ring light', 'رينج لايت'] },
-          { name: 'المستلزمات الرياضية', keywords: ['نظارة موتوسيكل', 'موتوكروس', 'motocross', 'motorcycle goggles', 'cycling glasses', 'ski goggles', 'sports goggles', 'racing goggles', 'نظارات سباقات', 'نظارات الدراجات', 'نظارات التزلج', 'معدات رياضية', 'إكسسوارات رياضية'], negative: [] },
-          { name: 'الصحة والجمال', keywords: ['صحة', 'جمال', 'تجميل', 'عناية', 'مكياج', 'شامبو', 'عطر', 'مزيل عرق', 'واقي', 'شمس', 'بشرة', 'skincare', 'beauty'], negative: [] },
-          { name: 'أدوات منزلية', keywords: ['منزل', 'مطبخ', 'تنظيف', 'ديكور', 'أثاث', 'برطمان', 'علب', 'موزع مياه', 'مكيف', 'زيت', 'طبخ', 'طعام'], negative: [] },
-          { name: 'فاشون', keywords: ['ملابس', 'أزياء', 'فاشون', 'موضة', 'حذاء', 'ساعة', 'نظارة', 'نظارات', 'قميص', 'بنطلون'], negative: ['موتوسيكل', 'دراجات', 'تزلج', 'سباقات', 'motocross', 'cycling', 'ski', 'sports'] },
-          { name: 'دمى وألعاب', keywords: ['لعبة', 'ألعاب', 'أطفال', 'ركوب', 'لعب', 'سيارات أطفال'], negative: [] },
-          { name: 'الإلكترونيات', keywords: ['تلفزيون', 'شاشة', 'رسيفر', 'باور بانك', 'إلكترونيات', 'موبايل', 'هاتف', 'بلوتوث', 'bluetooth', 'speaker', 'مكبر صوت', 'receiver'], negative: ['جراب', 'حافظة', 'ميكروفون', 'earbuds', 'شاحن سيارة', 'سماعة'] }
-        ];
-
-        if (textToAnalyze.includes('جراب') && (textToAnalyze.includes('ساوند كور') || textToAnalyze.includes('soundcore') || textToAnalyze.includes('سماعات') || textToAnalyze.includes('سماعة') || textToAnalyze.includes('ايربودز'))) {
-          finalCategoryTitle = 'سماعات وإكسسواراتها';
-        } else {
-          for (const rule of RULES) {
-            const hasPositive = rule.keywords.some(k => textToAnalyze.includes(k));
-            const hasNegative = rule.negative.some(k => textToAnalyze.includes(k));
-            if (hasPositive && !hasNegative) {
-              finalCategoryTitle = rule.name;
-              break;
-            }
-          }
+        let match = null;
+        
+        // Priority 1: Breadcrumbs
+        if (breadcrumbs.length > 0) {
+          match = findCategory(breadcrumbs);
         }
-
-        if (!finalCategoryTitle && breadcrumbs.length > 0) {
-          finalCategoryTitle = breadcrumbs[0];
+        
+        // Priority 2 & 3: Product Title and brand (keywords)
+        if (!match) {
+          match = findCategory([title, brand]);
         }
-
+        
         let assignedCategoryId = '';
-        if (finalCategoryTitle) {
-          const normalizedTitle = finalCategoryTitle.toLowerCase();
-          if (categoryMap.has(normalizedTitle)) {
-            assignedCategoryId = categoryMap.get(normalizedTitle)!;
-          } else {
-            const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
-            const newSectionId = 'sec_' + Math.random().toString(36).substr(2, 9);
-            const { error: catErr } = await supabaseAdmin.from('sections').insert({
-              id: newSectionId, type: 'products_by_category', category: newCatId, title: finalCategoryTitle, enabled: true, order_index: 99
-            });
-            if (!catErr) { assignedCategoryId = newCatId; categoryMap.set(normalizedTitle, newCatId); }
+        
+        if (match) {
+          const matchedChild = existingCategories?.find(c => c.title === match?.child);
+          if (matchedChild && matchedChild.category) {
+            assignedCategoryId = matchedChild.category;
+            console.log(`[CATEGORY] Mapped: ${match.parent} -> ${match.child}`);
           }
         }
-
-        if (!assignedCategoryId) assignedCategoryId = targetCategory || '';
         
         if (!assignedCategoryId) {
-          const defaultCategoryTitle = 'عام';
-          if (categoryMap.has(defaultCategoryTitle)) {
-            assignedCategoryId = categoryMap.get(defaultCategoryTitle)!;
-          } else {
-            const newCatId = 'cat_' + Math.random().toString(36).substr(2, 9);
-            const newSectionId = 'sec_' + Math.random().toString(36).substr(2, 9);
-            const { error: catErr } = await supabaseAdmin.from('sections').insert({
-              id: newSectionId, type: 'products_by_category', category: newCatId, title: defaultCategoryTitle, enabled: true, order_index: 999
-            });
-            if (!catErr) { assignedCategoryId = newCatId; categoryMap.set(defaultCategoryTitle, newCatId); }
+          // Fallback: غير مصنف
+          const fallback = existingCategories?.find(c => c.title === 'غير مصنف');
+          if (fallback && fallback.category) {
+             assignedCategoryId = fallback.category;
           }
+          console.log(`[CATEGORY] No confident match → غير مصنف`);
         }
 
         const product: Product = {
@@ -270,6 +316,9 @@ export async function POST(req: Request) {
         
         // If single URL, we can insert immediately
         if (urlList.length === 1) {
+          if (isPreview) {
+            return NextResponse.json({ success: true, status: 'Preview', product });
+          }
           const row = {
             id: product.id,
             original_url: product.originalUrl,

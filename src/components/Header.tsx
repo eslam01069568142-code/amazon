@@ -25,7 +25,7 @@ const getCachedCategories = unstable_cache(
     
     const { data } = await supabaseAdminLocal
       .from('sections')
-      .select('id, title, type, category, enabled, order_index')
+      .select('id, title, type, category, enabled, order_index, parent_id, icon')
       .eq('enabled', true)
       .not('category', 'is', null)
       .order('order_index', { ascending: true });
@@ -47,36 +47,46 @@ const getCachedCategories = unstable_cache(
 
 export default async function Header() {
   const rows = await getCachedCategories();
-  const catSections = rows.map((row: any) => ({
-    id: `nav_${row.id}`,
-    title: row.title,
-    category: row.category,
+  
+  // Group categories for Mega Menu
+  const parentCategories = rows.filter((r: any) => !r.parent_id);
+  const catSections = parentCategories.map((parent: any) => ({
+    id: `nav_${parent.id}`,
+    title: parent.title,
+    category: parent.category,
+    icon: parent.icon,
+    children: rows
+      .filter((r: any) => r.parent_id === parent.category)
+      .map((child: any) => ({
+        id: `nav_${child.id}`,
+        title: child.title,
+        category: child.category,
+        icon: child.icon,
+      }))
   }));
 
   return (
     <header className={styles.header}>
-      {/* Top Bar (Logo Only) */}
-      <div className="container">
-        <div className={styles.topBar}>
+      {/* Top Bar: Logo + Search */}
+      <div className={styles.topBarWrapper}>
+        <div className={`container ${styles.topBarInner}`}>
           <Link href="/" className={styles.logo}>
-            <Image src="/logo.png" alt="Bkam El-Naharda Logo" width={40} height={40} style={{ objectFit: 'contain' }} priority />
+            <Image src="/logo.png" alt="Bkam El-Naharda Logo" width={80} height={80} style={{ objectFit: 'contain' }} priority />
           </Link>
-        </div>
-      </div>
-
-      {/* Hero Search Section */}
-      <div className={styles.heroSection}>
-        <div className="container">
-          <h1 className={styles.heroTitle}>قارن واكتشف أفضل الأسعار من أمازون مصر</h1>
-          
-          <SearchBar />
+          <div className={styles.searchWrapper}>
+            <SearchBar />
+          </div>
         </div>
       </div>
       
-      {/* Navigation Menu */}
-      <Suspense fallback={<div className={styles.sliderNav} style={{ height: '70px' }} />}>
-        <CategorySlider sections={catSections} />
-      </Suspense>
+      {/* Navigation Bar (Dark/Black) */}
+      <div className={styles.navBarWrapper}>
+        <div className={`container ${styles.navBarInner}`}>
+          <Suspense fallback={<div className={styles.navBarSkeleton} />}>
+            <CategorySlider sections={catSections} />
+          </Suspense>
+        </div>
+      </div>
     </header>
   );
 }

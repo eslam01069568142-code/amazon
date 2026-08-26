@@ -98,28 +98,53 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   // Format Description into paragraphs
   const descriptionParagraphs = product.description.split('\n').filter(p => p.trim() !== '');
 
-  // ── 1. "المنتجات المرتبطة بهذه السلعة" (Same Category) ──
-  const relatedProducts = db.products
-    .filter(p => p.id !== product.id && p.category === product.category)
-    .slice(0, 8);
+  // ── Smart Recommendation Engine ──
+  const titleWords = product.title.split(' ').slice(0, 3).map(w => w.toLowerCase());
+  
+  const scoreProduct = (p: typeof product) => {
+    let score = 0;
+    if (p.id === product.id) return -1;
+    if (p.category === product.category) score += 10;
+    
+    const productCategoryInfo = db.sections.find(s => s.category === product.category);
+    const pCategoryInfo = db.sections.find(s => s.category === p.category);
+    if (productCategoryInfo?.parentId && pCategoryInfo?.parentId === productCategoryInfo.parentId) {
+      score += 5;
+    }
 
-  // ── 2. "منتجات مشابهة قد تهمك" (Deterministic PRNG Product ID Seed) ──
-  const similarRandom = getSeededRandom(product.id);
-  const shuffledForSimilar = [...db.products.filter(p => p.id !== product.id)];
-  for (let i = shuffledForSimilar.length - 1; i > 0; i--) {
-    const j = Math.floor(similarRandom() * (i + 1));
-    [shuffledForSimilar[i], shuffledForSimilar[j]] = [shuffledForSimilar[j], shuffledForSimilar[i]];
+    const pTitle = p.title.toLowerCase();
+    for (const w of titleWords) {
+      if (w.length > 2 && pTitle.includes(w)) score += 3;
+    }
+    return score;
+  };
+
+  const scoredProducts = db.products
+    .map(p => ({ product: p, score: scoreProduct(p) }))
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  // ── 1. "المنتجات المرتبطة بهذه السلعة" ──
+  const relatedProducts = scoredProducts.slice(0, 8).map(i => i.product);
+
+  // ── 2. "منتجات مشابهة قد تهمك" ──
+  let similarProducts = scoredProducts.slice(8, 16).map(i => i.product);
+  if (similarProducts.length < 8) {
+    const similarRandom = getSeededRandom(product.id);
+    const fallback = [...db.products.filter(p => p.id !== product.id && !relatedProducts.includes(p) && !similarProducts.includes(p))];
+    for (let i = fallback.length - 1; i > 0; i--) {
+      const j = Math.floor(similarRandom() * (i + 1));
+      [fallback[i], fallback[j]] = [fallback[j], fallback[i]];
+    }
+    similarProducts = [...similarProducts, ...fallback.slice(0, 8 - similarProducts.length)];
   }
-  const similarProducts = shuffledForSimilar.slice(0, 8);
 
-  // ── 3. "منتجات قد تعجبك أيضًا" (Deterministic PRNG Product ID + 'liked' Seed, favor high rating) ──
+  // ── 3. "منتجات قد تعجبك أيضًا" ──
   const likedRandom = getSeededRandom(product.id + 'liked');
-  const validProductsForLiked = db.products.filter(p => p.id !== product.id);
-  validProductsForLiked.sort((a, b) => {
-    const rA = parseFloat(a.rating) || 0;
-    const rB = parseFloat(b.rating) || 0;
-    return rB - rA;
-  });
+  const validProductsForLiked = db.products.filter(p => 
+    p.id !== product.id && !relatedProducts.includes(p) && !similarProducts.includes(p)
+  );
+  validProductsForLiked.sort((a, b) => (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0));
   const topRated = validProductsForLiked.slice(0, 30);
   for (let i = topRated.length - 1; i > 0; i--) {
     const j = Math.floor(likedRandom() * (i + 1));
