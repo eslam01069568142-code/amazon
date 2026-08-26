@@ -40,9 +40,17 @@ export async function POST(req: Request) {
       if (!cleanUrl) continue;
       
       try {
-        // Extract ASIN to check for duplicates
-        const asinMatch = cleanUrl.match(/(?:dp|o|asin|product|aw\/d)\/([a-zA-Z0-9]{10})/i);
-        const asin = asinMatch ? asinMatch[1] : null;
+        // Extract ASIN or Shortlink ID to check for duplicates
+        let asin = null;
+        const asinMatch = cleanUrl.match(/(?:dp|o|asin|product|aw\/d)\/([a-zA-Z0-9]{10})(?:\/|\?|$)/i);
+        if (asinMatch && asinMatch[1]) {
+          asin = asinMatch[1].toUpperCase();
+        } else {
+          const shortMatch = cleanUrl.match(/(?:link\.amazon|amzn\.to|amzlinks\.in)\/([a-zA-Z0-9]+)(?:\/|\?|$)/i);
+          if (shortMatch && shortMatch[1]) {
+            asin = shortMatch[1];
+          }
+        }
         const productId = asin ? `prod_${asin}` : `prod_${Math.random().toString(36).substr(2, 9)}`;
 
         if (asin) {
@@ -72,8 +80,11 @@ export async function POST(req: Request) {
         const html = await response.text();
         const $ = cheerio.load(html);
 
-        const title = $('#productTitle').text().trim();
-        if (!title || title === '') {
+        let title = $('#productTitle').text().trim();
+        if (!title) title = $('meta[property="og:title"]').attr('content') || '';
+        if (!title) title = $('title').text().replace('Amazon.eg', '').replace(':', '').trim();
+        
+        if (!title || title === '' || title.includes('Amazon.eg')) {
           const errorMsg = 'Failed to extract product data (possible CAPTCHA)';
           results.push({ url: cleanUrl, success: false, status: 'Failed', error: errorMsg });
           if (urlList.length === 1) return NextResponse.json({ success: false, status: 'Failed', error: errorMsg });
@@ -276,7 +287,8 @@ export async function POST(req: Request) {
           if (error) {
             return NextResponse.json({ success: false, status: 'Failed', error: 'Database insert error' }, { status: 500 });
           }
-          revalidateTag('sections', 'max');
+          // Revalidate the cache so new categories appear immediately in the Header
+          revalidateTag('sections');
           return NextResponse.json({ success: true, status: 'Success', product });
         }
 

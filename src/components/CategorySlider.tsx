@@ -58,16 +58,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
     <nav className={styles.sliderNav}>
       <div className={styles.sliderContainer}>
         
-        {/* 1. Home */}
-        <Link 
-          href="/"
-          className={`${styles.categoryPill} ${currentCategory === '' ? styles.activePill : ''}`}
-        >
-          <Home size={20} />
-          <span>الرئيسية</span>
-        </Link>
-        
-        {/* 2. Categories Dropdown */}
+        {/* 1. Categories Dropdown */}
         <div className={styles.categoryDropdownWrapper}>
           <button 
             ref={buttonRef}
@@ -106,6 +97,15 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
             document.body
           )}
         </div>
+
+        {/* 2. Home */}
+        <Link 
+          href="/"
+          className={`${styles.categoryPill} ${currentCategory === '' ? styles.activePill : ''}`}
+        >
+          <Home size={20} />
+          <span>الرئيسية</span>
+        </Link>
 
         {/* 3. All Products (Currently mapping to Home as well, since Home displays all sections, but conceptually it could be a different view. We map it to Home without category params) */}
         <Link 
