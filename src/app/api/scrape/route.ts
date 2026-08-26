@@ -288,7 +288,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: false, status: 'Failed', error: 'Database insert error' }, { status: 500 });
           }
           // Revalidate the cache so new categories appear immediately in the Header
-          revalidateTag('sections');
+          revalidateTag('sections', 'max');
           return NextResponse.json({ success: true, status: 'Success', product });
         }
 
