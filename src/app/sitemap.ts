@@ -66,7 +66,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // Add static pages
-  /*
   ['about', 'contact', 'privacy', 'terms', 'shipping', 'return'].forEach((page) => {
     sitemapEntries.push({
       url: `${baseUrl}/${page}`,
@@ -75,7 +74,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     });
   });
-  */
 
   return sitemapEntries;
 }

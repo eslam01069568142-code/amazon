@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import { supabaseAdmin, Product } from '@/data/db';
 import { revalidateTag } from 'next/cache';
+import { buildAmazonAffiliateUrl } from '@/utils/affiliate';
+import { parseNumericPrice } from '@/utils/price';
+import { recordPriceHistory } from '@/utils/priceHistory';
 
 const ADJECTIVES_TO_IGNORE = [
   'elegant', 'stylish', 'premium', 'beautiful', 'amazing', 'best', 'modern', 'trendy', 'luxury', 
@@ -25,10 +28,10 @@ const CATEGORY_MAP = [
   { keywords: ['storage', 'organization', 'home organization', 'storage & organization', 'تنظيم', 'تخزين', 'تنظيم وتخزين'], child: 'تنظيم وتخزين', parent: 'المنزل والمطبخ' },
 
   // Beauty
-  { keywords: ['skincare', 'skin care', 'facial care', 'العناية بالبشرة', 'العناية بالوجه'], child: 'العناية بالبشرة والجسم', parent: 'الصحة والجمال' },
-  { keywords: ['hair care', 'haircare', 'hair styling', 'hair', 'العناية بالشعر', 'تصفيف الشعر'], child: 'العناية بالشعر', parent: 'الصحة والجمال' },
+  { keywords: ['skincare', 'skin care', 'facial care', 'العناية بالبشرة', 'العناية بالوجه', 'soap', 'صابون', 'body wash', 'غسول'], child: 'العناية بالبشرة والجسم', parent: 'الصحة والجمال' },
+  { keywords: ['hair care', 'haircare', 'hair styling', 'hair', 'العناية بالشعر', 'تصفيف الشعر', 'shampoo', 'شامبو', 'conditioner', 'بلسم', 'زيت شعر'], child: 'العناية بالشعر', parent: 'الصحة والجمال' },
   { keywords: ['perfumes', 'fragrance', 'fragrances', 'perfume', 'عطور', 'عطر'], child: 'العطور', parent: 'الصحة والجمال' },
-  { keywords: ['personal care devices', 'beauty devices', 'أجهزة العناية الشخصية'], child: 'أجهزة العناية الشخصية', parent: 'الصحة والجمال' },
+  { keywords: ['personal care devices', 'beauty devices', 'أجهزة العناية الشخصية', 'ماكينة حلاقة', 'shaver', 'hair removal'], child: 'أجهزة العناية الشخصية', parent: 'الصحة والجمال' },
 
   // Fashion
   { keywords: ["men's clothing", 'men clothing', 'ملابس رجالية'], child: 'ملابس رجالية', parent: 'الأزياء والموضة' },
@@ -99,6 +102,17 @@ export async function POST(req: Request) {
       .from('sections')
       .select('id, title, category, parent_id')
       .eq('type', 'products_by_category');
+      
+    // Fetch tracking ID
+    const { data: settingsData } = await supabaseAdmin
+      .from('settings')
+      .select('tracking_id')
+      .limit(1)
+      .single();
+    const trackingId = settingsData?.tracking_id || '';
+    if (!trackingId) {
+      return NextResponse.json({ error: 'لم يتم العثور على Amazon Tracking ID في الإعدادات. يرجى إضافته أولاً لضمان احتساب العمولات.' }, { status: 400 });
+    }
     
     const categoryMap = new Map<string, string>();
     if (existingCategories) {
@@ -232,11 +246,63 @@ export async function POST(req: Request) {
           continue;
         }
 
-        let price = $('.a-price .a-offscreen').first().text().trim();
-        if (!price) price = $('#corePriceDisplay_desktop_feature_div .a-price .a-offscreen').first().text().trim();
-        if (!price) price = 'Price unavailable';
+        let currentPrice = '';
+        let originalPrice = '';
 
-        let originalPrice = $('.a-text-price .a-offscreen').first().text().trim();
+        // Priority 1: Primary Amazon price selectors
+        let priceElem = $('.priceToPay .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('#corePriceDisplay_desktop_feature_div .priceToPay .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('#corePrice_desktop .priceToPay .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('.a-price .a-offscreen').first().text().trim();
+
+        // Priority 2: Structured Data (JSON-LD script tags)
+        if (!priceElem) {
+          $('script[type="application/ld+json"]').each((_, el) => {
+            try {
+              const str = $(el).html();
+              if (!str) return;
+              const json = JSON.parse(str);
+              const items = Array.isArray(json) ? json : [json];
+              for (const item of items) {
+                if (item.offers) {
+                  const offers = Array.isArray(item.offers) ? item.offers[0] : item.offers;
+                  if (offers.price) {
+                    priceElem = String(offers.price);
+                    break;
+                  }
+                }
+              }
+            } catch (e) {}
+          });
+        }
+
+        // Priority 3: Fallback Amazon selectors
+        if (!priceElem) priceElem = $('#priceblock_ourprice').text().trim();
+        if (!priceElem) priceElem = $('#priceblock_dealprice').text().trim();
+        if (!priceElem) priceElem = $('.a-price-whole').first().text().trim();
+        if (!priceElem) priceElem = $('.a-color-price').first().text().trim();
+
+        currentPrice = priceElem;
+
+        // Extract original list price
+        let basisPriceElem = $('.basisPrice .a-offscreen').first().text().trim();
+        if (!basisPriceElem) basisPriceElem = $('#corePriceDisplay_desktop_feature_div .basisPrice .a-offscreen').first().text().trim();
+        if (!basisPriceElem) basisPriceElem = $('.a-text-price .a-offscreen').first().text().trim();
+        
+        originalPrice = basisPriceElem;
+
+        // Validate extracted price using parseNumericPrice
+        const parsedCurrentNum = parseNumericPrice(currentPrice);
+        let needsPrice = false;
+        let priceErrorMsg = '';
+
+        if (parsedCurrentNum === null) {
+          needsPrice = true;
+          priceErrorMsg = 'تعذر استخراج السعر الحالي من Amazon.';
+          currentPrice = ''; // Do NOT store '0' or invalid string
+        }
+
+        let price = currentPrice;
 
         const rating = $('#acrPopover').attr('title') || 'لا يوجد تقييم';
         const reviewsMatch = $('#acrCustomerReviewText').first().text().trim();
@@ -288,15 +354,12 @@ export async function POST(req: Request) {
           }
         }
         
+        let needsCategory = false;
+        let categoryErrorMsg = '';
         if (!assignedCategoryId) {
-          // Fallback: غير مصنف
-          const fallback = existingCategories?.find(c => c.title === 'غير مصنف');
-          if (fallback && fallback.category) {
-             assignedCategoryId = fallback.category;
-          }
-          console.log(`[CATEGORY] No confident match → غير مصنف`);
+          needsCategory = true;
+          categoryErrorMsg = 'تعذر تحديد الفئة تلقائياً.';
         }
-
         const product: Product = {
           id: productId,
           originalUrl: cleanUrl,
@@ -310,6 +373,13 @@ export async function POST(req: Request) {
           category: assignedCategoryId,
           createdAt: new Date().toISOString()
         };
+
+        if (needsPrice || needsCategory) {
+          const combinedErrors = [priceErrorMsg, categoryErrorMsg].filter(Boolean).join(' | ');
+          results.push({ url: cleanUrl, success: false, status: 'NeedsInput', error: combinedErrors, product, needsPrice, needsCategory } as any);
+          if (urlList.length === 1) return NextResponse.json({ success: false, status: 'NeedsInput', error: combinedErrors, product, needsPrice, needsCategory });
+          continue;
+        }
 
         newProducts.push(product);
         results.push({ url: cleanUrl, success: true, status: 'Success' });
@@ -336,6 +406,29 @@ export async function POST(req: Request) {
           if (error) {
             return NextResponse.json({ success: false, status: 'Failed', error: 'Database insert error' }, { status: 500 });
           }
+
+          // Insert Amazon Offer
+          const offerPriceNum = parseNumericPrice(product.price);
+          const offerOrigPriceNum = parseNumericPrice(product.originalPrice);
+          const offerId = 'offer_' + Math.random().toString(36).substr(2, 9);
+          
+          await supabaseAdmin.from('product_offers').insert([{
+            id: offerId,
+            product_id: product.id,
+            store_id: 'store_amazon',
+            price: offerPriceNum,
+            original_price: offerOrigPriceNum,
+            currency: 'EGP',
+            product_url: product.originalUrl,
+            affiliate_url: buildAmazonAffiliateUrl(product.originalUrl, trackingId),
+            availability: 'in_stock',
+            created_at: new Date().toISOString()
+          }]);
+
+          if (offerPriceNum) {
+            await recordPriceHistory(offerId, product.id, 'store_amazon', offerPriceNum, 'EGP');
+          }
+
           // Revalidate the cache so new categories appear immediately in the Header
           revalidateTag('sections', 'max');
           return NextResponse.json({ success: true, status: 'Success', product });
@@ -364,6 +457,21 @@ export async function POST(req: Request) {
         created_at: p.createdAt,
       }));
       await supabaseAdmin.from('products').insert(rows);
+
+      const offerRows = newProducts.map(p => ({
+        id: 'offer_' + Math.random().toString(36).substr(2, 9),
+        product_id: p.id,
+        store_id: 'store_amazon',
+        price: parseNumericPrice(p.price),
+        original_price: parseNumericPrice(p.originalPrice),
+        currency: 'EGP',
+        product_url: p.originalUrl,
+        affiliate_url: buildAmazonAffiliateUrl(p.originalUrl, trackingId),
+        availability: 'in_stock',
+        created_at: new Date().toISOString()
+      }));
+      await supabaseAdmin.from('product_offers').insert(offerRows);
+
       revalidateTag('sections', 'max');
     }
 

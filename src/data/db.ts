@@ -74,6 +74,35 @@ export interface Settings {
   socialLinks?: SocialLink[];
 }
 
+export interface Store {
+  id: string;
+  name: string;
+  slug: string;
+  logo?: string;
+  websiteUrl?: string;
+  affiliateEnabled: boolean;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type AvailabilityStatus = 'in_stock' | 'out_of_stock' | 'unknown';
+
+export interface ProductOffer {
+  id: string;
+  productId: string;
+  storeId: string;
+  price?: string;
+  originalPrice?: string;
+  currency: string;
+  productUrl: string;
+  affiliateUrl?: string;
+  availability: AvailabilityStatus;
+  lastCheckedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DbSchema {
   settings: Settings;
   products: Product[];
@@ -140,6 +169,39 @@ function rowToSettings(row: any): Settings {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function rowToStore(row: any): Store {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    logo: row.logo,
+    websiteUrl: row.website_url,
+    affiliateEnabled: row.affiliate_enabled,
+    enabled: row.enabled,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function rowToProductOffer(row: any): ProductOffer {
+  return {
+    id: row.id,
+    productId: row.product_id,
+    storeId: row.store_id,
+    price: row.price,
+    originalPrice: row.original_price,
+    currency: row.currency,
+    productUrl: row.product_url,
+    affiliateUrl: row.affiliate_url,
+    availability: row.availability as AvailabilityStatus,
+    lastCheckedAt: row.last_checked_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 // ── Model-to-row converters ────────────────────────────────────────────
 
 export function productToRow(p: Product) {
@@ -193,6 +255,37 @@ export function settingsToRow(s: Settings) {
     tracking_id: s.trackingId,
     facebook_pixel_id: s.facebookPixelId,
     social_links: s.socialLinks || [],
+  };
+}
+
+export function storeToRow(s: Store) {
+  return {
+    id: s.id,
+    name: s.name,
+    slug: s.slug,
+    logo: s.logo,
+    website_url: s.websiteUrl,
+    affiliate_enabled: s.affiliateEnabled,
+    enabled: s.enabled,
+    created_at: s.createdAt,
+    updated_at: s.updatedAt,
+  };
+}
+
+export function productOfferToRow(po: ProductOffer) {
+  return {
+    id: po.id,
+    product_id: po.productId,
+    store_id: po.storeId,
+    price: po.price,
+    original_price: po.originalPrice,
+    currency: po.currency,
+    product_url: po.productUrl,
+    affiliate_url: po.affiliateUrl,
+    availability: po.availability,
+    last_checked_at: po.lastCheckedAt,
+    created_at: po.createdAt,
+    updated_at: po.updatedAt,
   };
 }
 

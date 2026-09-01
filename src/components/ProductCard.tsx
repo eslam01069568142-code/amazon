@@ -1,48 +1,27 @@
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 import type { Product } from '@/data/db';
+import { parseNumericPrice, formatDisplayPrice, calculateOriginalDiscount } from '@/utils/price';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // Extract number from rating e.g., "4.2 out of 5 stars" -> 4.2
-  const ratingNum = parseFloat(product.rating) || 0;
-  const parsePrice = (p: string) => parseFloat(p?.replace(/[^0-9.]/g, '')) || 0;
-  const currPriceNum = parsePrice(product.price);
-  const origPriceNum = product.originalPrice ? parsePrice(product.originalPrice) : null;
-  const showOriginalPrice = origPriceNum && origPriceNum > currPriceNum;
-  
-  const formatPrice = (priceStr: string) => {
-    if (!priceStr) return null;
-    const match = priceStr.match(/([\d,]+)\.(\d{2})/);
-    if (match && match.index !== undefined) {
-      const full = match[0];
-      const intPart = match[1];
-      const fracPart = match[2];
-      const before = priceStr.substring(0, match.index);
-      const after = priceStr.substring(match.index + full.length);
-      return (
-        <>
-          {before}
-          <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>{intPart}</span>
-          <span style={{ fontSize: '0.65em', verticalAlign: 'super', margin: '0 2px' }}>
-            .{fracPart}
-          </span>
-          {after}
-        </>
-      );
-    }
-    return (
-      <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>{priceStr}</span>
-    );
-  };
+  const currPriceNum = parseNumericPrice(product.price);
+  const origPriceNum = parseNumericPrice(product.originalPrice);
+  const discountPct = calculateOriginalDiscount(currPriceNum, origPriceNum);
+  const formattedPrice = formatDisplayPrice(currPriceNum, product.price);
 
   return (
     <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Link href={`/product/${product.id}`} style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none' }}>
-        <div style={{ height: '150px', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderBottom: '1px solid #f1f5f9' }}>
+        <div style={{ height: '150px', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderBottom: '1px solid #f1f5f9', position: 'relative' }}>
+          {discountPct !== null && (
+            <span style={{ position: 'absolute', top: '8px', right: '8px', backgroundColor: '#ef4444', color: '#fff', fontSize: '0.65rem', fontWeight: 700, padding: '0.15rem 0.4rem', borderRadius: '4px' }}>
+              خصم {discountPct}%
+            </span>
+          )}
           <img 
             src={product.image} 
             alt={product.title} 
@@ -67,17 +46,23 @@ export default function ProductCard({ product }: ProductCardProps) {
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#eab308', marginTop: '0.1rem' }}>
             <Star size={12} fill="currentColor" />
-            <span style={{ color: '#64748b', fontSize: '0.75rem' }}>{product.rating}</span>
+            <span style={{ color: '#64748b', fontSize: '0.75rem' }}>{product.rating || 'لا يوجد تقييم'}</span>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: 'auto', paddingTop: '0.4rem' }}>
-            {showOriginalPrice && (
+            <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>
+              أفضل سعر:
+            </div>
+            {discountPct !== null && origPriceNum !== null && (
               <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
-                <span style={{ textDecoration: 'line-through' }}>{product.originalPrice}</span>
+                <span style={{ textDecoration: 'line-through' }}>{formatDisplayPrice(origPriceNum, product.originalPrice)}</span>
               </span>
             )}
-            <div style={{ color: '#b91c1c', lineHeight: '1.1' }}>
-               {formatPrice(product.price)}
+            <div style={{ color: currPriceNum !== null ? '#059669' : '#64748b', fontSize: '1rem', fontWeight: 800, lineHeight: '1.2' }}>
+               {formattedPrice}
+            </div>
+            <div style={{ marginTop: '0.3rem', fontSize: '0.7rem', color: '#2563eb', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+              <span>🔍 قارن الأسعار بين المتاجر</span>
             </div>
           </div>
         </div>
