@@ -5,6 +5,7 @@ import { revalidateTag } from 'next/cache';
 import { buildAmazonAffiliateUrl } from '@/utils/affiliate';
 import { parseNumericPrice } from '@/utils/price';
 import { recordPriceHistory } from '@/utils/priceHistory';
+import { getHighResImageUrl } from '@/utils/image';
 
 const ADJECTIVES_TO_IGNORE = [
   'elegant', 'stylish', 'premium', 'beautiful', 'amazing', 'best', 'modern', 'trendy', 'luxury', 
@@ -238,7 +239,8 @@ export async function POST(req: Request) {
           if (mainImage) images.push(mainImage);
         }
 
-        mainImage = images[0] || '';
+        images = images.map(img => getHighResImageUrl(img)).filter(Boolean);
+        mainImage = getHighResImageUrl(images[0] || mainImage);
         if (!mainImage) {
           const errorMsg = 'Failed to extract images';
           results.push({ url: cleanUrl, success: false, status: 'Failed', error: errorMsg });

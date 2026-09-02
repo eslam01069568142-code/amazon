@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import { supabaseAdmin } from '@/data/db';
+import { getHighResImageUrl } from '@/utils/image';
 
 export async function POST(req: Request) {
   try {
@@ -101,13 +102,16 @@ export async function POST(req: Request) {
       }
     }
 
+    mainImage = getHighResImageUrl(mainImage);
+    const cleanedImages = mainImage ? [mainImage] : [];
+
     return NextResponse.json({
       success: true,
       data: {
         title: title || '',
         description: description || '',
         image: mainImage || '',
-        images: mainImage ? [mainImage] : [],
+        images: cleanedImages,
         price: price || '',
         originalPrice: originalPrice || '',
         originalUrl: finalUrl,
