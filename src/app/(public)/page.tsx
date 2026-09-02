@@ -1,9 +1,94 @@
 import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
 import { getDb } from '@/data/db';
-import { Tag, Zap, ArrowLeft, Clock } from 'lucide-react';
+import { Tag, Zap, ArrowLeft, Clock, Shirt, HeartPulse, Dumbbell, Smartphone, Home as HomeIcon, Gamepad2, Briefcase, Car, Sparkles, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+
+function getCategoryTheme(title: string, category: string) {
+  const t = (title + ' ' + category).toLowerCase();
+  
+  if (t.includes('أزياء') || t.includes('موضة') || t.includes('ملابس') || t.includes('حقائب') || t.includes('أحذية')) {
+    return {
+      Icon: Shirt,
+      gradient: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
+      bgLight: '#fdf2f8',
+      borderColor: '#fbcfe8',
+      textColor: '#be185d'
+    };
+  }
+  if (t.includes('صحة') || t.includes('جمال') || t.includes('عناية')) {
+    return {
+      Icon: HeartPulse,
+      gradient: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+      bgLight: '#ecfdf5',
+      borderColor: '#a7f3d0',
+      textColor: '#047857'
+    };
+  }
+  if (t.includes('رياضة') || t.includes('لياقة')) {
+    return {
+      Icon: Dumbbell,
+      gradient: 'linear-gradient(135deg, #f97316 0%, #c2410c 100%)',
+      bgLight: '#fff7ed',
+      borderColor: '#fed7aa',
+      textColor: '#c2410c'
+    };
+  }
+  if (t.includes('إلكترونيات') || t.includes('أجهزة') || t.includes('ساعات') || t.includes('طابعات')) {
+    return {
+      Icon: Smartphone,
+      gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+      bgLight: '#eff6ff',
+      borderColor: '#bfdbfe',
+      textColor: '#1d4ed8'
+    };
+  }
+  if (t.includes('منزل') || t.includes('مطبخ') || t.includes('ديكور') || t.includes('تخزين')) {
+    return {
+      Icon: HomeIcon,
+      gradient: 'linear-gradient(135deg, #eab308 0%, #a16207 100%)',
+      bgLight: '#fefce8',
+      borderColor: '#fef08a',
+      textColor: '#a16207'
+    };
+  }
+  if (t.includes('ألعاب') || t.includes('ترفيه')) {
+    return {
+      Icon: Gamepad2,
+      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+      bgLight: '#f5f3ff',
+      borderColor: '#ddd6fe',
+      textColor: '#6d28d9'
+    };
+  }
+  if (t.includes('مكتب') || t.includes('مدرسية')) {
+    return {
+      Icon: Briefcase,
+      gradient: 'linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)',
+      bgLight: '#ecfeff',
+      borderColor: '#a5f3fc',
+      textColor: '#0e7490'
+    };
+  }
+  if (t.includes('سيار') || t.includes('سيارات')) {
+    return {
+      Icon: Car,
+      gradient: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+      bgLight: '#fef2f2',
+      borderColor: '#fecaca',
+      textColor: '#b91c1c'
+    };
+  }
+
+  return {
+    Icon: Sparkles,
+    gradient: 'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)',
+    bgLight: '#eef2ff',
+    borderColor: '#c7d2fe',
+    textColor: '#4338ca'
+  };
+}
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }): Promise<Metadata> {
   const resolvedParams = await searchParams;
@@ -205,91 +290,125 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
       ))}
 
-      {/* 1.5 Shop by Category (8 Parent Categories) */}
+      {/* 1.5 Shop by Category (8 Parent Categories UI Revamp) */}
       {(() => {
         const parentCategories = enabledSections.filter(s => s.type === 'products_by_category' && !s.parentId).slice(0, 8);
         if (parentCategories.length === 0) return null;
         
         return (
           <section className="section" style={{ paddingTop: '1.5rem', paddingBottom: '1rem' }}>
-            <h2 className="text-xl" style={{ marginBottom: '1rem', fontWeight: 700 }}>تسوق حسب الفئة</h2>
-            <div className="shop-by-category-fixed-grid">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <h2 className="text-xl" style={{ margin: 0, fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ fontSize: '1.3rem' }}>🏷️</span> تصفح الفئات الرئيسية
+              </h2>
+            </div>
+            <div className="category-revamped-grid">
               <style dangerouslySetInnerHTML={{__html: `
-                .shop-by-category-fixed-grid {
+                .category-revamped-grid {
                   display: grid;
-                  grid-template-columns: repeat(4, 200px);
-                  justify-content: start;
-                  gap: 1.25rem;
+                  grid-template-columns: repeat(4, 1fr);
+                  gap: 1rem;
                 }
-                @media (max-width: 768px) {
-                  .shop-by-category-fixed-grid {
-                    grid-template-columns: repeat(3, 170px);
-                    gap: 1rem;
+                @media (max-width: 1024px) {
+                  .category-revamped-grid {
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 0.85rem;
                   }
                 }
-                @media (max-width: 480px) {
-                  .shop-by-category-fixed-grid {
+                @media (max-width: 768px) {
+                  .category-revamped-grid {
                     grid-template-columns: repeat(2, 1fr);
                     gap: 0.75rem;
                   }
                 }
-                .category-square-card {
+                @media (max-width: 480px) {
+                  .category-revamped-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 0.65rem;
+                  }
+                }
+                .category-revamped-card {
+                  display: flex;
+                  align-items: center;
+                  gap: 0.85rem;
+                  padding: 0.9rem 1rem;
+                  border-radius: 1rem;
+                  text-decoration: none;
+                  box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+                  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
                   position: relative;
-                  width: 100%;
-                  height: 85px;
-                  border-radius: 0.75rem;
                   overflow: hidden;
-                  background-color: #f1f5f9;
-                  display: block;
-                  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-                  transition: transform 0.2s ease, box-shadow 0.2s ease;
                 }
-                .category-square-card:hover {
-                  transform: translateY(-4px);
-                  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.15);
+                .category-revamped-card:hover {
+                  transform: translateY(-3px);
+                  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
                 }
-                .category-square-img {
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                }
-                .category-square-overlay {
-                  position: absolute;
-                  inset: 0;
-                  background: rgba(0,0,0,0.45);
+                .category-icon-badge {
+                  width: 44px;
+                  height: 44px;
+                  border-radius: 0.85rem;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  padding: 1rem;
-                  transition: background 0.2s ease;
+                  color: #ffffff;
+                  flex-shrink: 0;
+                  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                  transition: transform 0.22s ease;
                 }
-                .category-square-card:hover .category-square-overlay {
-                  background: rgba(0,0,0,0.55);
+                .category-revamped-card:hover .category-icon-badge {
+                  transform: scale(1.08) rotate(-4deg);
                 }
-                .category-square-title {
-                  color: white;
-                  font-weight: 700;
-                  font-size: 1.1rem;
-                  text-align: center;
-                  line-height: 1.3;
+                .category-text-container {
+                  flex-grow: 1;
+                  min-width: 0;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 0.15rem;
+                }
+                .category-card-name {
                   margin: 0;
-                  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+                  font-size: 0.95rem;
+                  font-weight: 800;
+                  color: #0f172a;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  line-height: 1.3;
+                }
+                .category-card-subtitle {
+                  font-size: 0.73rem;
+                  font-weight: 700;
+                  display: flex;
+                  align-items: center;
+                  gap: 0.2rem;
                 }
               `}} />
-              {parentCategories.map(cat => (
-                <div key={cat.id}>
-                  <Link href={`/?category=${cat.category}`} className="category-square-card">
-                    {cat.image ? (
-                      <img src={cat.image} alt={cat.title} className="category-square-img" />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #cbd5e1, #94a3b8)' }} />
-                    )}
-                    <div className="category-square-overlay">
-                      <h3 className="category-square-title">{cat.title}</h3>
+              {parentCategories.map(cat => {
+                const theme = getCategoryTheme(cat.title, cat.category || '');
+                const IconComponent = theme.Icon;
+                
+                return (
+                  <Link
+                    key={cat.id}
+                    href={`/?category=${cat.category}`}
+                    className="category-revamped-card"
+                    style={{
+                      background: theme.bgLight,
+                      border: `1.5px solid ${theme.borderColor}`
+                    }}
+                  >
+                    <div className="category-icon-badge" style={{ background: theme.gradient }}>
+                      <IconComponent size={22} />
+                    </div>
+                    <div className="category-text-container">
+                      <h3 className="category-card-name">{cat.title}</h3>
+                      <span className="category-card-subtitle" style={{ color: theme.textColor }}>
+                        تصفح العروض <ChevronLeft size={12} />
+                      </span>
                     </div>
                   </Link>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
         );

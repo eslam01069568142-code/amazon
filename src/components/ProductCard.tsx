@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Star } from 'lucide-react';
+import { Star, ArrowLeft, Zap } from 'lucide-react';
 import type { Product } from '@/data/db';
 import { parseNumericPrice, formatDisplayPrice, calculateOriginalDiscount } from '@/utils/price';
 
@@ -14,55 +14,235 @@ export default function ProductCard({ product }: ProductCardProps) {
   const formattedPrice = formatDisplayPrice(currPriceNum, product.price);
 
   return (
-    <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Link href={`/product/${product.id}`} style={{ display: 'flex', flexDirection: 'column', height: '100%', textDecoration: 'none' }}>
-        <div style={{ height: '150px', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', borderBottom: '1px solid #f1f5f9', position: 'relative' }}>
-          {discountPct !== null && (
-            <span style={{ position: 'absolute', top: '8px', right: '8px', backgroundColor: '#ef4444', color: '#fff', fontSize: '0.65rem', fontWeight: 700, padding: '0.15rem 0.4rem', borderRadius: '4px' }}>
-              خصم {discountPct}%
+    <div className="product-card-modern">
+      <style dangerouslySetInnerHTML={{__html: `
+        .product-card-modern {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 1rem;
+          overflow: hidden;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+          transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        .product-card-modern:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.1);
+          border-color: #cbd5e1;
+        }
+        .product-card-link-wrapper {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          text-decoration: none;
+          color: inherit;
+        }
+        .product-card-image-box {
+          height: 160px;
+          padding: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #ffffff;
+          border-bottom: 1px solid #f1f5f9;
+          position: relative;
+        }
+        .product-card-badge-container {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          right: 8px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.25rem;
+          z-index: 2;
+        }
+        .product-card-discount-tag {
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+          color: #ffffff;
+          font-size: 0.68rem;
+          font-weight: 800;
+          padding: 0.18rem 0.5rem;
+          border-radius: 0.375rem;
+          box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+        }
+        .product-card-compare-tag {
+          background: #f0fdf4;
+          color: #166534;
+          border: 1px solid #bbf7d0;
+          font-size: 0.64rem;
+          font-weight: 700;
+          padding: 0.15rem 0.45rem;
+          border-radius: 999px;
+          margin-right: auto;
+          display: flex;
+          align-items: center;
+          gap: 0.2rem;
+        }
+        .product-card-img {
+          max-height: 100%;
+          max-width: 100%;
+          object-fit: contain;
+          transition: transform 0.25s ease;
+        }
+        .product-card-modern:hover .product-card-img {
+          transform: scale(1.04);
+        }
+        .product-card-details {
+          padding: 0.8rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          flex-grow: 1;
+          background-color: #ffffff;
+        }
+        .product-card-heading {
+          font-size: 0.86rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          line-height: 1.35;
+          height: 2.7em;
+          margin: 0;
+          color: #0f172a;
+          font-weight: 700;
+        }
+        .product-card-meta {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 0.1rem;
+        }
+        .product-card-rating-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+          color: #eab308;
+          font-size: 0.73rem;
+          font-weight: 600;
+        }
+        .product-card-store-badges {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+        .store-chip {
+          font-size: 0.62rem;
+          font-weight: 800;
+          padding: 0.08rem 0.35rem;
+          border-radius: 0.25rem;
+        }
+        .chip-amazon {
+          background-color: #fff7ed;
+          color: #c2410c;
+          border: 1px solid #ffedd5;
+        }
+        .chip-noon {
+          background-color: #fefce8;
+          color: #854d0e;
+          border: 1px solid #fef08a;
+        }
+        .product-card-price-section {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+          margin-top: auto;
+          padding-top: 0.5rem;
+        }
+        .product-card-price-label {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 0.7rem;
+        }
+        .price-title-text {
+          color: #64748b;
+          font-weight: 600;
+        }
+        .price-strike-text {
+          color: #94a3b8;
+          text-decoration: line-through;
+        }
+        .product-card-main-price {
+          color: #059669;
+          font-size: 1.15rem;
+          font-weight: 900;
+          line-height: 1.2;
+          letter-spacing: -0.01em;
+        }
+        .product-card-cta-button {
+          margin-top: 0.55rem;
+          padding: 0.55rem 0.85rem;
+          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+          color: #ffffff;
+          border-radius: 0.5rem;
+          font-size: 0.78rem;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.35rem;
+          box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+          transition: background 0.2s ease;
+        }
+        .product-card-modern:hover .product-card-cta-button {
+          background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+        }
+      `}} />
+      <Link href={`/product/${product.id}`} className="product-card-link-wrapper">
+        <div className="product-card-image-box">
+          <div className="product-card-badge-container">
+            {discountPct !== null && (
+              <span className="product-card-discount-tag">
+                خصم {discountPct}%
+              </span>
+            )}
+            <span className="product-card-compare-tag">
+              <Zap size={10} /> قارن الأسعار
             </span>
-          )}
+          </div>
           <img 
             src={product.image} 
             alt={product.title} 
-            style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+            className="product-card-img"
           />
         </div>
-        <div style={{ padding: '0.65rem', display: 'flex', flexDirection: 'column', gap: '0.3rem', flexGrow: 1, backgroundColor: '#fff' }}>
-          <h3 style={{ 
-            fontSize: '0.85rem',
-            display: '-webkit-box', 
-            WebkitLineClamp: 2, 
-            WebkitBoxOrient: 'vertical', 
-            overflow: 'hidden',
-            lineHeight: 1.35,
-            height: '2.7em',
-            margin: 0,
-            color: '#1e293b',
-            fontWeight: 600
-          }}>
+        
+        <div className="product-card-details">
+          <h3 className="product-card-heading">
             {product.title}
           </h3>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: '#eab308', marginTop: '0.1rem' }}>
-            <Star size={12} fill="currentColor" />
-            <span style={{ color: '#64748b', fontSize: '0.75rem' }}>{product.rating || 'لا يوجد تقييم'}</span>
+          <div className="product-card-meta">
+            <div className="product-card-rating-badge">
+              <Star size={12} fill="currentColor" />
+              <span style={{ color: '#64748b' }}>{product.rating || '4.5'}</span>
+            </div>
+            <div className="product-card-store-badges">
+              <span className="store-chip chip-amazon">Amazon</span>
+              <span className="store-chip chip-noon">Noon</span>
+            </div>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem', marginTop: 'auto', paddingTop: '0.4rem' }}>
-            <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>
-              أفضل سعر:
+          <div className="product-card-price-section">
+            <div className="product-card-price-label">
+              <span className="price-title-text">أفضل سعر متوفر:</span>
+              {discountPct !== null && origPriceNum !== null && (
+                <span className="price-strike-text">
+                  {formatDisplayPrice(origPriceNum, product.originalPrice)}
+                </span>
+              )}
             </div>
-            {discountPct !== null && origPriceNum !== null && (
-              <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
-                <span style={{ textDecoration: 'line-through' }}>{formatDisplayPrice(origPriceNum, product.originalPrice)}</span>
-              </span>
-            )}
-            <div style={{ color: currPriceNum !== null ? '#059669' : '#64748b', fontSize: '1rem', fontWeight: 800, lineHeight: '1.2' }}>
-               {formattedPrice}
+            <div className="product-card-main-price">
+              {formattedPrice}
             </div>
-            <div style={{ marginTop: '0.3rem', fontSize: '0.7rem', color: '#2563eb', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-              <span>🔍 قارن الأسعار بين المتاجر</span>
+            <div className="product-card-cta-button">
+              <span>عرض أفضل سعر والمقارنة</span>
+              <ArrowLeft size={14} />
             </div>
           </div>
         </div>
@@ -70,3 +250,4 @@ export default function ProductCard({ product }: ProductCardProps) {
     </div>
   );
 }
+
