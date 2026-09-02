@@ -488,33 +488,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* ── PRICE ALERT & HISTORY PREPARATION UI ── */}
-        <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-          
-          {/* Price Alert Card */}
-          <div style={{ background: '#fff', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0' }}>
-            <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
-              <span>🔔</span> تنبيه عند انخفاض السعر
-            </h4>
-            <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.75rem' }}>احصل على إشعار فور هبوط سعر هذا المنتج عن السعر الحالي.</p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input style={{ flex: 1, padding: '0.4rem 0.75rem', border: '1px solid #cbd5e1', borderRadius: '0.375rem', fontSize: '0.85rem', outline: 'none' }} placeholder="بريدك الإلكتروني..." />
-              <button style={{ padding: '0.4rem 0.85rem', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '0.375rem', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }} onClick={() => alert('تم تسجيل طلب التنبيه بنجاح!')}>تفعيل</button>
-            </div>
-          </div>
-
-          {/* Price History Status */}
-          <div style={{ background: '#fff', padding: '1.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
-              <span>📉</span> تتبع تغيرات السعر
-            </h4>
-            <div style={{ fontSize: '0.85rem', color: '#334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>حالة السعر حالياً:</span>
-              <span style={{ fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '0.15rem 0.6rem', borderRadius: '999px', fontSize: '0.75rem' }}>أفضل سعر هذا الأسبوع</span>
-            </div>
-          </div>
-
-        </div>
 
         {/* Full Product Description */}
         <div style={{ marginTop: '1.5rem', backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
