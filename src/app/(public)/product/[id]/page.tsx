@@ -140,8 +140,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const discountPercent = calculateOriginalDiscount(displayPriceNum, displayOrigPriceNum);
   const savingsInfo = storeSavings;
 
-  const formatPrice = (priceStr: string | null | undefined) => {
-    if (!priceStr) return null;
+  const formatPrice = (priceVal: string | number | null | undefined) => {
+    if (priceVal === null || priceVal === undefined) return null;
+    const priceStr = String(priceVal);
     const match = priceStr.match(/([\d,]+)\.(\d{2})/);
     if (match && match.index !== undefined) {
       const full = match[0];

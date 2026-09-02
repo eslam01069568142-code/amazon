@@ -185,50 +185,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
   return (
     <div className="container animate-fade-in">
       
-      {/* ── 0. HERO SECTION ── */}
-      <section className="section" style={{ paddingTop: '2.5rem', paddingBottom: '2rem' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-          borderRadius: '1.25rem',
-          padding: '3rem 2rem',
-          color: '#ffffff',
-          textAlign: 'center',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          <div style={{ position: 'relative', zIndex: 2, maxWidth: '700px', margin: '0 auto' }}>
-            <span style={{ background: 'rgba(234, 179, 8, 0.2)', color: '#fde047', padding: '0.25rem 0.85rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 700, display: 'inline-block', marginBottom: '1rem', border: '1px solid rgba(234, 179, 8, 0.4)' }}>
-              ⚡️ منصة مقارنة الأسعار الأولى في مصر
-            </span>
-            <h1 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '1rem', lineHeight: 1.2, color: '#ffffff' }}>
-              بتدور على أفضل سعر؟
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: '#94a3b8', marginBottom: '2rem', lineHeight: 1.6 }}>
-              قارن أسعار المنتجات بين <strong style={{ color: '#fbbf24' }}>Amazon</strong> و <strong style={{ color: '#fde047' }}>Noon</strong> في مكان واحد واعرف أفضل عرض قبل ما تشتري ووفر فلوسك.
-            </p>
-            
-            {/* Inline Search Bar */}
-            <form action="/" method="GET" style={{ display: 'flex', gap: '0.5rem', maxWidth: '560px', margin: '0 auto 1.5rem auto' }}>
-              <input 
-                type="text" 
-                name="q" 
-                placeholder="ابحث عن منتج، موبايل، لابتوب، تكييف..." 
-                style={{ flex: 1, padding: '0.85rem 1.25rem', borderRadius: '0.5rem', border: 'none', fontSize: '1rem', outline: 'none', color: '#0f172a', fontWeight: 500 }}
-              />
-              <button type="submit" style={{ padding: '0.85rem 1.75rem', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '0.5rem', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                قارن الأسعار
-              </button>
-            </form>
-
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.85rem', color: '#cbd5e1' }}>
-              <span>✅ مقارنة دقيقة وشفافة</span>
-              <span>⚡️ أسعار محدثة باستمرار</span>
-              <span>🔗 روابط مباشرة بدون عمولات إضافية</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 1. Banners */}
       {banners.map(section => (
