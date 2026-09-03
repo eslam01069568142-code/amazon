@@ -23,6 +23,7 @@ export interface Product {
   images?: string[];
   rating: string;
   category: string;
+  isMyWay?: boolean;
   createdAt: string;
 }
 

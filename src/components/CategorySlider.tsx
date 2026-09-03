@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { ChevronDown, List, ChevronLeft } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -43,6 +43,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
   };
 
   const activeParent = sections.find(s => s.id === activeParentId) || sections[0];
+  const pathname = usePathname();
 
   return (
     <>
@@ -56,8 +57,12 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
         <ChevronDown size={16} style={{ marginLeft: '-4px', transform: dropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
       </button>
 
-      <Link href="/" className={`${styles.categoryPill} ${currentCategory === '' ? styles.activePill : ''}`}>
+      <Link href="/" className={`${styles.categoryPill} ${pathname === '/' && currentCategory === '' ? styles.activePill : ''}`}>
         الرئيسية
+      </Link>
+      
+      <Link href="/my-way" className={`${styles.categoryPill} ${pathname === '/my-way' ? styles.activePill : ''}`}>
+        منتجات ماي واي
       </Link>
       
       {mounted && dropdownOpen && createPortal(

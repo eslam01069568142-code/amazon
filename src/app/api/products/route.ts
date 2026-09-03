@@ -11,6 +11,11 @@ export async function GET(req: Request) {
   if (category && category !== 'All') {
     query = query.eq('category', category);
   }
+  
+  const isMyWay = searchParams.get('myway');
+  if (isMyWay === 'true') {
+    query = query.eq('is_my_way', true);
+  }
 
   const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -27,6 +32,7 @@ export async function GET(req: Request) {
     images: row.images || [],
     rating: row.rating,
     category: row.category,
+    isMyWay: row.is_my_way || false,
     createdAt: row.created_at,
   }));
 
@@ -82,6 +88,7 @@ export async function POST(req: Request) {
       images: body.images || [],
       rating: body.rating,
       category: body.category,
+      is_my_way: body.isMyWay || false,
       created_at: body.createdAt || new Date().toISOString(),
     };
     

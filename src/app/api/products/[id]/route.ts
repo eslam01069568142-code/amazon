@@ -45,6 +45,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (body.metaDescription !== undefined) updateRow.meta_description = body.metaDescription;
     if (body.price !== undefined) updateRow.price = body.price;
     if (body.originalPrice !== undefined) updateRow.original_price = body.originalPrice;
+    if (body.isMyWay !== undefined) updateRow.is_my_way = body.isMyWay;
 
     const { data: updatedProduct, error: updateError } = await supabaseAdmin.from('products').update(updateRow).eq('id', id).select().single();
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 });

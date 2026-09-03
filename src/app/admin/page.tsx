@@ -538,6 +538,7 @@ export default function AdminDashboard() {
           image: noonImportData.image,
           images: noonImportData.images || [],
           category: noonImportData.categoryId,
+          isMyWay: noonImportData.isMyWay || false,
         };
 
         const prodRes = await fetch('/api/products', {
@@ -959,6 +960,18 @@ export default function AdminDashboard() {
                               </div>
                             )}
 
+                            {s.status === 'NeedsInput' && (
+                              <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '4px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <input 
+                                  type="checkbox" 
+                                  id={`scrapeIsMyWay-${idx}`}
+                                  checked={s.product?.isMyWay || false}
+                                  onChange={e => updateScrapeStatusProduct(idx, 'isMyWay', e.target.checked)}
+                                />
+                                <label htmlFor={`scrapeIsMyWay-${idx}`} style={{ fontSize: '0.85rem', fontWeight: 600, margin: 0, cursor: 'pointer' }}>منتج تابع لـ ماي واي (My Way)</label>
+                              </div>
+                            )}
+
                             <div style={{ marginTop: '0.5rem', textAlign: 'left' }}>
                               <button 
                                 style={{ ...btnPrimary, fontSize: '0.8rem', padding: '0.4rem 1rem' }}
@@ -1110,6 +1123,15 @@ export default function AdminDashboard() {
                         <option value="">-- اختر الفئة --</option>
                         {categorySections.map(c => <option key={c.id} value={c.category}>{c.title}</option>)}
                       </select>
+                      <div style={{ marginTop: '0.75rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '4px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <input 
+                          type="checkbox" 
+                          id="noonIsMyWay"
+                          checked={noonImportData.isMyWay || false}
+                          onChange={e => setNoonImportData({...noonImportData, isMyWay: e.target.checked})}
+                        />
+                        <label htmlFor="noonIsMyWay" style={{ fontSize: '0.85rem', fontWeight: 600, margin: 0, cursor: 'pointer' }}>هذا المنتج تابع لـ ماي واي (My Way)</label>
+                      </div>
                     </div>
                     <div style={{ flex: 1 }}>
                       <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.25rem' }}>التوفر</label>
@@ -1216,6 +1238,17 @@ export default function AdminDashboard() {
                   <select style={{...inputStyle, marginBottom: '0.75rem'}} value={editData.category} onChange={e => setEditData({...editData, category: e.target.value})}>
                     {categorySections.map(c => <option key={c.id} value={c.category}>{c.title}</option>)}
                   </select>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', padding: '0.75rem', background: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px solid #e2e8f0' }}>
+                    <input 
+                      type="checkbox" 
+                      id="editIsMyWay" 
+                      checked={editData.isMyWay || false} 
+                      onChange={e => setEditData({...editData, isMyWay: e.target.checked})} 
+                      style={{ width: '1.25rem', height: '1.25rem' }}
+                    />
+                    <label htmlFor="editIsMyWay" style={{ fontWeight: 600, margin: 0, cursor: 'pointer' }}>هذا المنتج تابع لـ ماي واي (My Way)</label>
+                  </div>
                   
                   <label style={{ display: 'block', fontWeight: 600 }}>السعر</label>
                   <input style={{...inputStyle, marginBottom: '0.75rem'}} value={editData.price} onChange={e => setEditData({...editData, price: e.target.value})} />
