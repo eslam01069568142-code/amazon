@@ -173,9 +173,15 @@ async function handleRepair() {
               let extractedImg = '';
 
               if (isAmazon) {
-                let priceElem = $('.priceToPay .a-offscreen').first().text().trim() ||
+                let priceElem = $('#corePrice_feature_div .a-price .a-offscreen').first().text().trim() ||
+                                $('.priceToPay .a-offscreen').first().text().trim() ||
                                 $('#corePriceDisplay_desktop_feature_div .priceToPay .a-offscreen').first().text().trim() ||
-                                $('.a-price .a-offscreen').first().text().trim();
+                                $('#corePrice_desktop .priceToPay .a-offscreen').first().text().trim() ||
+                                $('#tp_price_block_total_price_ww .a-offscreen').first().text().trim() ||
+                                $('#apex_desktop .a-price .a-offscreen').first().text().trim() ||
+                                $('span[data-a-color="price"] .a-offscreen').first().text().trim() ||
+                                $('.a-price .a-offscreen').first().text().trim() ||
+                                $('.a-price-whole').first().text().trim();
                 extractedPrice = priceElem;
                 extractedOrigPrice = $('.basisPrice .a-offscreen').first().text().trim();
                 extractedImg = $('#landingImage').attr('src') || $('.a-dynamic-image').attr('src') || '';

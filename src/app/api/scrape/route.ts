@@ -251,10 +251,14 @@ export async function POST(req: Request) {
         let currentPrice = '';
         let originalPrice = '';
 
-        // Priority 1: Primary Amazon price selectors
-        let priceElem = $('.priceToPay .a-offscreen').first().text().trim();
+        // Priority 1: Primary Amazon & Apparel/Variant price selectors
+        let priceElem = $('#corePrice_feature_div .a-price .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('.priceToPay .a-offscreen').first().text().trim();
         if (!priceElem) priceElem = $('#corePriceDisplay_desktop_feature_div .priceToPay .a-offscreen').first().text().trim();
         if (!priceElem) priceElem = $('#corePrice_desktop .priceToPay .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('#tp_price_block_total_price_ww .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('#apex_desktop .a-price .a-offscreen').first().text().trim();
+        if (!priceElem) priceElem = $('span[data-a-color="price"] .a-offscreen').first().text().trim();
         if (!priceElem) priceElem = $('.a-price .a-offscreen').first().text().trim();
 
         // Priority 2: Structured Data (JSON-LD script tags)

@@ -16,12 +16,6 @@ export async function POST(req: Request) {
 
     const safeDescription = description ? String(description).substring(0, 3000) : '';
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env['GEMINI_API_KEY'];
-    if (!apiKey) {
-      console.warn('GEMINI_API_KEY is not set');
-      return NextResponse.json({ error: 'AI provider not configured' }, { status: 503 });
-    }
-
     // Fetch existing categories from Supabase (only products_by_category)
     const { data: categories } = await supabaseAdmin
       .from('sections')
@@ -30,6 +24,40 @@ export async function POST(req: Request) {
 
     if (!categories || categories.length === 0) {
       return NextResponse.json({ error: 'No categories available in the system' }, { status: 400 });
+    }
+
+    // Rule-based fallback keyword dictionary
+    const keywordMap: { keywords: string[]; categoryId: string }[] = [
+      { keywords: ['قميص', 'تيشرت', 'تي شيرت', 'بوكسر', 'فانلة', 'شرابات', 'حمالة صدر', 'بنطلون', 'جينز', 'ملابس', 'بلوزة', 'شنطة', 'حذاء', 'اديداس', 'دايس', 'كوتشي', 'أزياء', 'موضة'], categoryId: 'cat_fashion' },
+      { keywords: ['موبايل', 'هاتف', 'سامسونج', 'آيفون', 'شاومي', 'نوكيا', 'سماعة', 'شاحن', 'باور بانك', 'إلكترونيات'], categoryId: 'cat_electronics' },
+      { keywords: ['لابتوب', 'كمبيوتر', 'ماوس', 'كيبورد', 'شاشة'], categoryId: 'cat_laptops' },
+      { keywords: ['مطبخ', 'قلاية', 'خلاط', 'كبة', 'غلاية', 'أجهزة منزلية', 'تكييف', 'غسالة', 'ثلاجة'], categoryId: 'cat_appliances' },
+      { keywords: ['بشرة', 'شعر', 'عطر', 'غسول', 'صابون', 'شامبو', 'حلاقة', 'عناية'], categoryId: 'cat_beauty' }
+    ];
+
+    const titleLower = title.toLowerCase();
+    let ruleMatchedCategory = '';
+    for (const rule of keywordMap) {
+      if (rule.keywords.some(kw => titleLower.includes(kw))) {
+        const found = categories.find((c: { category: string; title: string }) => c.category === rule.categoryId || c.category.includes(rule.categoryId.replace('cat_', '')));
+        if (found) {
+          ruleMatchedCategory = found.category;
+          break;
+        }
+      }
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY || process.env['GEMINI_API_KEY'];
+    if (!apiKey) {
+      const fallbackCat = ruleMatchedCategory || categories[0].category;
+      const matchedCategory = categories.find(c => c.category === fallbackCat) || categories[0];
+      return NextResponse.json({
+        success: true,
+        category: matchedCategory.category,
+        categoryTitle: matchedCategory.title,
+        confidence: 80,
+        reason: 'Rule-based categorization fallback (AI key not set)'
+      });
     }
 
     const categoriesListStr = categories.map(c => `- ID: "${c.category}" (Name: "${c.title}")`).join('\n');
@@ -56,39 +84,48 @@ Return your answer strictly as a JSON object with this format (do not wrap in ma
 }
 `;
 
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: 'application/json',
+        }
+      });
+
+      const text = response.text;
+      if (text) {
+        const parsed = JSON.parse(text);
+        const matchedCategory = categories.find(c => c.category === parsed.category);
+        if (matchedCategory) {
+          return NextResponse.json({
+            success: true,
+            category: matchedCategory.category,
+            categoryTitle: matchedCategory.title,
+            confidence: parsed.confidence || 90,
+            reason: parsed.reason || 'AI Categorized'
+          });
+        }
       }
-    });
-
-    const text = response.text;
-    if (!text) {
-      throw new Error('Empty response from AI');
+    } catch (aiErr: any) {
+      console.warn('AI Categorize call failed, falling back to rule engine:', aiErr.message);
     }
 
-    const parsed = JSON.parse(text);
-
-    // Validate that the returned category is actually in our list
-    const matchedCategory = categories.find(c => c.category === parsed.category);
-    if (!matchedCategory) {
-      throw new Error(`AI suggested invalid category: ${parsed.category}`);
-    }
+    // Default Fallback if AI fails or returns invalid ID
+    const fallbackCatId = ruleMatchedCategory || categories[0].category;
+    const fallbackObj = categories.find(c => c.category === fallbackCatId) || categories[0];
 
     return NextResponse.json({
       success: true,
-      category: parsed.category,
-      categoryTitle: matchedCategory.title,
-      confidence: parsed.confidence,
-      reason: parsed.reason
+      category: fallbackObj.category,
+      categoryTitle: fallbackObj.title,
+      confidence: 75,
+      reason: 'Rule-based fallback categorization'
     });
 
   } catch (error: any) {
     console.error('Categorize API Error:', error);
-    // Gracefully fallback so the client can handle manual selection
     return NextResponse.json({ success: false, error: 'Failed to process AI categorization' }, { status: 500 });
   }
 }

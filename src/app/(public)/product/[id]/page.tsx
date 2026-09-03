@@ -10,6 +10,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { parseNumericPrice, formatDisplayPrice, calculateSavings, calculateOriginalDiscount, UnifiedOffer } from '@/utils/price';
 
+export const revalidate = 60;
+
 // Simple deterministic PRNG based on a string seed
 function getSeededRandom(seedStr: string) {
   let h = 0;

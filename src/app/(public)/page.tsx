@@ -5,6 +5,8 @@ import { Tag, Zap, ArrowLeft, Clock, Shirt, HeartPulse, Dumbbell, Smartphone, Ho
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
+export const revalidate = 60;
+
 function getCategoryTheme(title: string, category: string) {
   const t = (title + ' ' + category).toLowerCase();
   
