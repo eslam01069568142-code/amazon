@@ -144,7 +144,7 @@ function parsePrice(priceStr: string | undefined): number {
   return numericStr ? parseFloat(numericStr) : 0;
 }
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string, sub?: string, q?: string }> }) {
   const resolvedParams = await searchParams;
   const db = await getDb();
 
@@ -181,16 +181,63 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     const categoryName = categoryInfo ? categoryInfo.title : resolvedParams.category;
     
     // Include child categories
-    const childCats = db.sections.filter(c => c.parentId === resolvedParams.category).map(c => c.category);
-    const validCats = [resolvedParams.category, ...childCats];
+    const childSections = db.sections.filter(c => c.parentId === resolvedParams.category).sort((a, b) => (a.order || 0) - (b.order || 0));
+    const childCats = childSections.map(c => c.category);
+    
+    // If a subcategory tab is active, only show that subcategory's products. Otherwise, show parent + all children.
+    const validCats = resolvedParams.sub ? [resolvedParams.sub] : [resolvedParams.category, ...childCats];
     const filtered = db.products.filter(p => p.category && validCats.includes(p.category));
     
     return (
       <div className="container animate-fade-in">
         <section className="section" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
-          <h2 className="text-2xl" style={{ marginBottom: '2rem' }}>
+          <h2 className="text-2xl" style={{ marginBottom: '1.5rem' }}>
             {categoryName}
           </h2>
+
+          {childSections.length > 0 && (
+            <div style={{ display: 'flex', gap: '0.65rem', overflowX: 'auto', paddingBottom: '1rem', marginBottom: '1.5rem', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }} className="hide-scrollbar">
+              <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; }`}} />
+              <Link
+                href={`/?category=${resolvedParams.category}`}
+                style={{
+                  padding: '0.5rem 1.25rem',
+                  borderRadius: '2rem',
+                  whiteSpace: 'nowrap',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
+                  background: !resolvedParams.sub ? 'var(--accent-color)' : 'var(--surface-color)',
+                  color: !resolvedParams.sub ? 'white' : 'var(--text-color)',
+                  border: `1.5px solid ${!resolvedParams.sub ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                  transition: 'all 0.2s ease',
+                  boxShadow: !resolvedParams.sub ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
+                }}
+              >
+                الكل
+              </Link>
+              {childSections.map(child => (
+                <Link
+                  key={child.id}
+                  href={`/?category=${resolvedParams.category}&sub=${child.category}`}
+                  style={{
+                    padding: '0.5rem 1.25rem',
+                    borderRadius: '2rem',
+                    whiteSpace: 'nowrap',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    background: resolvedParams.sub === child.category ? 'var(--accent-color)' : 'var(--surface-color)',
+                    color: resolvedParams.sub === child.category ? 'white' : 'var(--text-color)',
+                    border: `1.5px solid ${resolvedParams.sub === child.category ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                    transition: 'all 0.2s ease',
+                    boxShadow: resolvedParams.sub === child.category ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
+                  }}
+                >
+                  {child.title}
+                </Link>
+              ))}
+            </div>
+          )}
+
           {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-secondary)' }}>
               لا توجد منتجات في هذا القسم حالياً.
