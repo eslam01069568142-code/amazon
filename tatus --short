@@ -1,0 +1,154 @@
+src/app/(public)/product/[id]/page.tsx:72: trailing whitespace.
+[32m+[m[41m  [m
+src/app/(public)/product/[id]/page.tsx:76: trailing whitespace.
+[32m+[m[41m  [m
+src/app/(public)/product/[id]/page.tsx:122: trailing whitespace.
+[32m+[m[41m  [m
+src/app/(public)/product/[id]/page.tsx:127: trailing whitespace.
+[32m+[m[41m  [m
+src/app/(public)/product/[id]/page.tsx:128: trailing whitespace.
+[32m+[m[32m  const discountPercent = (displayOrigPriceNum && displayOrigPriceNum > displayPriceNum!)[m[41m [m
+src/app/(public)/product/[id]/page.tsx:129: trailing whitespace.
+[32m+[m[32m    ? Math.round(((displayOrigPriceNum - displayPriceNum!) / displayOrigPriceNum) * 100)[m[41m [m
+src/app/admin/page.tsx:76: trailing whitespace.
+[32m+[m[41m  [m
+src/app/admin/page.tsx:111: trailing whitespace.
+[32m+[m[41m    [m
+src/app/admin/page.tsx:118: trailing whitespace.
+[32m+[m[41m    [m
+src/app/admin/page.tsx:136: trailing whitespace.
+[32m+[m[41m      [m
+src/app/admin/page.tsx:155: trailing whitespace.
+[32m+[m[41m      [m
+src/app/admin/page.tsx:187: trailing whitespace.
+[32m+[m[41m      [m
+src/app/admin/page.tsx:382: trailing whitespace.
+[32m+[m[41m    [m
+src/app/admin/page.tsx:384: trailing whitespace.
+[32m+[m[41m    [m
+src/app/admin/page.tsx:392: trailing whitespace.
+[32m+[m[41m    [m
+src/app/admin/page.tsx:406: trailing whitespace.
+[32m+[m[41m    [m
+src/app/admin/page.tsx:452: trailing whitespace.
+[32m+[m[41m        [m
+src/app/admin/page.tsx:479: trailing whitespace.
+[32m+[m[41m        [m
+src/app/admin/page.tsx:498: trailing whitespace.
+[32m+[m[41m      [m
+src/app/admin/page.tsx:515: trailing whitespace.
+[32m+[m[41m      [m
+src/app/admin/page.tsx:753: trailing whitespace.
+[32m+[m[41m          [m
+src/app/admin/page.tsx:858: trailing whitespace.
+[32m+[m[41m              [m
+src/app/admin/page.tsx:867: trailing whitespace.
+[32m+[m[32m                        السعر: <strong style={{ color: '#16a34a' }}>{previewProduct.price}</strong>[m[41m [m
+src/app/admin/page.tsx:877: trailing whitespace.
+[32m+[m[41m              [m
+src/app/admin/page.tsx:883: trailing whitespace.
+[32m+[m[32m                      <div key={idx} style={{[m[41m [m
+src/app/admin/page.tsx:910: trailing whitespace.
+[32m+[m[41m                            [m
+src/app/admin/page.tsx:915: trailing whitespace.
+[32m+[m[32m                                  <input[m[41m [m
+src/app/admin/page.tsx:916: trailing whitespace.
+[32m+[m[32m                                    style={{ ...inputStyle, marginBottom: 0, borderColor: '#ea580c' }}[m[41m [m
+src/app/admin/page.tsx:924: trailing whitespace.
+[32m+[m[32m                                  <input[m[41m [m
+src/app/admin/page.tsx:925: trailing whitespace.
+[32m+[m[32m                                    style={{ ...inputStyle, marginBottom: 0 }}[m[41m [m
+src/app/admin/page.tsx:937: trailing whitespace.
+[32m+[m[32m                                <select[m[41m [m
+src/app/admin/page.tsx:949: trailing whitespace.
+[32m+[m[32m                              <button[m[41m [m
+src/app/admin/page.tsx:972: trailing whitespace.
+[32m+[m[41m              [m
+src/app/admin/page.tsx:984: trailing whitespace.
+[32m+[m[41m                  [m
+src/app/admin/page.tsx:993: trailing whitespace.
+[32m+[m[41m                  [m
+src/app/admin/page.tsx:996: trailing whitespace.
+[32m+[m[41m                  [m
+src/app/admin/page.tsx:1020: trailing whitespace.
+[32m+[m[41m                      [m
+src/app/admin/page.tsx:1034: trailing whitespace.
+[32m+[m[32m                                <button[m[41m [m
+src/app/admin/page.tsx:1035: trailing whitespace.
+[32m+[m[32m                                  style={{ ...btnGhost, padding: '0.25rem 0.5rem', fontSize: '0.75rem', background: '#e0f2fe', color: '#0369a1', marginTop: '0.25rem' }}[m[41m [m
+src/app/admin/page.tsx:1131: trailing whitespace.
+[32m+[m[41m                  [m
+src/app/admin/page.tsx:1136: trailing whitespace.
+[32m+[m[41m                  [m
+src/app/admin/page.tsx:1139: trailing whitespace.
+[32m+[m[41m                  [m
+src/app/admin/page.tsx:1389: trailing whitespace.
+[32m+[m[41m            [m
+src/app/admin/page.tsx:1390: trailing whitespace.
+[32m+[m[32m            <div[m[41m [m
+src/app/admin/page.tsx:1401: trailing whitespace.
+[32m+[m[41m            [m
+src/app/admin/page.tsx:1402: trailing whitespace.
+[32m+[m[32m            <div[m[41m [m
+src/app/api/categorize/route.ts:40: trailing whitespace.
+[32m+[m[32mYou MUST choose EXACTLY ONE category ID from the provided list.[m[41m [m
+src/app/api/noon-scrape/route.ts:33: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/noon-scrape/route.ts:38: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/noon-scrape/route.ts:40: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/noon-scrape/route.ts:43: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/noon-scrape/route.ts:91: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/noon-scrape/route.ts:95: trailing whitespace.
+[32m+[m[41m      [m
+src/app/api/product-offers/[id]/route.ts:9: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/product-offers/[id]/route.ts:19: trailing whitespace.
+[32m+[m[41m      [m
+src/app/api/product-offers/[id]/route.ts:22: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/product-offers/[id]/route.ts:25: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/product-offers/[id]/route.ts:29: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/product-offers/[id]/route.ts:38: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/product-offers/route.ts:9: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/product-offers/route.ts:18: trailing whitespace.
+[32m+[m[41m      [m
+src/app/api/product-offers/route.ts:72: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/products/[id]/route.ts:20: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/products/[id]/route.ts:78: trailing whitespace.
+[32m+[m[41m          [m
+src/app/api/products/[id]/route.ts:119: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/products/[id]/route.ts:135: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/products/route.ts:87: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/products/route.ts:91: trailing whitespace.
+[32m+[m[41m    [m
+src/app/api/products/route.ts:114: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/scrape/route.ts:103: trailing whitespace.
+[32m+[m[41m      [m
+src/app/api/scrape/route.ts:254: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/scrape/route.ts:257: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/scrape/route.ts:264: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/scrape/route.ts:274: trailing whitespace.
+[32m+[m[41m        [m
+src/app/api/scrape/route.ts:386: trailing whitespace.
+[32m+[m[41m          [m
+src/utils/affiliate.ts:7: trailing whitespace.
+[32m+[m[32m    // 1. Check for short links.[m[41m [m
+src/utils/affiliate.ts:21: trailing whitespace.
+[32m+[m[41m    [m

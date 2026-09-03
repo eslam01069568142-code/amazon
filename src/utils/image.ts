@@ -8,13 +8,18 @@ export function getHighResImageUrl(url: string | null | undefined): string {
   let cleaned = url.trim();
   
   // Amazon High-Res Cleaner:
-  // Stripping parameters between dot-underscore (._) and final extension restores full resolution.
-  if (cleaned.includes('media-amazon.com') || cleaned.includes('images-amazon.com') || cleaned.includes('amazon.eg') || cleaned.includes('amazon.')) {
-    cleaned = cleaned.replace(/\._[A-Z0-9_,.-]+_\.([a-z0-9]+)/gi, '.$1');
+  // Stripping parameter blocks between ._ and the extension restores full resolution.
+  if (cleaned.includes('media-amazon.com') || cleaned.includes('images-amazon.com') || cleaned.includes('amazon.')) {
+    cleaned = cleaned.replace(/\._[A-Z0-9_,.+%-]+_\.([a-z0-9]+)$/gi, '.$1');
+    cleaned = cleaned.replace(/\.([A-Z0-9_,-]+)\.(jpg|png|jpeg|webp)$/gi, (match, p1, ext) => {
+      if (p1.includes('AC') || p1.includes('SR') || p1.includes('US') || p1.includes('SX') || p1.includes('SY') || p1.includes('UL') || p1.includes('SL') || p1.includes('CR')) {
+        return '.' + ext;
+      }
+      return match;
+    });
   }
 
   // Noon High-Res Cleaner:
-  // Upgrade Noon thumbnail widths (e.g. ?width=200) to full width (?width=1200).
   if (cleaned.includes('nooncdn.com')) {
     if (cleaned.includes('?width=')) {
       cleaned = cleaned.replace(/\?width=\d+/, '?width=1200');
