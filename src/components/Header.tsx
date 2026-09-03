@@ -71,10 +71,6 @@ export default async function Header() {
       children: children.length > 0 ? children : undefined
     };
   });
-  
-  // Optional: Filter out parents that were meant to be mega-menus but have 0 valid children
-  // (Unless they are fundamental standalone categories like Fashion)
-  catSections = catSections.filter((cat: any) => cat.category !== 'cat_toys_parent');
 
   return (
     <header className={styles.header}>
