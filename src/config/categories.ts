@@ -37,7 +37,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'الإلكترونيات',
     slug: 'electronics',
     iconName: 'Smartphone',
-    childIds: ['cat_audio', 'cat_phones', 'cat_cameras', 'cat_accessories', 'cat_power', 'cat_zpw1oj2b7', 'cat_a3yzg81fr', 'cat_khnmn6p8m', 'cat_q4p0xeu9y', 'cat_z2p4a5gd3', 'cat_q8ol87c8r', 'cat_x2m7dey9f']
+    childIds: ['cat_audio', 'cat_phones', 'cat_cameras', 'cat_accessories', 'cat_power']
   },
   // 5. Sports & Fitness (الرياضة واللياقة)
   cat_gnkssf8aq: {
