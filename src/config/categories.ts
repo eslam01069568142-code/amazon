@@ -13,7 +13,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'أزياء وملابس',
     slug: 'fashion',
     iconName: 'Shirt',
-    childIds: ['cat_hfskvya0h', 'cat_oxh8hivt8', 'cat_5kv8y47df', 'cat_62fdle3jq', 'cat_kbp8na6k6']
+    childIds: ['cat_hfskvya0h', 'cat_oxh8hivt8', 'cat_5kv8y47df']
   },
   // 2. Home & Kitchen (المنزل والمطبخ)
   cat_mfufmoad0: {
@@ -21,7 +21,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'المنزل والمطبخ',
     slug: 'home-kitchen',
     iconName: 'Home',
-    childIds: ['cat_6d04c5ft6', 'cat_c4tky0yxa', 'cat_2zjelnsdg', 'cat_u310yd1w3']
+    childIds: ['cat_kitchenapps', 'cat_kitchentools', 'cat_6d04c5ft6', 'cat_c4tky0yxa', 'cat_2zjelnsdg', 'cat_u310yd1w3']
   },
   // 3. Health & Beauty (الصحة والجمال)
   cat_g3n6vkljv: {
@@ -29,7 +29,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'الصحة والجمال',
     slug: 'health-beauty',
     iconName: 'HeartPulse',
-    childIds: ['cat_ut73yprlm', 'cat_bwoqca3kt', 'cat_o6r080tvi', 'cat_r826y1abx']
+    childIds: ['cat_perfumes', 'cat_personalcare', 'cat_ut73yprlm', 'cat_bwoqca3kt', 'cat_o6r080tvi', 'cat_r826y1abx']
   },
   // 4. Electronics (الإلكترونيات)
   cat_uzhhuoj5g: {
@@ -37,7 +37,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'الإلكترونيات',
     slug: 'electronics',
     iconName: 'Smartphone',
-    childIds: ['cat_zpw1oj2b7', 'cat_a3yzg81fr', 'cat_khnmn6p8m', 'cat_q4p0xeu9y', 'cat_z2p4a5gd3', 'cat_q8ol87c8r', 'cat_x2m7dey9f']
+    childIds: ['cat_audio', 'cat_phones', 'cat_cameras', 'cat_accessories', 'cat_power', 'cat_zpw1oj2b7', 'cat_a3yzg81fr', 'cat_khnmn6p8m', 'cat_q4p0xeu9y', 'cat_z2p4a5gd3', 'cat_q8ol87c8r', 'cat_x2m7dey9f']
   },
   // 5. Sports & Fitness (الرياضة واللياقة)
   cat_gnkssf8aq: {
@@ -53,7 +53,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'الحقائب والشنط',
     slug: 'bags',
     iconName: 'Briefcase',
-    childIds: []
+    childIds: ['cat_backpacks', 'cat_travelcross']
   },
   // 7. Shoes (الأحذية)
   cat_5kv8y47df: {
