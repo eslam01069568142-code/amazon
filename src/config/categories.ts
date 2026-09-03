@@ -70,6 +70,14 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     slug: 'personal-care',
     iconName: 'Sparkles',
     childIds: []
+  },
+  // 9. Car Supplies (مستلزمات السيارات)
+  cat_carsupplies: {
+    id: 'cat_carsupplies',
+    title: 'مستلزمات السيارات',
+    slug: 'car-supplies',
+    iconName: 'Car',
+    childIds: ['cat_a6s6tp65d']
   }
 };
 
