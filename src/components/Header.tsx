@@ -50,20 +50,31 @@ export default async function Header() {
   
   // Group categories for Mega Menu
   const parentCategories = rows.filter((r: any) => !r.parent_id);
-  const catSections = parentCategories.map((parent: any) => ({
-    id: `nav_${parent.id}`,
-    title: parent.title,
-    category: parent.category,
-    icon: parent.icon,
-    children: rows
-      .filter((r: any) => r.parent_id === parent.category)
+  
+  let catSections = parentCategories.map((parent: any) => {
+    const children = rows
+      .filter((r: any) => r.parent_id === parent.category && r.category !== parent.category)
       .map((child: any) => ({
         id: `nav_${child.id}`,
         title: child.title,
         category: child.category,
         icon: child.icon,
-      }))
-  }));
+      }));
+
+    // Prevent redundant single-item dropdowns if the child is exactly the same concept as the parent
+    // or just pass them through but ensure we don't have empty dropdowns.
+    return {
+      id: `nav_${parent.id}`,
+      title: parent.title,
+      category: parent.category,
+      icon: parent.icon,
+      children: children.length > 0 ? children : undefined
+    };
+  });
+  
+  // Optional: Filter out parents that were meant to be mega-menus but have 0 valid children
+  // (Unless they are fundamental standalone categories like Fashion)
+  catSections = catSections.filter((cat: any) => cat.category !== 'cat_toys_parent');
 
   return (
     <header className={styles.header}>
