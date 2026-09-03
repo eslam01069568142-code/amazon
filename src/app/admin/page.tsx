@@ -1162,7 +1162,30 @@ export default function AdminDashboard() {
                       <tr key={p.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
                         <td style={{ padding: '0.75rem' }}><img src={p.image} alt={p.title} style={{ width: 50, height: 50, objectFit: 'contain' }} /></td>
                         <td style={{ padding: '0.75rem', maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</td>
-                        <td style={{ padding: '0.75rem' }}>{categorySections.find(c => c.category === p.category)?.title || p.category}</td>
+                        <td style={{ padding: '0.75rem' }}>
+                          <select 
+                            style={{ padding: '0.25rem', fontSize: '0.85rem', borderRadius: '4px', border: '1px solid #cbd5e1', maxWidth: '150px' }}
+                            value={p.category || ''}
+                            onChange={async (e) => {
+                              const newCat = e.target.value;
+                              // Optimistic UI update
+                              setProducts(products.map(prod => prod.id === p.id ? { ...prod, category: newCat } : prod));
+                              // API update
+                              try {
+                                await fetch(`/api/products/${p.id}`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ category: newCat })
+                                });
+                              } catch (err) {
+                                alert('فشل في تحديث الفئة!');
+                              }
+                            }}
+                          >
+                            <option value="">-- غير محدد --</option>
+                            {categorySections.map(c => <option key={c.id} value={c.category}>{c.title}</option>)}
+                          </select>
+                        </td>
                         <td style={{ padding: '0.75rem', fontWeight: 700 }}>{p.price}</td>
                         <td style={{ padding: '0.75rem' }}>
                           <div style={{ display: 'flex', gap: '0.5rem' }}><button style={btnGhost} onClick={() => handleEditClick(p)}>تعديل</button><button style={btnDanger} onClick={() => handleDeleteProduct(p.id)}>حذف</button></div>
