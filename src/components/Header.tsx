@@ -34,7 +34,7 @@ const getCachedCategories = unstable_cache(
     const uniqueCategories: any[] = [];
     const seen = new Set();
     for (const row of data || []) {
-      if (row.category && !seen.has(row.category)) {
+      if (row.category && !seen.has(row.category) && row.title !== 'غير مصنف') {
         seen.add(row.category);
         uniqueCategories.push(row);
       }

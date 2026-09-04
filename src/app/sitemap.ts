@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getDb } from '@/data/db';
+import { generateSlug } from '@/utils/slugs';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const db = await getDb();
@@ -18,6 +19,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Add categories
   const categories = new Set(db.products.map((p) => p.category).filter(Boolean));
   categories.forEach((category) => {
+    const section = db.sections.find(s => s.category === category);
+    if (!section || section.title === 'غير مصنف') return;
+
     // Find the latest product date in this category
     const categoryProducts = db.products.filter(p => p.category === category);
     let latestDate = new Date(0); // Epoch start
@@ -39,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     sitemapEntries.push({
-      url: `${baseUrl}/?category=${encodeURIComponent(category)}`,
+      url: `${baseUrl}/category/${generateSlug(section.title)}`,
       lastModified: latestDate,
       changeFrequency: 'daily',
       priority: 0.8,
@@ -58,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     } catch(e) {}
 
     sitemapEntries.push({
-      url: `${baseUrl}/product/${product.id}`,
+      url: `${baseUrl}/product/${product.id}/${generateSlug(product.title)}`,
       lastModified: lastMod,
       changeFrequency: 'weekly',
       priority: 0.6,

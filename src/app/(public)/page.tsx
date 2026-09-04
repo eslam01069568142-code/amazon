@@ -3,6 +3,8 @@ import ProductCarousel from '@/components/ProductCarousel';
 import { getDb } from '@/data/db';
 import { Tag, Zap, ArrowLeft, Clock, Shirt, HeartPulse, Dumbbell, Smartphone, Home as HomeIcon, Gamepad2, Briefcase, Car, Sparkles, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { permanentRedirect } from 'next/navigation';
+import { generateSlug } from '@/utils/slugs';
 import type { Metadata } from 'next';
 
 export const revalidate = 60;
@@ -92,31 +94,7 @@ function getCategoryTheme(title: string, category: string) {
   };
 }
 
-export async function generateMetadata({ searchParams }: { searchParams: Promise<{ category?: string, q?: string }> }): Promise<Metadata> {
-  const resolvedParams = await searchParams;
-  
-  if (resolvedParams.category) {
-    return {
-      title: `${resolvedParams.category} | بكام النهاردة`,
-      description: `اكتشف وقارن أفضل أسعار وعروض ${resolvedParams.category} في مصر على بكام النهاردة.`,
-      alternates: {
-        canonical: `/?category=${encodeURIComponent(resolvedParams.category)}`,
-      },
-      openGraph: {
-        title: `${resolvedParams.category} | بكام النهاردة`,
-        description: `اكتشف وقارن أفضل أسعار وعروض ${resolvedParams.category} في مصر على بكام النهاردة.`,
-        url: `/?category=${encodeURIComponent(resolvedParams.category)}`,
-      }
-    };
-  }
-  
-  if (resolvedParams.q) {
-    return {
-      title: `نتائج البحث عن: ${resolvedParams.q} | بكام النهاردة`,
-      robots: { index: false, follow: true }
-    };
-  }
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
     alternates: {
       canonical: '/',
@@ -175,83 +153,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     );
   }
 
-  // ── 1. Category Page View ──
+  // ── 1. Category 301 Redirect ──
   if (resolvedParams.category) {
     const categoryInfo = db.sections.find(s => s.type === 'products_by_category' && s.category === resolvedParams.category);
-    const categoryName = categoryInfo ? categoryInfo.title : resolvedParams.category;
-    
-    // Include child categories
-    const childSections = db.sections.filter(c => c.parentId === resolvedParams.category).sort((a, b) => (a.order || 0) - (b.order || 0));
-    const childCats = childSections.map(c => c.category);
-    
-    // If a subcategory tab is active, only show that subcategory's products. Otherwise, show parent + all children.
-    const validCats = resolvedParams.sub ? [resolvedParams.sub] : [resolvedParams.category, ...childCats];
-    const filtered = db.products.filter(p => p.category && validCats.includes(p.category));
-    
-    return (
-      <div className="container animate-fade-in">
-        <section className="section" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
-          <h2 className="text-2xl" style={{ marginBottom: '1.5rem' }}>
-            {categoryName}
-          </h2>
-
-          {childSections.length > 0 && (
-            <div style={{ display: 'flex', gap: '0.65rem', overflowX: 'auto', paddingBottom: '1rem', marginBottom: '1.5rem', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }} className="hide-scrollbar">
-              <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; }`}} />
-              <Link
-                href={`/?category=${resolvedParams.category}`}
-                style={{
-                  padding: '0.5rem 1.25rem',
-                  borderRadius: '2rem',
-                  whiteSpace: 'nowrap',
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  background: !resolvedParams.sub ? 'var(--accent-color)' : 'var(--surface-color)',
-                  color: !resolvedParams.sub ? 'white' : 'var(--text-color)',
-                  border: `1.5px solid ${!resolvedParams.sub ? 'var(--accent-color)' : 'var(--border-color)'}`,
-                  transition: 'all 0.2s ease',
-                  boxShadow: !resolvedParams.sub ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
-                }}
-              >
-                الكل
-              </Link>
-              {childSections.map(child => (
-                <Link
-                  key={child.id}
-                  href={`/?category=${resolvedParams.category}&sub=${child.category}`}
-                  style={{
-                    padding: '0.5rem 1.25rem',
-                    borderRadius: '2rem',
-                    whiteSpace: 'nowrap',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    background: resolvedParams.sub === child.category ? 'var(--accent-color)' : 'var(--surface-color)',
-                    color: resolvedParams.sub === child.category ? 'white' : 'var(--text-color)',
-                    border: `1.5px solid ${resolvedParams.sub === child.category ? 'var(--accent-color)' : 'var(--border-color)'}`,
-                    transition: 'all 0.2s ease',
-                    boxShadow: resolvedParams.sub === child.category ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
-                  }}
-                >
-                  {child.title}
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--text-secondary)' }}>
-              لا توجد منتجات في هذا القسم حالياً.
-            </div>
-          ) : (
-            <div className="grid grid-cols-4">
-              {filtered.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-    );
+    if (categoryInfo) {
+      permanentRedirect(`/category/${generateSlug(categoryInfo.title)}`);
+    } else {
+      permanentRedirect(`/`);
+    }
   }
 
   // ── 2. Homepage View ──
@@ -439,7 +348,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
                 return (
                   <Link
                     key={cat.id}
-                    href={`/?category=${cat.category}`}
+                    href={`/category/${generateSlug(cat.title)}`}
                     className="category-revamped-card"
                     style={{
                       background: theme.bgLight,
@@ -497,7 +406,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
               <span />
               <Link
-                href={`/?category=${section.category}`}
+                href={`/category/${generateSlug(section.title)}`}
                 style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none', marginBottom: '0.5rem' }}
               >
                 عرض الكل <ArrowLeft size={16} />
@@ -534,7 +443,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
               <h2 className="text-2xl" style={{ margin: 0 }}>{section.title}</h2>
               {section.type === 'category_section' && (
                 <Link 
-                  href={`/?category=${section.category}`} 
+                  href={`/category/${generateSlug(section.title)}`} 
                   style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none' }}
                 >
                   عرض الكل <ArrowLeft size={16} />

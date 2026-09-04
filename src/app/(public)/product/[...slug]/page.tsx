@@ -1,6 +1,7 @@
 import { getDb, supabase } from '@/data/db';
 import { getAmazonProductUrl } from '@/utils/amazon';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { generateSlug } from '@/utils/slugs';
 import ImageGallery from '@/components/ImageGallery';
 import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
@@ -25,25 +26,28 @@ function getSeededRandom(seedStr: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
   const resolvedParams = await params;
+  const id = resolvedParams.slug[0];
   const db = await getDb();
-  const product = db.products.find(p => p.id === resolvedParams.id);
+  const product = db.products.find(p => p.id === id);
   if (!product) return { title: 'Product Not Found' };
   
   const desc = product.metaDescription || product.description.substring(0, 160) || `تسوق ${product.title} بأفضل سعر في مصر على بكام النهاردة.`;
   const imgUrl = (product.images && product.images.length > 0) ? product.images[0] : product.image;
 
+  const expectedSlug = generateSlug(product.title);
+
   return {
     title: `${product.title} | بكام النهاردة`,
     description: desc,
     alternates: {
-      canonical: `/product/${product.id}`,
+      canonical: `/product/${product.id}/${expectedSlug}`,
     },
     openGraph: {
       title: `${product.title} | بكام النهاردة`,
       description: desc,
-      url: `/product/${product.id}`,
+      url: `/product/${product.id}/${expectedSlug}`,
       images: imgUrl ? [{ url: imgUrl }] : undefined,
     },
     twitter: {
@@ -55,13 +59,21 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductPage({ params }: { params: Promise<{ slug: string[] }> }) {
   const resolvedParams = await params;
+  const id = resolvedParams.slug[0];
+  const currentTitleSlug = resolvedParams.slug.length > 1 ? resolvedParams.slug[1] : null;
+  
   const db = await getDb();
-  const product = db.products.find(p => p.id === resolvedParams.id);
+  const product = db.products.find(p => p.id === id);
 
   if (!product) {
     notFound();
+  }
+
+  const expectedSlug = generateSlug(product.title);
+  if (currentTitleSlug !== expectedSlug) {
+    permanentRedirect(`/product/${id}/${expectedSlug}`);
   }
 
   // Fetch store offers securely using public anon client and RLS
@@ -399,7 +411,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                           <a
                             href={offer.url}
                             target="_blank"
-                            rel="nofollow noopener noreferrer"
+                            rel="sponsored nofollow noopener noreferrer"
                             style={{ padding: '0.5rem 1rem', background: isBest ? '#16a34a' : '#2563eb', color: '#fff', borderRadius: '0.375rem', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem', transition: 'all 0.2s' }}
                           >
                             شراء الآن
@@ -419,7 +431,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   <a
                     href={amazonAffiliateLink}
                     target="_blank"
-                    rel="nofollow noopener noreferrer"
+                    rel="sponsored nofollow noopener noreferrer"
                     className="btn-amazon"
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}
                   >
@@ -436,7 +448,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                     key={noonOffer.id}
                     href={noonOffer.affiliate_url}
                     target="_blank"
-                    rel="nofollow noopener noreferrer"
+                    rel="sponsored nofollow noopener noreferrer"
                     className="btn-store-offer noon-cta"
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', background: '#fef08a', color: '#854d0e', border: '1px solid #fde047', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: 700, transition: 'all 0.2s', textDecoration: 'none', marginBottom: '0.75rem' }}
                   >

@@ -5,6 +5,7 @@ import { ChevronDown, List, ChevronLeft } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './Header.module.css';
+import { generateSlug } from '@/utils/slugs';
 
 export default function CategorySlider({ sections = [] }: { sections?: any[] }) {
   const searchParams = useSearchParams();
@@ -96,7 +97,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
                     }}
                     style={{ borderBottom: window.innerWidth <= 768 ? '1px solid #e2e8f0' : 'none', marginBottom: 0, paddingBottom: window.innerWidth <= 768 ? '0.75rem' : '0.5rem', paddingRight: '1rem', paddingLeft: '1rem' }}
                   >
-                    <Link href={`/?category=${parent.category}`} onClick={() => window.innerWidth > 768 && setDropdownOpen(false)} style={{ color: 'inherit', textDecoration: 'none', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Link href={`/category/${generateSlug(parent.title)}`} onClick={() => window.innerWidth > 768 && setDropdownOpen(false)} style={{ color: 'inherit', textDecoration: 'none', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       {parent.title}
                       {window.innerWidth <= 768 ? (
                          <ChevronDown size={16} style={{ color: '#94a3b8', transform: activeParentId === parent.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
@@ -113,7 +114,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
                         parent.children.map((child: any) => (
                           <Link
                             key={child.id}
-                            href={`/?category=${child.category}`}
+                            href={`/category/${generateSlug(child.title)}`}
                             className={styles.megaMenuChild}
                             onClick={() => setDropdownOpen(false)}
                           >
@@ -135,7 +136,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
                 activeParent.children.map((child: any) => (
                   <Link
                     key={child.id}
-                    href={`/?category=${child.category}`}
+                    href={`/category/${generateSlug(child.title)}`}
                     className={styles.megaMenuChild}
                     onClick={() => setDropdownOpen(false)}
                   >

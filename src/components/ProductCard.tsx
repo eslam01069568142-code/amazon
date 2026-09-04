@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Star, ArrowLeft, Zap } from 'lucide-react';
 import type { Product } from '@/data/db';
 import { parseNumericPrice, formatDisplayPrice, calculateOriginalDiscount } from '@/utils/price';
+import { generateSlug } from '@/utils/slugs';
 
 interface ProductCardProps {
   product: Product;
@@ -193,7 +194,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           background: linear-gradient(135deg, #15803d 0%, #166534 100%);
         }
       `}} />
-      <Link href={`/product/${product.id}`} className="product-card-link-wrapper">
+      <Link href={`/product/${product.id}/${generateSlug(product.title)}`} className="product-card-link-wrapper">
         <div className="product-card-image-box">
           <div className="product-card-badge-container">
             {discountPct !== null && (

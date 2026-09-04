@@ -21,7 +21,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'المنزل والمطبخ',
     slug: 'home-kitchen',
     iconName: 'Home',
-    childIds: ['cat_kitchenapps', 'cat_kitchentools', 'cat_6d04c5ft6', 'cat_c4tky0yxa', 'cat_2zjelnsdg', 'cat_u310yd1w3']
+    childIds: ['cat_6d04c5ft6', 'cat_c4tky0yxa', 'cat_2zjelnsdg', 'cat_u310yd1w3']
   },
   // 3. Health & Beauty (الصحة والجمال)
   cat_g3n6vkljv: {
@@ -29,7 +29,7 @@ export const CATEGORIES_CONFIG: Record<string, CategoryConfig> = {
     title: 'الصحة والجمال',
     slug: 'health-beauty',
     iconName: 'HeartPulse',
-    childIds: ['cat_perfumes', 'cat_personalcare', 'cat_ut73yprlm', 'cat_bwoqca3kt', 'cat_o6r080tvi', 'cat_r826y1abx']
+    childIds: ['cat_ut73yprlm', 'cat_bwoqca3kt', 'cat_o6r080tvi', 'cat_r826y1abx']
   },
   // 4. Electronics (الإلكترونيات)
   cat_uzhhuoj5g: {
