@@ -282,6 +282,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     ...(offersSchema ? { "offers": offersSchema } : {})
   };
 
+  const aiData = product.aiData;
+  const faqSchema = aiData?.faqs ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": aiData.faqs.map((faq: any) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  } : null;
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -308,9 +322,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <div dir="rtl" className="bg-gray-50 min-h-screen pb-16">
+    <div dir="rtl" className="bg-gray-50 min-h-screen pb-24 relative">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
       
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200 py-3 px-4">
@@ -340,7 +355,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
             {/* Product Title */}
             <h1 className="product-title-text">
-              {product.title}
+              {aiData?.cleanTitle || product.title}
             </h1>
 
             {/* Pricing */}
@@ -370,6 +385,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   {formatPrice(displayRawPrice)}
                 </span>
               </div>
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: '0 0 0.5rem 0', fontWeight: 500 }}>
+                * الأسعار والعروض متغيرة على أمازون مصر؛ اضغط للتحقق من السعر المحدث.
+              </p>
             </div>
 
             {/* 🏆 BEST PRICE COMPARISON COMPONENT */}
@@ -467,14 +485,22 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             )}
 
             {/* Trust Signals */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.875rem', color: '#4b5563', marginTop: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <ShieldCheck size={18} color="#16a34a" />
-                <span>شراء آمن ومضمون 100%</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.85rem', color: '#4b5563', marginTop: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#16a34a', fontWeight: 600 }}>
+                <ShieldCheck size={18} />
+                <span>شراء آمن 100%</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Clock size={18} color="#2563eb" />
-                <span>آخر تحديث للأسعار: اليوم</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#ea580c', fontWeight: 600 }}>
+                <Clock size={18} />
+                <span>شحن سريع من أمازون</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#2563eb', fontWeight: 600 }}>
+                <span style={{ fontSize: '1.1rem' }}>🔄</span>
+                <span>إرجاع واستبدال مرن</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#4f46e5', fontWeight: 600 }}>
+                <span style={{ fontSize: '1.1rem' }}>💵</span>
+                <span>الدفع عند الاستلام متاح</span>
               </div>
             </div>
 
@@ -492,42 +518,105 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
 
         {/* ── AI PRODUCT SUMMARY & FEATURES ── */}
-        <div style={{ marginTop: '2rem', backgroundColor: '#eff6ff', borderRadius: '0.75rem', border: '1px solid #bfdbfe', padding: '1.5rem 2rem' }}>
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1e40af', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span>💡</span> ملخص مميزات المنتج
-          </h2>
-          <div style={{ color: '#1e3a8a', lineHeight: 1.8, fontSize: '0.95rem' }}>
-            {descriptionParagraphs.length > 0 ? (
-              <ul style={{ paddingRight: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {descriptionParagraphs.slice(0, 5).map((para, idx) => (
-                  <li key={idx} style={{ fontWeight: 500 }}>{para}</li>
+        {aiData ? (
+          <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            
+            {/* Editorial Review */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                نظرة عامة ورأي الخبراء
+              </h2>
+              <div style={{ color: '#334155', lineHeight: 1.8, fontSize: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {aiData.editorialReview.split('\n').map((para: string, idx: number) => (
+                  para.trim() && <p key={idx} style={{ margin: 0 }}>{para}</p>
                 ))}
-              </ul>
-            ) : (
-              <p style={{ margin: 0 }}>يحتوي هذا المنتج على التقييمات والأداء الممتاز من المتاجر الرسمية المتاحة.</p>
-            )}
-          </div>
-        </div>
+              </div>
+            </div>
 
+            {/* Pros & Cons */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+              <div style={{ backgroundColor: '#f0fdf4', borderRadius: '0.75rem', border: '1px solid #bbf7d0', padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  ✅ أبرز المميزات
+                </h3>
+                <ul style={{ paddingRight: '1.2rem', margin: 0, color: '#15803d', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.95rem' }}>
+                  {aiData.pros.map((pro: string, idx: number) => (
+                    <li key={idx}>{pro}</li>
+                  ))}
+                </ul>
+              </div>
 
-        {/* Full Product Description */}
-        <div style={{ marginTop: '1.5rem', backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
-            الوصف التفصيلي
-          </h2>
-          <div style={{ color: '#374151', lineHeight: 1.8, fontSize: '1rem' }}>
-            {descriptionParagraphs.length > 0 ? (
-              descriptionParagraphs.map((para, idx) => (
-                <p key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <span style={{ color: '#94a3b8', flexShrink: 0 }}>•</span>
-                  <span>{para}</span>
-                </p>
-              ))
-            ) : (
-              <p>لا يوجد وصف متوفر لهذا المنتج حالياً.</p>
-            )}
+              <div style={{ backgroundColor: '#fff7ed', borderRadius: '0.75rem', border: '1px solid #fed7aa', padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#9a3412', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  ⚠️ نقاط يجب مراعاتها
+                </h3>
+                <ul style={{ paddingRight: '1.2rem', margin: 0, color: '#9a3412', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.95rem' }}>
+                  {aiData.cons.map((con: string, idx: number) => (
+                    <li key={idx}>{con}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* FAQs */}
+            <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.25rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                أسئلة شائعة (FAQ)
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {aiData.faqs.map((faq: any, idx: number) => (
+                  <details key={idx} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} className="group">
+                    <summary style={{ fontWeight: 700, cursor: 'pointer', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none' }}>
+                      {faq.question}
+                      <span className="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    </summary>
+                    <p style={{ marginTop: '0.75rem', color: '#475569', lineHeight: 1.6, fontSize: '0.95rem' }}>
+                      {faq.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+
           </div>
-        </div>
+        ) : (
+          <>
+            <div style={{ marginTop: '2rem', backgroundColor: '#eff6ff', borderRadius: '0.75rem', border: '1px solid #bfdbfe', padding: '1.5rem 2rem' }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#1e40af', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>💡</span> ملخص مميزات المنتج
+              </h2>
+              <div style={{ color: '#1e3a8a', lineHeight: 1.8, fontSize: '0.95rem' }}>
+                {descriptionParagraphs.length > 0 ? (
+                  <ul style={{ paddingRight: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {descriptionParagraphs.slice(0, 5).map((para, idx) => (
+                      <li key={idx} style={{ fontWeight: 500 }}>{para}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p style={{ margin: 0 }}>يحتوي هذا المنتج على التقييمات والأداء الممتاز من المتاجر الرسمية المتاحة.</p>
+                )}
+              </div>
+            </div>
+
+            <div style={{ marginTop: '1.5rem', backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1e293b', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
+                الوصف التفصيلي
+              </h2>
+              <div style={{ color: '#374151', lineHeight: 1.8, fontSize: '1rem' }}>
+                {descriptionParagraphs.length > 0 ? (
+                  descriptionParagraphs.map((para, idx) => (
+                    <p key={idx} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      <span style={{ color: '#94a3b8', flexShrink: 0 }}>•</span>
+                      <span>{para}</span>
+                    </p>
+                  ))
+                ) : (
+                  <p>لا يوجد وصف متوفر لهذا المنتج حالياً.</p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Recommendation Sections */}
         <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
@@ -538,6 +627,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         </div>
 
+        {/* Affiliate Disclosure Footer */}
+        <div style={{ marginTop: '3rem', padding: '1.5rem', textAlign: 'center', borderTop: '1px solid #e2e8f0', color: '#64748b', fontSize: '0.85rem' }}>
+          <p>
+            بصفتنا شركاء في برنامج أمازون (Amazon Associates)، فإننا نربح عمولة من عمليات الشراء المؤهلة دون أي تكلفة إضافية عليك.
+          </p>
+        </div>
+
+      </div>
+
+      {/* Sticky Mobile CTA Bar */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50 flex items-center justify-between gap-3">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontWeight: 800, color: '#111827', fontSize: '1.1rem' }}>{formatPrice(displayRawPrice)}</span>
+          <span style={{ fontSize: '0.65rem', color: '#6b7280' }}>* قد يتغير السعر بأمازون</span>
+        </div>
+        <a 
+          href={amazonAffiliateLink} 
+          target="_blank" 
+          rel="sponsored nofollow noopener noreferrer"
+          style={{ flexGrow: 1, backgroundColor: '#f59e0b', color: '#fff', textAlign: 'center', padding: '0.75rem 1rem', borderRadius: '0.5rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)' }}
+        >
+          <ShoppingCart size={18} />
+          عرض على أمازون
+        </a>
       </div>
     </div>
   );

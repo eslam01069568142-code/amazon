@@ -24,6 +24,7 @@ export interface Product {
   rating: string;
   category: string;
   isMyWay?: boolean;
+  aiData?: any;
   createdAt: string;
 }
 
@@ -127,6 +128,7 @@ function rowToProduct(row: any): Product {
     images: row.images || [],
     rating: row.rating,
     category: row.category,
+    aiData: row.ai_data,
     createdAt: row.created_at,
   };
 }
@@ -218,6 +220,7 @@ export function productToRow(p: Product) {
     images: p.images || [],
     rating: p.rating,
     category: p.category,
+    ai_data: p.aiData,
     created_at: p.createdAt,
   };
 }
