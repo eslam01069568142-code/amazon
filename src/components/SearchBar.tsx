@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import styles from './Header.module.css';
 
 export default function SearchBar() {
@@ -9,7 +9,12 @@ export default function SearchBar() {
   const [suggestions, setSuggestions] = useState<{id: string, title: string}[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const dropdownRef = useRef<HTMLFormElement>(null);
+
+  if (pathname === '/') {
+    return null;
+  }
 
   useEffect(() => {
     if (!query.trim()) {
