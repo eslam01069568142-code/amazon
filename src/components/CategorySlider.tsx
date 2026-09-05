@@ -62,7 +62,7 @@ export default function CategorySlider({ sections = [] }: { sections?: any[] }) 
         الرئيسية
       </Link>
       
-      <Link href="/my-way" className={`${styles.categoryPill} ${pathname === '/my-way' ? styles.activePill : ''}`}>
+      <Link href={`/category/${generateSlug('ماي واي')}`} className={`${styles.categoryPill} ${pathname === `/category/${encodeURIComponent(generateSlug('ماي واي'))}` || pathname === `/category/${generateSlug('ماي واي')}` ? styles.activePill : ''}`}>
         منتجات ماي واي
       </Link>
       
