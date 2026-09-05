@@ -37,17 +37,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const imgUrl = (product.images && product.images.length > 0) ? product.images[0] : product.image;
 
   const expectedSlug = generateSlug(product.title);
+  const encodedSlug = encodeURIComponent(expectedSlug);
+  const absoluteUrl = `https://bkamelnaharda.vercel.app/product/${product.id}/${encodedSlug}`;
 
   return {
     title: `${product.title} | بكام النهاردة`,
     description: desc,
     alternates: {
-      canonical: `/product/${product.id}/${expectedSlug}`,
+      canonical: absoluteUrl,
     },
     openGraph: {
       title: `${product.title} | بكام النهاردة`,
       description: desc,
-      url: `/product/${product.id}/${expectedSlug}`,
+      url: absoluteUrl,
       images: imgUrl ? [{ url: imgUrl }] : undefined,
     },
     twitter: {
@@ -61,8 +63,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string[] }> }) {
   const resolvedParams = await params;
-  const id = resolvedParams.slug[0];
-  const currentTitleSlug = resolvedParams.slug.length > 1 ? resolvedParams.slug[1] : null;
+  const slug = resolvedParams.slug;
+  const id = slug[0];
   
   const db = await getDb();
   const product = db.products.find(p => p.id === id);
@@ -72,8 +74,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   }
 
   const expectedSlug = generateSlug(product.title);
-  if (currentTitleSlug !== expectedSlug) {
-    permanentRedirect(`/product/${id}/${expectedSlug}`);
+  
+  // Only redirect if there is NO slug in the URL at all (legacy URLs)
+  // If there is any slug (even if slightly mismatched), just render the page
+  // to avoid infinite redirect loops on Vercel with Arabic URLs.
+  if (slug.length === 1) {
+    permanentRedirect(`/product/${id}/${encodeURIComponent(expectedSlug)}`);
   }
 
   // Fetch store offers securely using public anon client and RLS
