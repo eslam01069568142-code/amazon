@@ -13,6 +13,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   const origPriceNum = parseNumericPrice(product.originalPrice);
   const discountPct = calculateOriginalDiscount(currPriceNum, origPriceNum);
   const formattedPrice = formatDisplayPrice(currPriceNum, product.price);
+  
+  const isNoon = product.originalUrl?.toLowerCase().includes('noon') || product.isMyWay === true;
+  const storeName = isNoon ? 'نون مصر' : 'أمازون مصر';
 
   return (
     <div className="product-card-modern">
@@ -145,6 +148,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           align-items: center;
           gap: 0.2rem;
         }
+        .chip-noon {
+          background-color: #fff7ed;
+          color: #c2410c;
+          border: 1px solid #ffedd5;
+          display: flex;
+          align-items: center;
+          gap: 0.2rem;
+        }
         .product-card-price-section {
           display: flex;
           flex-direction: column;
@@ -196,6 +207,15 @@ export default function ProductCard({ product }: ProductCardProps) {
         .product-card-modern:hover .product-card-cta-button {
           background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
         }
+        .btn-noon {
+          background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+          box-shadow: 0 2px 4px rgba(202, 138, 4, 0.2);
+          color: #1e1b4b;
+        }
+        .product-card-modern:hover .btn-noon {
+          background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%);
+          color: #ffffff;
+        }
       `}} />
       <Link href={`/product/${product.id}/${generateSlug(product.title)}`} className="product-card-link-wrapper">
         <div className="product-card-image-box">
@@ -229,9 +249,15 @@ export default function ProductCard({ product }: ProductCardProps) {
               <span style={{ color: '#64748b' }}>{product.rating || '4.5'}</span>
             </div>
             <div className="product-card-store-badges">
-              <span className="store-chip chip-amazon">
-                <span style={{ fontSize: '10px' }}>📦</span> أمازون مصر
-              </span>
+              {isNoon ? (
+                <span className="store-chip chip-noon">
+                  <span style={{ fontSize: '10px' }}>📦</span> نون مصر
+                </span>
+              ) : (
+                <span className="store-chip chip-amazon">
+                  <span style={{ fontSize: '10px' }}>📦</span> أمازون مصر
+                </span>
+              )}
             </div>
           </div>
           
@@ -248,10 +274,10 @@ export default function ProductCard({ product }: ProductCardProps) {
               {formattedPrice}
             </div>
             <div className="price-disclaimer-text">
-              * الأسعار متغيرة على أمازون مصر
+              * الأسعار متغيرة على {storeName}
             </div>
-            <div className="product-card-cta-button">
-              <span>عرض العرض على أمازون مصر</span>
+            <div className={`product-card-cta-button ${isNoon ? 'btn-noon' : ''}`}>
+              <span>عرض العرض على {storeName}</span>
               <ArrowLeft size={14} />
             </div>
           </div>

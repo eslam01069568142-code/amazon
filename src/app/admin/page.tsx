@@ -244,6 +244,7 @@ export default function AdminDashboard() {
   const [scrapeCategory, setScrapeCategory] = useState('');
   const [scrapeLoading, setScrapeLoading] = useState(false);
   const [noonSelectedProductId, setNoonSelectedProductId] = useState('');
+  const [autoEnrichWithAI, setAutoEnrichWithAI] = useState(true);
 
   const [products, setProducts] = useState<any[]>([]);
   const [filterCategory, setFilterCategory] = useState('All');
@@ -349,7 +350,7 @@ export default function AdminDashboard() {
       try {
         const res = await fetch('/api/scrape', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, category: targetCategory, preview: isPreview }),
+          body: JSON.stringify({ url, category: targetCategory, preview: isPreview, autoEnrich: autoEnrichWithAI }),
         });
         const data = await res.json();
         if (data.success) {
@@ -458,7 +459,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch('/api/noon-scrape', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: noonInputUrl.trim() }),
+        body: JSON.stringify({ url: noonInputUrl.trim(), autoEnrich: autoEnrichWithAI }),
       });
       const data = await res.json();
       if (data.success) {
@@ -539,6 +540,7 @@ export default function AdminDashboard() {
           images: noonImportData.images || [],
           category: noonImportData.categoryId,
           isMyWay: noonImportData.isMyWay || false,
+          autoEnrich: autoEnrichWithAI,
         };
 
         const prodRes = await fetch('/api/products', {
@@ -772,6 +774,57 @@ export default function AdminDashboard() {
             </div>
           )}
 
+      {/* ── Dashboard Ribbon (الرئيسية) ── */}
+      {activeTab === 'الرئيسية' && (
+        <div style={{ background: '#fff', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 800 }}>مرحباً بك في لوحة تحكم Bkam El-Naharda 👋</h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div style={{ padding: '1.25rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600, marginBottom: '0.5rem' }}>إجمالي المنتجات</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a' }}>{products.length}</div>
+            </div>
+            <div style={{ padding: '1.25rem', background: '#fdf4ff', border: '1px solid #f0abfc', borderRadius: '12px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#86198f', fontWeight: 600, marginBottom: '0.5rem' }}>المنتجات المحسنة بالذكاء الاصطناعي</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#c026d3' }}>
+                {products.filter(p => p.aiData && Object.keys(p.aiData).length > 0).length} 
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#a21caf', marginRight: '0.25rem' }}>
+                  ({products.length > 0 ? Math.round((products.filter(p => p.aiData && Object.keys(p.aiData).length > 0).length / products.length) * 100) : 0}%)
+                </span>
+              </div>
+            </div>
+            <div style={{ padding: '1.25rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#166534', fontWeight: 600, marginBottom: '0.5rem' }}>الأسعار السليمة</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#15803d' }}>
+                {products.filter(p => p.price && parseFloat(p.price.replace(/[^\d.]/g, '')) > 0).length}
+              </div>
+            </div>
+            <div style={{ padding: '1.25rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '12px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#b45309', fontWeight: 600, marginBottom: '0.5rem' }}>أسعار تحتاج مراجعة</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#d97706' }}>
+                {products.filter(p => !p.price || parseFloat(p.price.replace(/[^\d.]/g, '')) === 0 || p.price === 'Price unavailable').length}
+              </div>
+            </div>
+          </div>
+          
+          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', fontWeight: 700 }}>توزيع المنتجات حسب الفئات</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {categorySections.map(c => {
+              const count = products.filter(p => p.category === c.category).length;
+              return (
+                <div key={c.id} style={{ padding: '0.5rem 1rem', background: '#f8fafc', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 600, color: '#334155', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  {c.icon && <span>{c.icon}</span>}
+                  <span>{c.title} ({count})</span>
+                </div>
+              );
+            })}
+            <div style={{ padding: '0.5rem 1rem', background: '#f8fafc', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 600, color: '#334155', border: '1px solid #e2e8f0' }}>
+              غير مصنف ({products.filter(p => !p.category || p.category === 'General').length})
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── 1. Categories (إدارة تصنيفات المنتجات) ── */}
       {activeTab === 'التصنيفات' && (
         <div style={{ background: '#fff', padding: '1.5rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
@@ -855,6 +908,20 @@ export default function AdminDashboard() {
               <h3 style={{ margin: '0 0 1rem 0', color: '#f97316', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span>📦</span> Amazon (استيراد تلقائي)
               </h3>
+              
+              <div style={{ marginBottom: '1rem', padding: '0.75rem', background: '#fdf4ff', border: '1px solid #f0abfc', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input 
+                  type="checkbox" 
+                  id="amazonEnrichAI" 
+                  checked={autoEnrichWithAI} 
+                  onChange={e => setAutoEnrichWithAI(e.target.checked)} 
+                  style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+                />
+                <label htmlFor="amazonEnrichAI" style={{ fontWeight: 700, color: '#86198f', margin: 0, cursor: 'pointer' }}>
+                  ✨ تفعيل الصياغة التلقائية بالذكاء الاصطناعي (Gemini)
+                </label>
+              </div>
+
               <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>روابط المنتجات (رابط في كل سطر)</label>
               <textarea style={{ ...inputStyle, resize: 'vertical', marginBottom: '1rem' }} rows={4} value={urls} onChange={e => setUrls(e.target.value)} placeholder={'https://www.amazon.eg/...\nhttps://www.amazon.eg/...'} dir="ltr" />
               <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>الفئة (Category)</label>
@@ -997,6 +1064,19 @@ export default function AdminDashboard() {
               </h3>
               <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '1rem' }}>الصق رابط Noon لجلب بيانات المنتج تلقائياً وإضافته كمنتج جديد مع عرض Noon.</p>
               
+              <div style={{ marginBottom: '1rem', padding: '0.75rem', background: '#fdf4ff', border: '1px solid #f0abfc', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input 
+                  type="checkbox" 
+                  id="noonEnrichAI" 
+                  checked={autoEnrichWithAI} 
+                  onChange={e => setAutoEnrichWithAI(e.target.checked)} 
+                  style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer' }}
+                />
+                <label htmlFor="noonEnrichAI" style={{ fontWeight: 700, color: '#86198f', margin: 0, cursor: 'pointer' }}>
+                  ✨ تفعيل الصياغة التلقائية بالذكاء الاصطناعي (Gemini)
+                </label>
+              </div>
+
               <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>رابط المنتج على Noon</label>
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                 <input style={{ ...inputStyle, marginBottom: 0, flex: 1, direction: 'ltr' }} value={noonInputUrl} onChange={e => setNoonInputUrl(e.target.value)} placeholder="https://www.noon.com/..." />
@@ -1210,6 +1290,11 @@ export default function AdminDashboard() {
                         </td>
                         <td style={{ padding: '0.75rem', fontWeight: 700 }}>{p.price}</td>
                         <td style={{ padding: '0.75rem' }}>
+                          <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '0.5rem', justifyContent: 'flex-start' }}>
+                            <button style={{ ...btnGhost, fontSize: '0.8rem', padding: '0.25rem 0.4rem' }} onClick={() => navigator.clipboard.writeText(p.aiData?.adVisualPrompt || 'لا يوجد برومبت').then(() => msg('📋 تم نسخ برومبت الإعلان'))} title="نسخ برومبت تصميم الإعلان (Canva / Midjourney)">📋</button>
+                            <button style={{ ...btnGhost, fontSize: '0.8rem', padding: '0.25rem 0.4rem' }} onClick={() => navigator.clipboard.writeText((p.aiData?.marketingHooks || []).join('\n') || 'لا توجد خطافات').then(() => msg('🎣 تم نسخ خطافات الإعلانات'))} title="نسخ خطافات الإعلانات (Viral Hooks)">🎣</button>
+                            <button style={{ ...btnGhost, fontSize: '0.8rem', padding: '0.25rem 0.4rem' }} onClick={() => navigator.clipboard.writeText(`https://www.amazon.eg/dp/${p.id.replace('prod_', '')}?tag=${trackingId}`).then(() => msg('🔗 تم نسخ رابط الأفلييت المباشر'))} title="نسخ رابط الأفلييت المباشر">🔗</button>
+                          </div>
                           <div style={{ display: 'flex', gap: '0.5rem' }}><button style={btnGhost} onClick={() => handleEditClick(p)}>تعديل</button><button style={btnDanger} onClick={() => handleDeleteProduct(p.id)}>حذف</button></div>
                         </td>
                       </tr>
@@ -1264,11 +1349,37 @@ export default function AdminDashboard() {
                       <input style={{...inputStyle, direction: 'ltr', textAlign: 'left', marginBottom: '0'}} value={editData.image || ''} onChange={e => setEditData({...editData, image: e.target.value})} />
                       {editData.image && <img src={editData.image} alt="Preview" style={{ width: 80, height: 80, objectFit: 'contain', border: '1px solid #e2e8f0', borderRadius: 4, marginTop: '0.5rem', backgroundColor: '#fff' }} />}
                     </div>
-                    {/* Placeholder for Multi-Image Upload UI */}
-                    <div style={{ padding: '1.5rem', border: '2px dashed #cbd5e1', borderRadius: '8px', textAlign: 'center', color: '#64748b', background: '#f1f5f9' }}>
-                      سيتم إضافة واجهة رفع وتعديل الصور المتعددة (Multi-Image Upload) هنا في المرحلة القادمة.
-                    </div>
                   </div>
+                </CollapsePanel>
+
+                <CollapsePanel title="محتوى الذكاء الاصطناعي والسيو" icon="✨">
+                  <button style={{ ...btnPrimary, background: '#8b5cf6', marginBottom: '1rem', width: '100%' }} onClick={async () => {
+                    msg('جاري التوليد عبر Gemini...');
+                    try {
+                      const res = await fetch(`/api/admin/enrich-single?productId=${editData.id}`);
+                      const data = await res.json();
+                      if (data.success) {
+                        setEditData({ ...editData, aiData: data.aiData });
+                        msg('✅ تم التوليد بنجاح!');
+                      } else {
+                        alert(data.error);
+                      }
+                    } catch (err) {
+                      alert('حدث خطأ');
+                    }
+                  }}>✨ إعادة التوليد عبر Gemini</button>
+
+                  <label style={{ display: 'block', fontWeight: 600 }}>العنوان المحسن (Clean Title)</label>
+                  <input style={{...inputStyle, marginBottom: '0.75rem'}} value={editData.aiData?.cleanTitle || ''} onChange={e => setEditData({...editData, aiData: {...(editData.aiData||{}), cleanTitle: e.target.value}})} />
+
+                  <label style={{ display: 'block', fontWeight: 600 }}>المراجعة التحريرية (Editorial Review)</label>
+                  <textarea style={{...inputStyle, marginBottom: '0.75rem', minHeight: '100px'}} value={editData.aiData?.editorialReview || ''} onChange={e => setEditData({...editData, aiData: {...(editData.aiData||{}), editorialReview: e.target.value}})} />
+
+                  <label style={{ display: 'block', fontWeight: 600 }}>المميزات (Pros) - ميزة في كل سطر</label>
+                  <textarea style={{...inputStyle, marginBottom: '0.75rem', minHeight: '80px'}} value={(editData.aiData?.pros || []).join('\n')} onChange={e => setEditData({...editData, aiData: {...(editData.aiData||{}), pros: e.target.value.split('\n')}})} />
+
+                  <label style={{ display: 'block', fontWeight: 600 }}>العيوب (Cons) - عيب في كل سطر</label>
+                  <textarea style={{...inputStyle, marginBottom: '0.75rem', minHeight: '80px'}} value={(editData.aiData?.cons || []).join('\n')} onChange={e => setEditData({...editData, aiData: {...(editData.aiData||{}), cons: e.target.value.split('\n')}})} />
                 </CollapsePanel>
 
                 <CollapsePanel title="عروض المتاجر" icon="🏪">

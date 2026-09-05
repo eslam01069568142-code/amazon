@@ -6,6 +6,7 @@ import { buildAmazonAffiliateUrl } from '@/utils/affiliate';
 import { parseNumericPrice } from '@/utils/price';
 import { recordPriceHistory } from '@/utils/priceHistory';
 import { getHighResImageUrl } from '@/utils/image';
+import { enrichProductData } from '@/services/aiEnricher';
 
 const ADJECTIVES_TO_IGNORE = [
   'elegant', 'stylish', 'premium', 'beautiful', 'amazing', 'best', 'modern', 'trendy', 'luxury', 
@@ -380,6 +381,17 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString()
         };
 
+        if (body.autoEnrich) {
+          try {
+            const aiData = await enrichProductData(product.title, product.description);
+            if (aiData) {
+              product.aiData = aiData;
+            }
+          } catch (e) {
+            console.error('Failed to auto-enrich product:', e);
+          }
+        }
+
         if (needsPrice || needsCategory) {
           const combinedErrors = [priceErrorMsg, categoryErrorMsg].filter(Boolean).join(' | ');
           results.push({ url: cleanUrl, success: false, status: 'NeedsInput', error: combinedErrors, product, needsPrice, needsCategory } as any);
@@ -406,6 +418,7 @@ export async function POST(req: Request) {
             images: product.images || [],
             rating: product.rating,
             category: product.category,
+            ai_data: product.aiData,
             created_at: product.createdAt,
           };
           const { error } = await supabaseAdmin.from('products').insert([row]);
@@ -460,6 +473,7 @@ export async function POST(req: Request) {
         images: p.images || [],
         rating: p.rating,
         category: p.category,
+        ai_data: p.aiData,
         created_at: p.createdAt,
       }));
       await supabaseAdmin.from('products').insert(rows);

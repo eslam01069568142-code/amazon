@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/data/db';
 import { revalidateTag } from 'next/cache';
 import { buildAmazonAffiliateUrl } from '@/utils/affiliate';
+import { enrichProductData } from '@/services/aiEnricher';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -91,6 +92,17 @@ export async function POST(req: Request) {
       is_my_way: body.isMyWay || false,
       created_at: body.createdAt || new Date().toISOString(),
     };
+    
+    if (body.autoEnrich) {
+      try {
+        const aiData = await enrichProductData(row.title, row.description);
+        if (aiData) {
+          (row as any).ai_data = aiData;
+        }
+      } catch (e) {
+        console.error('Failed to auto-enrich product:', e);
+      }
+    }
     
     // Insert Product
     const { data, error } = await supabaseAdmin.from('products').insert(row).select().single();

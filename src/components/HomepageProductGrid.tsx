@@ -71,13 +71,13 @@ export default function HomepageProductGrid({ products, categories }: HomepagePr
             gap: 1.25rem;
           }
           @media (max-width: 1024px) {
-            .interactive-grid { grid-template-columns: repeat(3, 1fr); }
+            .interactive-grid { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
           }
           @media (max-width: 768px) {
-            .interactive-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .interactive-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
           }
           @media (max-width: 480px) {
-            .interactive-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .interactive-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
           }
         `}} />
         
