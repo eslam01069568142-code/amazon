@@ -1,5 +1,7 @@
 import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
+import HomepageHero from '@/components/HomepageHero';
+import HomepageProductGrid from '@/components/HomepageProductGrid';
 import { getDb } from '@/data/db';
 import { Tag, Zap, ArrowLeft, Clock, Shirt, HeartPulse, Dumbbell, Smartphone, Home as HomeIcon, Gamepad2, Briefcase, Car, Sparkles, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -226,27 +228,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     .sort((a, b) => a.order - b.order);
 
   return (
-    <div className="container animate-fade-in">
+    <div className="animate-fade-in" style={{ paddingBottom: '3rem' }}>
+      
+      {/* 1. Hero & Trust Bar */}
+      <div className="container" style={{ paddingTop: '1.5rem' }}>
+        <HomepageHero />
+      </div>
       
 
-      {/* 1. Banners */}
-      {banners.map(section => (
-        <section key={section.id} className="section" style={{ paddingBottom: '2rem' }}>
-          <div style={{
-            backgroundColor: 'var(--surface-color)', padding: '2rem',
-            borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)',
-            border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '1rem',
-          }}>
-            <div style={{ backgroundColor: 'var(--accent-color)', color: 'white', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
-              <Tag size={32} />
-            </div>
-            <div>
-              <h2 className="text-2xl" style={{ marginBottom: '0.5rem' }}>{section.title}</h2>
-              <p className="text-muted">اكتشف أحدث التخفيضات والصفقات الحصرية من أمازون مصر اليوم.</p>
-            </div>
-          </div>
-        </section>
-      ))}
+
 
       {/* 1.5 Shop by Category (8 Parent Categories UI Revamp) */}
       {(() => {
@@ -372,88 +362,37 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         );
       })()}
 
-      {/* 2. Daily Deals */}
-      {finalDailyDeals.length > 0 && (
-        <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-            <Zap size={28} color="#eab308" />
-            <h2 className="text-2xl" style={{ margin: 0 }}>عروض اليوم</h2>
-          </div>
-          <ProductCarousel title="" products={finalDailyDeals} />
-        </section>
-      )}
-
-      {/* 3. New Arrivals */}
-      {newArrivals.length > 0 && (
-        <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-            <Clock size={28} color="var(--accent-color)" />
-            <h2 className="text-2xl" style={{ margin: 0 }}>وصل حديثاً</h2>
-          </div>
-          <ProductCarousel title="" products={newArrivals} />
-        </section>
-      )}
-
-      {/* 4. Automatic Category Sections — Carousel (Limited to 4 to avoid clutter) */}
-      {categorySections.slice(0, 4).map(section => {
-        const childCats = db.sections.filter(c => c.parentId === section.category).map(c => c.category);
-        const validCats = [section.category, ...childCats];
-        const catProducts = db.products.filter(p => p.category && validCats.includes(p.category)).slice(0, 20);
-        if (catProducts.length === 0) return null;
-
-        return (
-          <section key={section.id} className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
-              <span />
-              <Link
-                href={`/category/${generateSlug(section.title)}`}
-                style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none', marginBottom: '0.5rem' }}
-              >
-                عرض الكل <ArrowLeft size={16} />
-              </Link>
+      <div className="container">
+        {/* 2. Daily Deals */}
+        {finalDailyDeals.length > 0 && (
+          <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              <Zap size={28} color="#eab308" />
+              <h2 className="text-2xl" style={{ margin: 0 }}>عروض اليوم</h2>
             </div>
-            <ProductCarousel title={section.title} products={catProducts} />
+            <ProductCarousel title="" products={finalDailyDeals} />
           </section>
-        );
-      })}
+        )}
 
-      {/* 5. Existing Manual/Promotional Sections */}
-      {manualSections.map(section => {
-        let sectionProducts: any[] = [];
-        
-        if (section.type === 'manual_products') {
-          if (section.productIds && section.productIds.length > 0) {
-            sectionProducts = db.products.filter(p => section.productIds!.includes(p.id));
-          }
-        } else if (section.type === 'category_section') {
-          if (section.category) {
-            sectionProducts = db.products.filter(p => p.category === section.category).slice(0, 8);
-          }
-        } else if (section.type === 'best_sellers' || section.type === 'recommended') {
-          sectionProducts = [];
-        } else if (section.type === 'all_products') {
-          sectionProducts = db.products.slice(0, 16);
-        }
-
-        if (sectionProducts.length === 0) return null;
-
-        return (
-          <section key={section.id} className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 className="text-2xl" style={{ margin: 0 }}>{section.title}</h2>
-              {section.type === 'category_section' && (
-                <Link 
-                  href={`/category/${generateSlug(section.title)}`} 
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none' }}
-                >
-                  عرض الكل <ArrowLeft size={16} />
-                </Link>
-              )}
+        {/* 3. New Arrivals */}
+        {newArrivals.length > 0 && (
+          <section className="section" style={{ paddingTop: '2rem', paddingBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+              <Clock size={28} color="var(--accent-color)" />
+              <h2 className="text-2xl" style={{ margin: 0 }}>وصل حديثاً</h2>
             </div>
-            <ProductCarousel title="" products={sectionProducts} />
+            <ProductCarousel title="" products={newArrivals} />
           </section>
-        );
-      })}
+        )}
+      </div>
+
+      {/* 4. Interactive Category Product Grid */}
+      <div className="container">
+        <HomepageProductGrid 
+          products={db.products} 
+          categories={['أجهزة المطبخ والمنزل', 'الإلكترونيات', 'العناية الشخصية', 'الموبايلات', 'الكمبيوتر', 'ماي واي', 'أزياء']} 
+        />
+      </div>
 
     </div>
   );

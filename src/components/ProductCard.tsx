@@ -71,9 +71,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
         }
         .product-card-compare-tag {
-          background: #f0fdf4;
-          color: #166534;
-          border: 1px solid #bbf7d0;
+          background: #fff7ed;
+          color: #c2410c;
+          border: 1px solid #ffedd5;
           font-size: 0.64rem;
           font-weight: 700;
           padding: 0.15rem 0.45rem;
@@ -138,14 +138,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           border-radius: 0.25rem;
         }
         .chip-amazon {
-          background-color: #fff7ed;
-          color: #c2410c;
-          border: 1px solid #ffedd5;
-        }
-        .chip-noon {
           background-color: #fefce8;
           color: #854d0e;
           border: 1px solid #fef08a;
+          display: flex;
+          align-items: center;
+          gap: 0.2rem;
         }
         .product-card-price-section {
           display: flex;
@@ -175,23 +173,28 @@ export default function ProductCard({ product }: ProductCardProps) {
           line-height: 1.2;
           letter-spacing: -0.01em;
         }
+        .price-disclaimer-text {
+          font-size: 0.55rem;
+          color: #94a3b8;
+          margin-top: 0.1rem;
+        }
         .product-card-cta-button {
           margin-top: 0.55rem;
           padding: 0.55rem 0.85rem;
-          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
           color: #ffffff;
           border-radius: 0.5rem;
-          font-size: 0.78rem;
+          font-size: 0.75rem;
           font-weight: 800;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.35rem;
-          box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+          box-shadow: 0 2px 4px rgba(217, 119, 6, 0.2);
           transition: background 0.2s ease;
         }
         .product-card-modern:hover .product-card-cta-button {
-          background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+          background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
         }
       `}} />
       <Link href={`/product/${product.id}/${generateSlug(product.title)}`} className="product-card-link-wrapper">
@@ -199,12 +202,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="product-card-badge-container">
             {discountPct !== null && (
               <span className="product-card-discount-tag">
-                خصم {discountPct}%
+                وفر {discountPct}%
               </span>
             )}
-            <span className="product-card-compare-tag">
-              <Zap size={10} /> قارن الأسعار
-            </span>
+            {currPriceNum !== null && origPriceNum !== null && origPriceNum > currPriceNum && (
+              <span className="product-card-compare-tag">
+                وفر {origPriceNum - currPriceNum} جنيه
+              </span>
+            )}
           </div>
           <img 
             src={product.image} 
@@ -224,8 +229,9 @@ export default function ProductCard({ product }: ProductCardProps) {
               <span style={{ color: '#64748b' }}>{product.rating || '4.5'}</span>
             </div>
             <div className="product-card-store-badges">
-              <span className="store-chip chip-amazon">Amazon</span>
-              <span className="store-chip chip-noon">Noon</span>
+              <span className="store-chip chip-amazon">
+                <span style={{ fontSize: '10px' }}>📦</span> أمازون مصر
+              </span>
             </div>
           </div>
           
@@ -241,8 +247,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="product-card-main-price">
               {formattedPrice}
             </div>
+            <div className="price-disclaimer-text">
+              * الأسعار متغيرة على أمازون مصر
+            </div>
             <div className="product-card-cta-button">
-              <span>عرض أفضل سعر والمقارنة</span>
+              <span>عرض العرض على أمازون مصر</span>
               <ArrowLeft size={14} />
             </div>
           </div>
