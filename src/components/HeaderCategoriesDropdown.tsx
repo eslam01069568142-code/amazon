@@ -50,14 +50,20 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
           />
           
           {/* Drawer Panel */}
-          <div className="fixed inset-y-0 right-0 w-full max-w-[600px] bg-white shadow-2xl flex flex-col z-[101] animate-slide-in-right text-slate-800">
+          <div 
+            className="fixed inset-y-0 right-0 w-full max-w-[620px] shadow-2xl z-50 flex flex-col animate-slide-in-right"
+            style={{ backgroundColor: '#ffffff' }}
+          >
             
             {/* Drawer Header */}
-            <div className="flex justify-between items-center p-4 border-b border-gray-100 bg-white">
-              <h2 className="text-xl font-extrabold text-slate-900">تصفح جميع الفئات</h2>
+            <div 
+              className="flex justify-between items-center p-4"
+              style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0' }}
+            >
+              <h2 className="text-xl font-extrabold" style={{ color: '#1e293b' }}>تصفح جميع الفئات</h2>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-full transition-colors"
+                className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="إغلاق"
               >
                 <X size={24} />
@@ -67,13 +73,17 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
             {/* Drawer Body (2 Columns) */}
             <div className="flex flex-1 overflow-hidden">
               
-              {/* Right Column: Parents (40%) */}
-              <div className="w-2/5 bg-gray-50/50 border-l border-gray-100 overflow-y-auto flex flex-col custom-scrollbar">
+              {/* Right Column: Parents (42%) */}
+              <div 
+                className="overflow-y-auto flex flex-col custom-scrollbar border-l border-gray-200"
+                style={{ width: '42%', backgroundColor: '#f8fafc' }}
+              >
                 {parents.map((p, i) => (
                   <button
                     key={i}
                     type="button"
-                    className={`py-4 px-4 text-sm font-medium flex justify-between items-center cursor-pointer transition-colors border-b border-gray-100 last:border-0 ${activeParent === p.category ? 'bg-white text-blue-600 shadow-sm border-r-4 border-r-blue-600' : 'text-slate-700 hover:bg-white hover:text-blue-600'}`}
+                    className={`py-4 px-4 text-sm font-medium flex justify-between items-center cursor-pointer transition-colors border-b border-gray-100 last:border-0 ${activeParent === p.category ? 'bg-white shadow-sm border-r-4 border-r-blue-600' : 'hover:bg-white'}`}
+                    style={{ color: activeParent === p.category ? '#2563eb' : '#1e293b' }}
                     onMouseEnter={() => setActiveParent(p.category)}
                     onClick={() => setActiveParent(p.category)}
                   >
@@ -81,20 +91,23 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
                       {p.icon && <span>{p.icon}</span>}
                       <span>{p.title}</span>
                     </div>
-                    <ChevronLeft size={16} className={activeParent === p.category ? 'text-blue-600' : 'text-gray-300'} />
+                    <ChevronLeft size={16} className={activeParent === p.category ? 'text-blue-600' : 'text-gray-400'} />
                   </button>
                 ))}
               </div>
 
-              {/* Left Column: Children (60%) */}
-              <div className="w-3/5 bg-white p-5 overflow-y-auto flex flex-col custom-scrollbar">
+              {/* Left Column: Children (58%) */}
+              <div 
+                className="p-5 overflow-y-auto flex flex-col custom-scrollbar"
+                style={{ width: '58%', backgroundColor: '#ffffff' }}
+              >
                 {activeParent && (() => {
                   const children = getChildren(activeParent);
                   const parentInfo = parents.find(p => p.category === activeParent);
                   
                   return (
                     <div className="flex flex-col h-full">
-                      <h3 className="font-extrabold text-lg text-slate-800 mb-4 border-b border-gray-100 pb-3 text-right">
+                      <h3 className="font-extrabold text-lg mb-4 border-b border-gray-100 pb-3 text-right" style={{ color: '#1e293b' }}>
                         {parentInfo?.title}
                       </h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow content-start">
@@ -102,7 +115,8 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
                           <Link
                             key={idx}
                             href={`/category/${generateSlug(child.title)}`}
-                            className="px-3 py-2.5 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 rounded-lg font-semibold transition-colors text-right block truncate border border-transparent hover:border-blue-100"
+                            className="px-3 py-2.5 text-sm hover:bg-blue-50/50 rounded-lg font-semibold transition-colors text-right block truncate border border-transparent hover:border-blue-100"
+                            style={{ color: '#334155' }}
                             onClick={() => setIsOpen(false)}
                           >
                             {child.title}
@@ -115,7 +129,7 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
                         className="mt-6 px-4 py-3 text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-bold transition-colors text-center flex items-center justify-center gap-2 shadow-sm"
                         onClick={() => setIsOpen(false)}
                       >
-                        عرض كل المنتجات في هذا القسم &larr;
+                        عرض كل منتجات القسم &larr;
                       </Link>
                     </div>
                   );
