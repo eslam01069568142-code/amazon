@@ -3,8 +3,11 @@
 import React, { useState } from 'react';
 import { Search, ShieldCheck, Truck, Banknote } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import HeaderCategoriesDropdown from './HeaderCategoriesDropdown';
 
-export default function HomepageHero() {
+export default function HomepageHero({ categories = [] }: { categories?: any[] }) {
   const [query, setQuery] = useState('');
   const router = useRouter();
 
@@ -124,61 +127,81 @@ export default function HomepageHero() {
           transform: translateY(-2px);
         }
         
-        .trust-bar {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1rem;
-          background: white;
-          padding: 0.75rem 1rem;
+        .unified-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(135deg, #0d6efd, #0056b3);
+          padding: 0.5rem 1rem;
           border-radius: 999px;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          margin-bottom: 1rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .trust-item {
+        .unified-right {
           display: flex;
           align-items: center;
-          text-align: right;
-          gap: 0.75rem;
-          padding: 0.25rem 0.5rem;
+          gap: 1.5rem;
         }
-        .trust-icon-box {
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
+        .unified-left {
           display: flex;
           align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
+          gap: 1rem;
         }
-        .trust-title {
-          font-weight: 800;
-          color: #0f172a;
-          font-size: 0.9rem;
-          margin: 0 0 0.15rem 0;
+        .trust-pill {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+          padding: 0.35rem 0.75rem;
+          border-radius: 999px;
+          font-size: 0.85rem;
+          font-weight: 600;
         }
-        .trust-desc {
-          font-size: 0.75rem;
-          color: #64748b;
-          margin: 0;
-          line-height: 1.3;
-        }
-        
+        @media (max-width: 1024px) {
+          .unified-bar {
+            flex-direction: column;
+            border-radius: 1rem;
+            padding: 1rem;
+            gap: 1rem;
+          }
+          .unified-left {
+            flex-wrap: wrap;
+            justify-content: center;
+          }
         }
         @media (max-width: 768px) {
-          .trust-bar {
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-            border-radius: 1rem;
-            padding: 0.75rem;
-          }
-          .trust-item {
-            padding: 0.25rem;
-          }
           .hero-title {
             font-size: 1.75rem;
           }
         }
       `}} />
+      
+      {/* 0. Unified Top Bar */}
+      <div className="unified-bar">
+        <div className="unified-right">
+          <Link href="/">
+            <Image src="/logo.png" alt="Bkam El-Naharda Logo" width={60} height={60} style={{ objectFit: 'contain' }} priority />
+          </Link>
+          <div className="hidden sm:block">
+            <HeaderCategoriesDropdown categories={categories} />
+          </div>
+        </div>
+        <div className="unified-left">
+          <div className="trust-pill">
+            <ShieldCheck size={16} className="text-blue-200" />
+            <span>مراجعات محايدة</span>
+          </div>
+          <div className="trust-pill">
+            <Truck size={16} className="text-blue-200" />
+            <span>شحن أمازون الرسمي</span>
+          </div>
+          <div className="trust-pill">
+            <Banknote size={16} className="text-blue-200" />
+            <span>دفع عند الاستلام</span>
+          </div>
+        </div>
+      </div>
       
       {/* 1. Hero Banner */}
       <div className="hero-banner">
@@ -214,39 +237,6 @@ export default function HomepageHero() {
                 {term}
               </button>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Trust Bar */}
-      <div className="trust-bar">
-        <div className="trust-item">
-          <div className="trust-icon-box" style={{ background: '#eff6ff', color: '#2563eb' }}>
-            <ShieldCheck size={20} />
-          </div>
-          <div>
-            <h3 className="trust-title">مراجعات وتحليل ذكي</h3>
-            <p className="trust-desc">نكشف المميزات والعيوب بحيادية</p>
-          </div>
-        </div>
-        
-        <div className="trust-item">
-          <div className="trust-icon-box" style={{ background: '#fef2f2', color: '#dc2626' }}>
-            <Truck size={20} />
-          </div>
-          <div>
-            <h3 className="trust-title">تنفيذ وشحن رسمي</h3>
-            <p className="trust-desc">عبر أسطول أمازون مصر الموثوق</p>
-          </div>
-        </div>
-
-        <div className="trust-item">
-          <div className="trust-icon-box" style={{ background: '#f0fdf4', color: '#16a34a' }}>
-            <Banknote size={20} />
-          </div>
-          <div>
-            <h3 className="trust-title">الدفع عند الاستلام</h3>
-            <p className="trust-desc">إرجاع سهل وسياسة ضمان رسمية</p>
           </div>
         </div>
       </div>
