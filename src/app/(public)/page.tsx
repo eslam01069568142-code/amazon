@@ -232,7 +232,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
       
       {/* 1. Hero & Trust Bar */}
       <div className="container" style={{ paddingTop: '1.5rem' }}>
-        <HomepageHero categories={categorySections.filter(s => !s.parentId)} />
+        <HomepageHero categories={categorySections} />
       </div>
       
 

@@ -131,6 +131,7 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
           display: flex;
           align-items: center;
           justify-content: space-between;
+          flex-direction: row-reverse; /* Logo on far left in RTL */
           background: linear-gradient(135deg, #0d6efd, #0056b3);
           padding: 0.5rem 1rem;
           border-radius: 999px;
@@ -140,7 +141,6 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
         .unified-right {
           display: flex;
           align-items: center;
-          gap: 1.5rem;
         }
         .unified-left {
           display: flex;
@@ -183,9 +183,6 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
           <Link href="/">
             <Image src="/logo.png" alt="Bkam El-Naharda Logo" width={60} height={60} style={{ objectFit: 'contain' }} priority />
           </Link>
-          <div className="hidden sm:block">
-            <HeaderCategoriesDropdown categories={categories} />
-          </div>
         </div>
         <div className="unified-left">
           <div className="trust-pill">
@@ -227,6 +224,9 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
           </form>
           
           <div className="quick-searches">
+            <div className="inline-block relative z-50">
+              <HeaderCategoriesDropdown categories={categories} />
+            </div>
             {quickSearches.map(term => (
               <button 
                 key={term} 
