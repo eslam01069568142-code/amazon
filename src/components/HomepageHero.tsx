@@ -100,16 +100,15 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
           align-items: center;
           gap: 0.5rem;
         }
-        .search-btn:hover {
-          background: #d97706;
-        }
         .search-actions {
           display: flex;
-          align-items: center;
           justify-content: flex-start;
+          align-items: center;
           gap: 1rem;
           margin-top: 1.25rem;
-          flex-wrap: wrap;
+          width: 100%;
+          direction: rtl;
+          text-align: right;
         }
         .quick-searches {
           display: flex;
@@ -228,8 +227,8 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
             </button>
           </form>
           
-          <div className="search-actions">
-            <div className="relative z-50">
+          <div className="search-actions w-full flex justify-start items-center gap-3 dir-rtl text-right">
+            <div className="flex-shrink-0 relative z-50">
               <HeaderCategoriesDropdown categories={categories} />
             </div>
             <div className="quick-searches">
