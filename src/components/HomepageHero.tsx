@@ -227,11 +227,11 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
             </button>
           </form>
           
-          <div className="search-actions w-full flex justify-start items-center gap-3 dir-rtl text-right">
+          <div className="w-full max-w-5xl mx-auto flex justify-start items-center gap-3 mt-4 px-4 dir-rtl text-right flex-wrap">
             <div className="flex-shrink-0 relative z-50">
               <HeaderCategoriesDropdown categories={categories} />
             </div>
-            <div className="quick-searches">
+            <div className="flex flex-wrap gap-2">
               {quickSearches.map(term => (
                 <button 
                   key={term} 
