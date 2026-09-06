@@ -45,15 +45,17 @@ export default function HomepageHero() {
         }
         .hero-title {
           font-size: 2.5rem;
-          font-weight: 900;
+          font-weight: 800;
           margin-bottom: 1rem;
           position: relative;
           z-index: 1;
           line-height: 1.3;
+          color: white;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .hero-subtitle {
           font-size: 1.15rem;
-          color: #c7d2fe;
+          color: #dbeafe; /* blue-100 */
           max-width: 600px;
           margin: 0 auto 2.5rem auto;
           line-height: 1.6;
@@ -125,56 +127,65 @@ export default function HomepageHero() {
         .trust-bar {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
+          gap: 1rem;
           background: white;
-          padding: 1.5rem;
-          border-radius: 1rem;
+          padding: 0.75rem 1rem;
+          border-radius: 999px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .trust-item {
           display: flex;
-          flex-direction: column;
           align-items: center;
-          text-align: center;
+          text-align: right;
           gap: 0.75rem;
+          padding: 0.25rem 0.5rem;
         }
         .trust-icon-box {
-          width: 48px;
-          height: 48px;
-          border-radius: 12px;
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
         }
         .trust-title {
           font-weight: 800;
           color: #0f172a;
-          font-size: 1rem;
-          margin: 0;
+          font-size: 0.9rem;
+          margin: 0 0 0.15rem 0;
         }
         .trust-desc {
-          font-size: 0.85rem;
+          font-size: 0.75rem;
           color: #64748b;
           margin: 0;
-          line-height: 1.5;
+          line-height: 1.3;
         }
         
+        }
         @media (max-width: 768px) {
           .trust-bar {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 0.5rem;
+            border-radius: 1rem;
+            padding: 0.75rem;
+          }
+          .trust-item {
+            padding: 0.25rem;
           }
           .hero-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
           }
         }
       `}} />
       
       {/* 1. Hero Banner */}
       <div className="hero-banner">
-        <h1 className="hero-title">دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر</h1>
-        <p className="hero-subtitle">بنفحص الأسعار ونرشح لك أفضل صفقات أمازون مصر مع الشحن الرسمي وضمان الدفع عند الاستلام.</p>
+        <h1 className="hero-title text-white font-extrabold drop-shadow-sm">
+          دليلك الذكي لأقوى العروض و<span className="text-amber-300">توفير فلوسك</span> في مصر
+        </h1>
+        <p className="hero-subtitle text-blue-100">بنفحص الأسعار ونرشح لك أفضل صفقات أمازون مصر مع الشحن الرسمي وضمان الدفع عند الاستلام.</p>
         
         <div className="search-container">
           <form className="search-form" onSubmit={handleSearch}>
@@ -211,31 +222,31 @@ export default function HomepageHero() {
       <div className="trust-bar">
         <div className="trust-item">
           <div className="trust-icon-box" style={{ background: '#eff6ff', color: '#2563eb' }}>
-            <ShieldCheck size={26} />
+            <ShieldCheck size={20} />
           </div>
           <div>
             <h3 className="trust-title">مراجعات وتحليل ذكي</h3>
-            <p className="trust-desc">نكشف لك المميزات والعيوب بحيادية لمساعدتك على الاختيار.</p>
+            <p className="trust-desc">نكشف المميزات والعيوب بحيادية</p>
           </div>
         </div>
         
         <div className="trust-item">
           <div className="trust-icon-box" style={{ background: '#fef2f2', color: '#dc2626' }}>
-            <Truck size={26} />
+            <Truck size={20} />
           </div>
           <div>
-            <h3 className="trust-title">تنفيذ وشحن أمازون الرسمي</h3>
-            <p className="trust-desc">طلبك يصلك مباشرة عبر أسطول أمازون مصر الموثوق.</p>
+            <h3 className="trust-title">تنفيذ وشحن رسمي</h3>
+            <p className="trust-desc">عبر أسطول أمازون مصر الموثوق</p>
           </div>
         </div>
 
         <div className="trust-item">
           <div className="trust-icon-box" style={{ background: '#f0fdf4', color: '#16a34a' }}>
-            <Banknote size={26} />
+            <Banknote size={20} />
           </div>
           <div>
-            <h3 className="trust-title">دفع عند الاستلام وإرجاع سهل</h3>
-            <p className="trust-desc">نفس سياسة الضمان والإرجاع المعتمدة رسمياً من أمازون.</p>
+            <h3 className="trust-title">الدفع عند الاستلام</h3>
+            <p className="trust-desc">إرجاع سهل وسياسة ضمان رسمية</p>
           </div>
         </div>
       </div>
