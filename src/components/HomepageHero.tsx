@@ -37,7 +37,6 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
           color: white;
           box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.4);
           position: relative;
-          overflow: hidden;
         }
         .hero-banner::before {
           content: "";
@@ -104,12 +103,18 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
         .search-btn:hover {
           background: #d97706;
         }
+        .search-actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 1rem;
+          margin-top: 1.25rem;
+          flex-wrap: wrap;
+        }
         .quick-searches {
           display: flex;
           flex-wrap: wrap;
-          justify-content: center;
           gap: 0.5rem;
-          margin-top: 1.25rem;
         }
         .quick-chip {
           background: rgba(255, 255, 255, 0.15);
@@ -223,20 +228,22 @@ export default function HomepageHero({ categories = [] }: { categories?: any[] }
             </button>
           </form>
           
-          <div className="quick-searches">
-            <div className="inline-block relative z-50">
+          <div className="search-actions">
+            <div className="relative z-50">
               <HeaderCategoriesDropdown categories={categories} />
             </div>
-            {quickSearches.map(term => (
-              <button 
-                key={term} 
-                type="button" 
-                className="quick-chip"
-                onClick={() => router.push(`/?q=${encodeURIComponent(term)}`)}
-              >
-                {term}
-              </button>
-            ))}
+            <div className="quick-searches">
+              {quickSearches.map(term => (
+                <button 
+                  key={term} 
+                  type="button" 
+                  className="quick-chip"
+                  onClick={() => router.push(`/?q=${encodeURIComponent(term)}`)}
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -32,7 +32,7 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
     <div className="relative" ref={dropdownRef}>
       <button 
         type="button"
-        className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full font-bold transition-colors"
+        className="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-md transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         onMouseEnter={() => setIsOpen(true)}
       >
@@ -42,63 +42,70 @@ export default function HeaderCategoriesDropdown({ categories }: { categories: a
       </button>
 
       {isOpen && (
-        <div 
-          className="absolute top-full right-0 mt-2 w-[600px] max-w-[90vw] bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-[100] flex animate-fade-in"
-          onMouseLeave={() => setIsOpen(false)}
-        >
-          {/* Right Column: Parents */}
-          <div className="w-1/3 bg-slate-50 border-l border-slate-100 flex flex-col p-2">
+        <>
+          <div 
+            className="fixed inset-0 z-40 bg-transparent"
+            onClick={() => setIsOpen(false)}
+          />
+          <div 
+            className="absolute right-0 top-full mt-2 z-50 w-[600px] max-w-[90vw] bg-white shadow-2xl rounded-xl border border-gray-200 overflow-hidden flex animate-fade-in text-slate-800"
+            onMouseLeave={() => setIsOpen(false)}
+          >
+          {/* Right Column: Parents (40%) */}
+          <div className="w-2/5 bg-gray-50/50 border-l border-gray-100 flex flex-col">
             {parents.map((p, i) => (
               <button
                 key={i}
                 type="button"
-                className={`flex items-center justify-between text-right px-3 py-2.5 rounded-lg font-bold text-sm transition-colors ${activeParent === p.category ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
+                className={`py-3 px-4 text-sm font-medium flex justify-between items-center cursor-pointer transition-colors ${activeParent === p.category ? 'bg-white text-blue-600 shadow-sm border-r-2 border-r-blue-600' : 'text-slate-700 hover:bg-white hover:text-blue-600'}`}
                 onMouseEnter={() => setActiveParent(p.category)}
               >
                 <div className="flex items-center gap-2">
                   {p.icon && <span>{p.icon}</span>}
                   <span>{p.title}</span>
                 </div>
-                <ChevronLeft size={14} className={activeParent === p.category ? 'text-blue-500' : 'text-slate-300'} />
+                <ChevronLeft size={16} className={activeParent === p.category ? 'text-blue-600' : 'text-gray-300'} />
               </button>
             ))}
           </div>
 
-          {/* Left Column: Children */}
-          <div className="w-2/3 bg-white p-4">
+          {/* Left Column: Children (60%) */}
+          <div className="w-3/5 bg-white p-4 flex flex-col h-full">
             {activeParent && (() => {
               const children = getChildren(activeParent);
               const parentInfo = parents.find(p => p.category === activeParent);
               
               return (
-                <div>
-                  <h3 className="font-extrabold text-slate-800 mb-3 border-b border-slate-100 pb-2">
+                <div className="flex flex-col h-full">
+                  <h3 className="font-extrabold text-slate-800 mb-3 border-b border-gray-100 pb-2 text-right">
                     {parentInfo?.title}
                   </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link
-                      href={`/category/${generateSlug(parentInfo?.title || '')}`}
-                      className="px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg font-bold transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      عرض الكل &larr;
-                    </Link>
+                  <div className="grid grid-cols-2 gap-2 flex-grow content-start">
                     {children.map((child, idx) => (
                       <Link
                         key={idx}
                         href={`/category/${generateSlug(child.title)}`}
-                        className="px-3 py-2 text-sm text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg font-semibold transition-colors"
+                        className="px-3 py-2 text-sm text-slate-700 hover:text-blue-600 hover:bg-blue-50/50 rounded-lg font-semibold transition-colors text-right block truncate"
                         onClick={() => setIsOpen(false)}
                       >
                         {child.title}
                       </Link>
                     ))}
                   </div>
+                  
+                  <Link
+                    href={`/category/${generateSlug(parentInfo?.title || '')}`}
+                    className="mt-4 px-4 py-2.5 text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg font-bold transition-colors text-center flex items-center justify-center gap-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    عرض كل المنتجات في هذا القسم &larr;
+                  </Link>
                 </div>
               );
             })()}
           </div>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
