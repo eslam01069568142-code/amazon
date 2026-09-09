@@ -4,12 +4,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, ShieldCheck, Truck, Banknote, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+const announcements = [
+  '🛡️ مراجعات وتحليل ذكي: نكشف لك المميزات والعيوب بحيادية لمساعدتك على الاختيار.',
+  '🚚 تنفيذ وشحن أمازون الرسمي: طلبك يصلك مباشرة عبر أسطول أمازون مصر الموثوق.',
+  '💵 دفع عند الاستلام وإرجاع سهل: نفس سياسة الضمان والإرجاع المعتمدة رسمياً من أمازون.'
+];
+
 export default function HomepageHero() {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<{id: string, title: string}[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef<HTMLFormElement>(null);
+  const [tickerIndex, setTickerIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % announcements.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -234,6 +248,16 @@ export default function HomepageHero() {
                 {term}
               </button>
             ))}
+          </div>
+
+          {/* Embedded Ticker */}
+          <div className="mt-4 max-w-xl mx-auto flex justify-center items-center py-1.5 px-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-white text-xs sm:text-sm text-center overflow-hidden">
+            <p 
+              key={tickerIndex}
+              className="transition-opacity duration-500 ease-in-out font-medium truncate"
+            >
+              {announcements[tickerIndex]}
+            </p>
           </div>
         </div>
       </div>
