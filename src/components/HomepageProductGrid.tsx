@@ -15,25 +15,6 @@ interface HomepageProductGridProps {
   categories: CategoryObj[] | string[];
 }
 
-const CATEGORY_MAP: Record<string, string[]> = {
-  // الإلكترونيات
-  'الإلكترونيات': ['cat_uzhhuoj5g', 'cat_cameras', 'cat_power', 'cat_phones', 'cat_audio', 'cat_accessories', 'electronics'],
-  // المنزل والمطبخ
-  'المنزل والمطبخ': ['cat_mfufmoad0', 'cat_kitchenapps', 'cat_6d04c5ft6', 'cat_c4tky0yxa', 'cat_kitchentools', 'cat_u310yd1w3', 'cat_2zjelnsdg', 'home-kitchen', 'kitchen', 'أجهزة المطبخ والمنزل'],
-  // الأزياء والموضة
-  'الأزياء والموضة': ['cat_hbxqqz95p', 'cat_hfskvya0h', 'cat_oxh8hivt8', 'cat_5kv8y47df', 'cat_travelcross', 'cat_backpacks', 'cat_62fdle3jq', 'fashion', 'أزياء'],
-  // الصحة والجمال
-  'الصحة والجمال': ['cat_g3n6vkljv', 'cat_ut73yprlm', 'cat_bwoqca3kt', 'cat_o6r080tvi', 'cat_perfumes', 'cat_personalcare', 'cat_r826y1abx', 'health-beauty', 'العناية الشخصية'],
-  // مستلزمات السيارات
-  'مستلزمات السيارات': ['cat_dvuxkdjve', 'cat_a6s6tp65d', 'cat_ifs67ovt2', 'cat_revsrdm4z', 'automotive'],
-  // الرياضة واللياقة
-  'الرياضة واللياقة': ['cat_gnkssf8aq', 'cat_pqw2g6ac9', 'cat_ouk0kv2k7', 'cat_jiacjmtx3', 'sports'],
-  // المنتجات المكتبية
-  'المنتجات المكتبية': ['cat_dby0c7bhh', 'cat_bbam1301v', 'cat_9pyqkxiit', 'cat_fmbmubvnt', 'office'],
-  // ماي واي
-  'ماي واي': ['cat_mtnxvq39', 'my-way', 'myway'],
-};
-
 export default function HomepageProductGrid({ products, categories }: HomepageProductGridProps) {
   const [activeCategory, setActiveCategory] = useState<string>('الكل');
 
@@ -42,42 +23,48 @@ export default function HomepageProductGrid({ products, categories }: HomepagePr
       return products.slice(0, 40);
     }
 
-    // Find the selected category object from categories array if it's an object array
-    let activeCat: CategoryObj | undefined = undefined;
+    // 1. Find if activeCategory matches a specific category in categories prop
+    let matchedCategory: CategoryObj | undefined = undefined;
     if (categories.length > 0 && typeof categories[0] === 'object') {
-      activeCat = (categories as CategoryObj[]).find(
-        (c) => c.id === activeCategory || c.slug === activeCategory || c.title === activeCategory
+      matchedCategory = (categories as CategoryObj[]).find(
+        (c) => c.title === activeCategory || c.id === activeCategory || c.slug === activeCategory
       );
     }
+    const directId = matchedCategory ? matchedCategory.id : activeCategory;
+
+    // 2. Parent-to-children mapping for high-level categories
+    const parentMappings: Record<string, string[]> = {
+      'الإلكترونيات': ['cat_uzhhuoj5g', 'cat_cameras', 'cat_power', 'cat_phones', 'cat_audio', 'cat_accessories', 'electronics'],
+      'المنزل والمطبخ': ['cat_mfufmoad0', 'cat_kitchenapps', 'cat_6d04c5ft6', 'cat_c4tky0yxa', 'cat_kitchentools', 'cat_u310yd1w3', 'cat_2zjelnsdg', 'home-kitchen', 'kitchen'],
+      'الأزياء والموضة': ['cat_hbxqqz95p', 'cat_hfskvya0h', 'cat_oxh8hivt8', 'cat_5kv8y47df', 'cat_travelcross', 'cat_backpacks', 'cat_62fdle3jq', 'fashion'],
+      'الصحة والجمال': ['cat_g3n6vkljv', 'cat_ut73yprlm', 'cat_bwoqca3kt', 'cat_o6r080tvi', 'cat_perfumes', 'cat_personalcare', 'cat_r826y1abx', 'health-beauty'],
+      'مستلزمات السيارات': ['cat_dvuxkdjve', 'cat_a6s6tp65d', 'cat_ifs67ovt2', 'cat_revsrdm4z', 'automotive'],
+      'الرياضة واللياقة': ['cat_gnkssf8aq', 'cat_pqw2g6ac9', 'cat_ouk0kv2k7', 'cat_jiacjmtx3', 'sports'],
+      'المنتجات المكتبية': ['cat_dby0c7bhh', 'cat_bbam1301v', 'cat_9pyqkxiit', 'cat_fmbmubvnt', 'office'],
+      'ماي واي': ['cat_mtnxvq39', 'my-way', 'myway'],
+      
+      // Explicit Subcategories Mappings
+      'موبايلات': ['cat_phones', 'phones', 'موبايلات'],
+      'الموبايلات': ['cat_phones', 'phones', 'موبايلات'],
+      'شواحن وباور بانك': ['cat_power', 'power'],
+      'كاميرات مراقبة': ['cat_cameras', 'cameras'],
+      'أدوات المطبخ والطبخ': ['cat_6d04c5ft6', 'kitchentools'],
+      'الأجهزة المنزلية': ['cat_c4tky0yxa', 'kitchenapps'],
+      'العطور': ['cat_o6r080tvi', 'cat_perfumes', 'perfumes'],
+      'ملابس رجالية': ['cat_hfskvya0h'],
+      'ملابس نسائية': ['cat_oxh8hivt8'],
+      'شنط سفر وكروس': ['cat_travelcross']
+    };
+
+    const allowedIds = parentMappings[activeCategory] || [directId, activeCategory];
 
     return products.filter((p: any) => {
-      // 0. Match using explicit category map
-      if (CATEGORY_MAP[activeCategory]) {
-        const mappedIds = CATEGORY_MAP[activeCategory];
-        if (mappedIds.includes(p.category) || mappedIds.includes(p.categoryId) || mappedIds.includes(p.category_id)) return true;
-        if (mappedIds.includes(p.categorySlug) || mappedIds.includes(p.categoryName)) return true;
-      }
+      const prodCat = String(p.category || p.categoryId || p.category_id || '').trim();
       
-      // Since some categories are mapped slightly differently in UI, check mapped IDs for aliases
-      for (const [parentName, mappedIds] of Object.entries(CATEGORY_MAP)) {
-         if (mappedIds.includes(activeCategory)) {
-            if (mappedIds.includes(p.category) || mappedIds.includes(p.categoryId) || mappedIds.includes(p.category_id)) return true;
-            if (p.category === parentName) return true;
-         }
-      }
-
-      // 1. Match against selectedCategory directly
-      if (p.category === activeCategory || p.categoryId === activeCategory || p.category_id === activeCategory) return true;
-      if (p.slug === activeCategory || p.categorySlug === activeCategory) return true;
-      if (p.title === activeCategory || p.categoryName === activeCategory) return true;
-
-      // 2. Match against resolved active category object
-      if (activeCat) {
-        if (p.category === activeCat.id || p.category === activeCat.slug || p.category === activeCat.title) return true;
-        if (p.categoryId === activeCat.id || p.category_id === activeCat.id) return true;
-        if (p.categorySlug === activeCat.slug || p.categoryName === activeCat.title) return true;
-      }
-
+      // Direct or mapped match
+      if (allowedIds.some((id) => id.toLowerCase() === prodCat.toLowerCase())) return true;
+      if (p.category === activeCategory || p.title?.includes(activeCategory)) return true;
+      
       return false;
     }).slice(0, 40);
   }, [products, activeCategory, categories]);
