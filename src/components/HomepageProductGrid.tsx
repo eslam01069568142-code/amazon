@@ -4,21 +4,49 @@ import React, { useState, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
 import type { Product } from '@/data/db';
 
+interface CategoryObj {
+  id: string;
+  title: string;
+  slug?: string;
+}
+
 interface HomepageProductGridProps {
   products: Product[];
-  categories: string[];
+  categories: CategoryObj[] | string[];
 }
 
 export default function HomepageProductGrid({ products, categories }: HomepageProductGridProps) {
   const [activeCategory, setActiveCategory] = useState<string>('الكل');
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === 'الكل') {
-      // Return a balanced mix or just all (let's say all, maybe max 40 for performance)
+    if (!activeCategory || activeCategory === 'all' || activeCategory === 'الكل') {
       return products.slice(0, 40);
     }
-    return products.filter(p => p.category === activeCategory).slice(0, 40);
-  }, [products, activeCategory]);
+
+    // Find the selected category object from categories array if it's an object array
+    let activeCat: CategoryObj | undefined = undefined;
+    if (categories.length > 0 && typeof categories[0] === 'object') {
+      activeCat = (categories as CategoryObj[]).find(
+        (c) => c.id === activeCategory || c.slug === activeCategory || c.title === activeCategory
+      );
+    }
+
+    return products.filter((p: any) => {
+      // 1. Match against selectedCategory directly
+      if (p.category === activeCategory || p.categoryId === activeCategory || p.category_id === activeCategory) return true;
+      if (p.slug === activeCategory || p.categorySlug === activeCategory) return true;
+      if (p.title === activeCategory || p.categoryName === activeCategory) return true;
+
+      // 2. Match against resolved active category object
+      if (activeCat) {
+        if (p.category === activeCat.id || p.category === activeCat.slug || p.category === activeCat.title) return true;
+        if (p.categoryId === activeCat.id || p.category_id === activeCat.id) return true;
+        if (p.categorySlug === activeCat.slug || p.categoryName === activeCat.title) return true;
+      }
+
+      return false;
+    }).slice(0, 40);
+  }, [products, activeCategory, categories]);
 
   return (
     <section className="section" style={{ paddingTop: '1rem', paddingBottom: '3rem' }}>
@@ -87,15 +115,19 @@ export default function HomepageProductGrid({ products, categories }: HomepagePr
         >
           الكل
         </button>
-        {categories.map(cat => (
-          <button 
-            key={cat}
-            className={`filter-chip ${activeCategory === cat ? 'active' : ''}`}
-            onClick={() => setActiveCategory(cat)}
-          >
-            {cat}
-          </button>
-        ))}
+        {categories.map(cat => {
+          const catTitle = typeof cat === 'string' ? cat : cat.title;
+          const catKey = typeof cat === 'string' ? cat : (cat.id || cat.title);
+          return (
+            <button 
+              key={catKey}
+              className={`filter-chip ${activeCategory === catTitle ? 'active' : ''}`}
+              onClick={() => setActiveCategory(catTitle)}
+            >
+              {catTitle}
+            </button>
+          );
+        })}
       </div>
 
       {/* Product Grid */}

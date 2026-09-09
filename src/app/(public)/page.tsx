@@ -390,7 +390,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
       <div className="container">
         <HomepageProductGrid 
           products={db.products} 
-          categories={['أجهزة المطبخ والمنزل', 'الإلكترونيات', 'العناية الشخصية', 'الموبايلات', 'الكمبيوتر', 'ماي واي', 'أزياء']} 
+          categories={['أجهزة المطبخ والمنزل', 'الإلكترونيات', 'العناية الشخصية', 'الموبايلات', 'الكمبيوتر', 'ماي واي', 'أزياء'].map(title => {
+            const section = db.sections.find(s => s.title === title);
+            return {
+              id: section?.category || section?.id || title,
+              title: title,
+              slug: title
+            };
+          })} 
         />
       </div>
 
