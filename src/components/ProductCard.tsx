@@ -207,7 +207,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
             {currPriceNum !== null && origPriceNum !== null && origPriceNum > currPriceNum && (
               <span className="product-card-compare-tag">
-                وفر {origPriceNum - currPriceNum} جنيه
+                وفر {Math.round(origPriceNum - currPriceNum)} جنيه
               </span>
             )}
           </div>

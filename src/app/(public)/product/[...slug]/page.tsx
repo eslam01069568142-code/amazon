@@ -189,12 +189,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   // ── Smart Recommendation Engine ──
   const titleWords = product.title.split(' ').slice(0, 3).map(w => w.toLowerCase());
   
+  const productCategoryInfo = db.sections.find(s => s.category === product.category);
+  const categoryTitle = productCategoryInfo?.title || product.category;
+
   const scoreProduct = (p: typeof product) => {
     let score = 0;
     if (p.id === product.id) return -1;
     if (p.category === product.category) score += 10;
     
-    const productCategoryInfo = db.sections.find(s => s.category === product.category);
     const pCategoryInfo = db.sections.find(s => s.category === p.category);
     if (productCategoryInfo?.parentId && pCategoryInfo?.parentId === productCategoryInfo.parentId) {
       score += 5;
@@ -309,7 +311,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       {
         "@type": "ListItem",
         "position": 2,
-        "name": product.category,
+        "name": categoryTitle,
         "item": `https://bkamelnaharda.vercel.app/?category=${encodeURIComponent(product.category)}`
       },
       {
@@ -332,7 +334,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-500 overflow-x-auto whitespace-nowrap">
           <Link href="/" className="hover:text-blue-600 transition-colors">الرئيسية</Link>
           <span>/</span>
-          <Link href={`/?category=${product.category}`} className="hover:text-blue-600 transition-colors">{product.category}</Link>
+          <Link href={`/?category=${product.category}`} className="hover:text-blue-600 transition-colors">{categoryTitle}</Link>
           <span>/</span>
           <span className="text-gray-900 font-medium truncate max-w-[200px] md:max-w-md">{product.title}</span>
         </div>
@@ -522,61 +524,71 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
             {/* Editorial Review */}
-            <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>
-                نظرة عامة ورأي الخبراء
-              </h2>
-              <div style={{ color: '#334155', lineHeight: 1.8, fontSize: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {aiData.editorialReview.split('\n').map((para: string, idx: number) => (
-                  para.trim() && <p key={idx} style={{ margin: 0 }}>{para}</p>
-                ))}
+            {aiData.editorialReview && (
+              <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                  نظرة عامة ورأي الخبراء
+                </h2>
+                <div style={{ color: '#334155', lineHeight: 1.8, fontSize: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {aiData.editorialReview.split('\n').map((para: string, idx: number) => (
+                    para.trim() && <p key={idx} style={{ margin: 0 }}>{para}</p>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Pros & Cons */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-              <div style={{ backgroundColor: '#f0fdf4', borderRadius: '0.75rem', border: '1px solid #bbf7d0', padding: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  ✅ أبرز المميزات
-                </h3>
-                <ul style={{ paddingRight: '1.2rem', margin: 0, color: '#15803d', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  {aiData.pros.map((pro: string, idx: number) => (
-                    <li key={idx}>{pro}</li>
-                  ))}
-                </ul>
-              </div>
+            {(aiData.pros?.length > 0 || aiData.cons?.length > 0) && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                {aiData.pros?.length > 0 && (
+                  <div style={{ backgroundColor: '#f0fdf4', borderRadius: '0.75rem', border: '1px solid #bbf7d0', padding: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      ✅ أبرز المميزات
+                    </h3>
+                    <ul style={{ paddingRight: '1.2rem', margin: 0, color: '#15803d', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.95rem' }}>
+                      {aiData.pros.map((pro: string, idx: number) => (
+                        <li key={idx}>{pro}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-              <div style={{ backgroundColor: '#fff7ed', borderRadius: '0.75rem', border: '1px solid #fed7aa', padding: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#9a3412', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  ⚠️ نقاط يجب مراعاتها
-                </h3>
-                <ul style={{ paddingRight: '1.2rem', margin: 0, color: '#9a3412', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  {aiData.cons.map((con: string, idx: number) => (
-                    <li key={idx}>{con}</li>
-                  ))}
-                </ul>
+                {aiData.cons?.length > 0 && (
+                  <div style={{ backgroundColor: '#fff7ed', borderRadius: '0.75rem', border: '1px solid #fed7aa', padding: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#9a3412', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      ⚠️ نقاط يجب مراعاتها
+                    </h3>
+                    <ul style={{ paddingRight: '1.2rem', margin: 0, color: '#9a3412', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.95rem' }}>
+                      {aiData.cons.map((con: string, idx: number) => (
+                        <li key={idx}>{con}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {/* FAQs */}
-            <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.25rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>
-                أسئلة شائعة (FAQ)
-              </h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                {aiData.faqs.map((faq: any, idx: number) => (
-                  <details key={idx} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} className="group">
-                    <summary style={{ fontWeight: 700, cursor: 'pointer', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none' }}>
-                      {faq.question}
-                      <span className="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
-                    </summary>
-                    <p style={{ marginTop: '0.75rem', color: '#475569', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                      {faq.answer}
-                    </p>
-                  </details>
-                ))}
+            {aiData.faqs?.length > 0 && (
+              <div style={{ backgroundColor: '#fff', borderRadius: '0.75rem', border: '1px solid #e2e8f0', padding: '1.5rem 2rem' }}>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b', marginBottom: '1.25rem', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                  أسئلة شائعة (FAQ)
+                </h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {aiData.faqs.map((faq: any, idx: number) => (
+                    <details key={idx} style={{ background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1' }} className="group">
+                      <summary style={{ fontWeight: 700, cursor: 'pointer', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', listStyle: 'none' }}>
+                        {faq.question}
+                        <span className="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                      </summary>
+                      <p style={{ marginTop: '0.75rem', color: '#475569', lineHeight: 1.6, fontSize: '0.95rem' }}>
+                        {faq.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         ) : (

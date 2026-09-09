@@ -1,16 +1,48 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, ShieldCheck, Truck, Banknote } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, ShieldCheck, Truck, Banknote, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function HomepageHero() {
   const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<{id: string, title: string}[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const router = useRouter();
+  const dropdownRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (!query.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    const abortController = new AbortController();
+    const timer = setTimeout(() => {
+      fetch(`/api/search-suggestions?q=${encodeURIComponent(query)}`, { signal: abortController.signal })
+        .then(res => res.json())
+        .then(data => setSuggestions(data))
+        .catch(() => {});
+    }, 200);
+    return () => {
+      clearTimeout(timer);
+      abortController.abort();
+    };
+  }, [query]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
+      setShowDropdown(false);
       router.push(`/?q=${encodeURIComponent(query.trim())}`);
     }
   };
@@ -173,24 +205,60 @@ export default function HomepageHero() {
       
       {/* 1. Hero Banner */}
       <div className="hero-banner">
-        <h1 className="hero-title">دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر</h1>
-        <p className="hero-subtitle">بنفحص الأسعار ونرشح لك أفضل صفقات أمازون مصر مع الشحن الرسمي وضمان الدفع عند الاستلام.</p>
+        <h1 className="hero-title text-white font-extrabold drop-shadow-sm">دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر</h1>
+        <p className="hero-subtitle text-blue-100">بنفحص الأسعار ونرشح لك أفضل صفقات أمازون مصر مع الشحن الرسمي وضمان الدفع عند الاستلام.</p>
         
         <div className="search-container">
-          <form className="search-form" onSubmit={handleSearch}>
+          <form className="search-form" onSubmit={handleSearch} ref={dropdownRef}>
             <input 
               type="text" 
               className="search-input" 
               placeholder="ابحث عن منتج، ماركة، أو فئة..." 
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setShowDropdown(true);
+              }}
+              onFocus={() => setShowDropdown(true)}
               dir="rtl"
             />
+            {query && (
+              <button 
+                type="button" 
+                onClick={() => setQuery('')}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '0 0.5rem', display: 'flex', alignItems: 'center' }}
+              >
+                <X size={18} />
+              </button>
+            )}
             <button type="submit" className="search-btn">
               <Search size={18} />
               بحث
             </button>
           </form>
+
+          {showDropdown && suggestions.length > 0 && (
+            <div style={{
+              position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '0.5rem',
+              backgroundColor: 'white', borderRadius: '1rem', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.2)',
+              border: '1px solid #e2e8f0', zIndex: 1000, overflow: 'hidden'
+            }}>
+              {suggestions.map(s => (
+                <div 
+                  key={s.id}
+                  onClick={() => {
+                    setShowDropdown(false);
+                    router.push(`/product/${s.id}`);
+                  }}
+                  style={{ padding: '0.85rem 1.25rem', cursor: 'pointer', borderBottom: '1px solid #f1f5f9', color: '#1e293b', textAlign: 'right', fontSize: '0.95rem' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f8fafc')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'white')}
+                >
+                  {s.title}
+                </div>
+              ))}
+            </div>
+          )}
           
           <div className="quick-searches">
             {quickSearches.map(term => (
