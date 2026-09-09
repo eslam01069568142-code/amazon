@@ -157,45 +157,53 @@ export default function HomepageHero() {
         .trust-bar {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
+          gap: 0.5rem;
           background: white;
-          padding: 1.5rem;
-          border-radius: 1rem;
+          padding: 0.6rem 1rem;
+          border-radius: 0.75rem;
           border: 1px solid #e2e8f0;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
         .trust-item {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
-          text-align: center;
-          gap: 0.75rem;
+          justify-content: flex-start;
+          text-align: right;
+          gap: 0.5rem;
         }
         .trust-icon-box {
-          width: 48px;
-          height: 48px;
-          border-radius: 12px;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-shrink: 0;
+        }
+        .trust-text-wrapper {
+          display: flex;
+          flex-direction: column;
         }
         .trust-title {
           font-weight: 800;
           color: #0f172a;
-          font-size: 1rem;
+          font-size: 0.8rem;
           margin: 0;
+          line-height: 1.2;
         }
         .trust-desc {
-          font-size: 0.85rem;
+          font-size: 0.65rem;
           color: #64748b;
           margin: 0;
-          line-height: 1.5;
+          line-height: 1.3;
         }
         
         @media (max-width: 768px) {
           .trust-bar {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
           }
           .hero-title {
             font-size: 2rem;
@@ -205,7 +213,7 @@ export default function HomepageHero() {
       
       {/* 1. Hero Banner */}
       <div className="hero-banner">
-        <h1 className="hero-title text-white font-extrabold drop-shadow-sm">دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر</h1>
+        <h1 style={{ color: '#ffffff' }} className="hero-title text-3xl sm:text-5xl font-extrabold text-white text-center drop-shadow-sm">دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر</h1>
         <p className="hero-subtitle text-blue-100">بنفحص الأسعار ونرشح لك أفضل صفقات أمازون مصر مع الشحن الرسمي وضمان الدفع عند الاستلام.</p>
         
         <div className="search-container">
@@ -279,31 +287,31 @@ export default function HomepageHero() {
       <div className="trust-bar">
         <div className="trust-item">
           <div className="trust-icon-box" style={{ background: '#eff6ff', color: '#2563eb' }}>
-            <ShieldCheck size={26} />
+            <ShieldCheck size={18} />
           </div>
-          <div>
+          <div className="trust-text-wrapper">
             <h3 className="trust-title">مراجعات وتحليل ذكي</h3>
-            <p className="trust-desc">نكشف لك المميزات والعيوب بحيادية لمساعدتك على الاختيار.</p>
+            <p className="trust-desc">نكشف لك المميزات والعيوب بحيادية</p>
           </div>
         </div>
         
         <div className="trust-item">
           <div className="trust-icon-box" style={{ background: '#fef2f2', color: '#dc2626' }}>
-            <Truck size={26} />
+            <Truck size={18} />
           </div>
-          <div>
+          <div className="trust-text-wrapper">
             <h3 className="trust-title">تنفيذ وشحن أمازون الرسمي</h3>
-            <p className="trust-desc">طلبك يصلك مباشرة عبر أسطول أمازون مصر الموثوق.</p>
+            <p className="trust-desc">يصلك مباشرة عبر أسطول أمازون</p>
           </div>
         </div>
 
         <div className="trust-item">
           <div className="trust-icon-box" style={{ background: '#f0fdf4', color: '#16a34a' }}>
-            <Banknote size={26} />
+            <Banknote size={18} />
           </div>
-          <div>
-            <h3 className="trust-title">دفع عند الاستلام وإرجاع سهل</h3>
-            <p className="trust-desc">نفس سياسة الضمان والإرجاع المعتمدة رسمياً من أمازون.</p>
+          <div className="trust-text-wrapper">
+            <h3 className="trust-title">إرجاع سهل وضمان</h3>
+            <p className="trust-desc">نفس سياسة الإرجاع الرسمية من أمازون</p>
           </div>
         </div>
       </div>

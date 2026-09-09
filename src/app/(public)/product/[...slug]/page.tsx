@@ -582,7 +582,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                         <span className="text-blue-600 group-open:rotate-180 transition-transform">▼</span>
                       </summary>
                       <p style={{ marginTop: '0.75rem', color: '#475569', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                        {faq.answer}
+                        {faq.answer.replace(/^answer:\s*/i, '')}
                       </p>
                     </details>
                   ))}
