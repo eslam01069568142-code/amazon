@@ -1,8 +1,40 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+const heroSlides = [
+  {
+    icon: '🌟',
+    title: 'دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر',
+    subtitle: 'بنفحص الأسعار ونرشح لك أفضل صفقات المتاجر المعتمدة مع الشحن الرسمي والدفع عند الاستلام.'
+  },
+  {
+    icon: '🛡️',
+    title: 'مراجعات وتحليل ذكي بحيادية تامة',
+    subtitle: 'نكشف لك المميزات والعيوب بصدق بناءً على تجارب المشترين لمساعدتك على الاختيار الأمثل.'
+  },
+  {
+    icon: '🚚',
+    title: 'تنفيذ وشحن رسمي موثوق 100%',
+    subtitle: 'طلبك يصلك مباشرة عبر أسطول الشحن المعتمد لضمان سرعة وسلامة التوصيل.'
+  },
+  {
+    icon: '💵',
+    title: 'دفع عند الاستلام وإرجاع سهل ومضمون',
+    subtitle: 'تسوق براحة بال تامة مع نفس سياسات الضمان وحماية المشتري المعتمدة رسمياً.'
+  }
+];
 
 export default function HomepageHero() {
+  const [slideIndex, setSlideIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % heroSlides.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="homepage-hero-wrapper">
       <style dangerouslySetInnerHTML={{__html: `
@@ -21,6 +53,10 @@ export default function HomepageHero() {
           box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.4);
           position: relative;
           overflow: hidden;
+          min-height: 140px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
         .hero-banner::before {
           content: "";
@@ -30,7 +66,7 @@ export default function HomepageHero() {
                       radial-gradient(circle at 80% -50%, rgba(99, 102, 241, 0.2) 0%, transparent 50%);
         }
         .hero-title {
-          font-size: 1.875rem;
+          font-size: 1.7rem;
           font-weight: 900;
           margin-bottom: 0.25rem;
           position: relative;
@@ -38,94 +74,59 @@ export default function HomepageHero() {
           line-height: 1.3;
         }
         .hero-subtitle {
-          font-size: 0.875rem;
+          font-size: 0.85rem;
           color: #c7d2fe;
           max-width: 600px;
-          margin: 0 auto 0.5rem auto;
+          margin: 0 auto;
           line-height: 1.6;
           position: relative;
           z-index: 1;
         }
-        .search-container {
-          max-width: 550px;
-          margin: 0 auto;
+        .slide-content {
+          transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .slide-icon {
+          font-size: 1.5rem;
+          margin-bottom: 0.25rem;
           position: relative;
           z-index: 1;
         }
-        .search-form {
-          display: flex;
-          background: white;
-          border-radius: 999px;
-          padding: 0.5rem;
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .search-input {
-          flex-grow: 1;
-          border: none;
-          outline: none;
-          padding: 0.5rem 1.25rem;
-          font-size: 1.05rem;
-          border-radius: 999px;
-          color: #1e293b;
-          background: transparent;
-        }
-        .search-btn {
-          background: #f59e0b;
-          color: white;
-          border: none;
-          border-radius: 999px;
-          padding: 0.75rem 1.5rem;
-          font-weight: 700;
-          cursor: pointer;
-          transition: background 0.2s;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-        .search-btn:hover {
-          background: #d97706;
-        }
-        .quick-searches {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-top: 0.5rem;
-        }
-        .quick-chip {
-          background: rgba(255, 255, 255, 0.15);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          color: white;
-          padding: 0.35rem 1rem;
-          border-radius: 999px;
-          font-size: 0.85rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          backdrop-filter: blur(4px);
-        }
-        .quick-chip:hover {
-          background: rgba(255, 255, 255, 0.25);
-          transform: translateY(-2px);
-        }
         @media (max-width: 768px) {
           .hero-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
           }
           .hero-subtitle {
             font-size: 0.75rem;
           }
           .hero-banner {
-            padding: 1rem 1rem;
+            padding: 1.25rem 1rem;
+            min-height: 150px;
+          }
+          .slide-icon {
+            font-size: 1.25rem;
           }
         }
       `}} />
       
       {/* 1. Hero Banner */}
       <div className="hero-banner">
-        <h1 style={{ color: '#ffffff' }} className="hero-title font-extrabold text-white text-center drop-shadow-sm">دليلك الذكي لأقوى العروض وتوفير فلوسك في مصر</h1>
-        <p className="hero-subtitle text-blue-100">بنفحص الأسعار ونرشح لك أفضل صفقات أمازون ونون مع الشحن الرسمي والدفع عند الاستلام.</p>
+        <div key={slideIndex} className="slide-content" style={{ animation: 'fadeInUp 0.5s ease' }}>
+          <div className="slide-icon">{heroSlides[slideIndex].icon}</div>
+          <h1 style={{ color: '#ffffff' }} className="hero-title text-white text-center drop-shadow-sm">
+            {heroSlides[slideIndex].title}
+          </h1>
+          <p className="hero-subtitle">
+            {heroSlides[slideIndex].subtitle}
+          </p>
+        </div>
       </div>
-
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}} />
     </div>
   );
 }
