@@ -2,6 +2,7 @@ import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
 import HomepageHero from '@/components/HomepageHero';
 import HomepageProductGrid from '@/components/HomepageProductGrid';
+import AnnouncementTicker from '@/components/AnnouncementTicker';
 import { getDb } from '@/data/db';
 import { Tag, Zap, ArrowLeft, Clock, Shirt, HeartPulse, Dumbbell, Smartphone, Home as HomeIcon, Gamepad2, Briefcase, Car, Sparkles, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -231,8 +232,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     <div className="animate-fade-in" style={{ paddingBottom: '3rem' }}>
       
       {/* 1. Hero & Trust Bar */}
-      <div className="container" style={{ paddingTop: '1.5rem' }}>
+      <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '1rem' }}>
         <HomepageHero />
+      </div>
+      
+      {/* 1.1 Sleek Rotating Ticker Ribbon */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <AnnouncementTicker />
       </div>
       
 
