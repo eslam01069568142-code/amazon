@@ -28,12 +28,6 @@ export default function ProductPageInteractive({
   const [alertLoading, setAlertLoading] = useState(false);
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  // AI Summary State
-  const [summaryPoints, setSummaryPoints] = useState<string[]>(() => {
-    const lines = (description || '').split('\n').map(l => l.trim()).filter(l => l.length > 5);
-    return lines.slice(0, 4);
-  });
-
   const handleCreateAlert = async (e: React.FormEvent) => {
     e.preventDefault();
     setAlertLoading(true);
@@ -111,21 +105,6 @@ export default function ProductPageInteractive({
           <span>📉 تتبع تغير السعر: مستقر</span>
         </div>
       </div>
-
-      {/* AI / Local Features Summary Box */}
-      {summaryPoints.length > 0 && (
-        <div style={{ backgroundColor: '#faf5ff', border: '1px solid #e9d5ff', borderRadius: '0.75rem', padding: '1rem 1.25rem', marginTop: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', color: '#7e22ce', fontWeight: 800, fontSize: '0.95rem' }}>
-            <Sparkles size={18} />
-            <span>💡 ملخص مميزات المنتج</span>
-          </div>
-          <ul style={{ margin: 0, paddingRight: '1.25rem', listStyleType: 'disc', color: '#581c87', fontSize: '0.85rem', lineHeight: '1.6' }}>
-            {summaryPoints.map((pt, idx) => (
-              <li key={idx}>{pt}</li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* Price Alert Modal */}
       {showAlertModal && (

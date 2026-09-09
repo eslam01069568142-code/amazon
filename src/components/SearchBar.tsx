@@ -48,8 +48,6 @@ export default function SearchBar() {
     }
   };
 
-  if (pathname === '/') return null;
-
   return (
     <form onSubmit={handleSubmit} className={styles.searchContainer} ref={dropdownRef}>
       <input 

@@ -82,6 +82,12 @@ export default async function Header() {
           </Link>
           <div className={styles.searchWrapper}>
             <SearchBar />
+            <div className={styles.quickChips}>
+              <Link href="/?q=أجهزة المطبخ" className={styles.quickChip}>أجهزة المطبخ</Link>
+              <Link href="/?q=ماي واي" className={styles.quickChip}>ماي واي</Link>
+              <Link href="/?q=باور بانك" className={styles.quickChip}>باور بانك</Link>
+              <Link href="/?q=العناية بالبشرة" className={styles.quickChip}>العناية بالبشرة</Link>
+            </div>
           </div>
         </div>
       </div>

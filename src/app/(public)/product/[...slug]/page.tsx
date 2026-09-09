@@ -74,6 +74,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   }
 
   const expectedSlug = generateSlug(product.title);
+  const absoluteUrl = `https://bkamelnaharda.vercel.app/product/${product.id}/${encodeURIComponent(expectedSlug)}`;
   
   // Only redirect if there is NO slug in the URL at all (legacy URLs)
   // If there is any slug (even if slightly mismatched), just render the page
@@ -438,9 +439,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                             href={offer.url}
                             target="_blank"
                             rel="sponsored nofollow noopener noreferrer"
-                            style={{ padding: '0.5rem 1rem', background: isBest ? '#16a34a' : '#2563eb', color: '#fff', borderRadius: '0.375rem', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem', transition: 'all 0.2s' }}
+                            style={{ padding: '0.5rem 1rem', background: isBest ? '#16a34a' : '#2563eb', color: '#fff', borderRadius: '0.375rem', textDecoration: 'none', fontWeight: 700, fontSize: '0.85rem', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
                           >
-                            شراء الآن
+                            {offer.storeName.toLowerCase().includes('amazon') ? 'عرض على أمازون' : offer.storeName.toLowerCase().includes('noon') ? 'شراء من نون' : 'شراء الآن'}
                           </a>
                         </div>
                       </div>
@@ -462,7 +463,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}
                   >
                     <ShoppingCart size={24} />
-                    شراء الآن من Amazon
+                    عرض العرض على أمازون مصر
                     {dbAmazonOffers.length > 0 && dbAmazonOffers[0].price && (
                        <span style={{ marginRight: 'auto', fontWeight: 800 }}>{dbAmazonOffers[0].price} {dbAmazonOffers[0].currency || 'EGP'}</span>
                     )}
@@ -479,12 +480,22 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', background: '#fef08a', color: '#854d0e', border: '1px solid #fde047', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: 700, transition: 'all 0.2s', textDecoration: 'none', marginBottom: '0.75rem' }}
                   >
                     <ShoppingCart size={24} />
-                    شراء الآن من نون
+                    شراء الآن من نون مصر
                     <span style={{ marginRight: 'auto', fontWeight: 800, color: '#a16207' }}>{noonOffer.price} {noonOffer.currency}</span>
                   </a>
                 ))}
               </>
             )}
+
+            {/* WhatsApp Share Button */}
+            <a
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(product.title + ' - ' + absoluteUrl)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: '#25D366', color: '#fff', padding: '0.6rem 1rem', borderRadius: '0.5rem', fontWeight: 700, textDecoration: 'none', marginBottom: '0.5rem', transition: 'background 0.2s' }}
+            >
+              <span style={{ fontSize: '1.25rem' }}>📲</span> شارك العرض عبر واتساب
+            </a>
 
             {/* Trust Signals */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.85rem', color: '#4b5563', marginTop: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #e2e8f0' }}>
@@ -494,7 +505,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#ea580c', fontWeight: 600 }}>
                 <Clock size={18} />
-                <span>شحن سريع من أمازون</span>
+                <span>{hasAmazonOffer ? 'شحن رسمي من أمازون مصر' : (noonOffers.length > 0 ? 'شحن سريع عبر نون مصر' : 'شحن سريع وموثوق')}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#2563eb', fontWeight: 600 }}>
                 <span style={{ fontSize: '1.1rem' }}>🔄</span>
