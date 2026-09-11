@@ -219,7 +219,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     .select('*, product_offers(*)')
     .order('created_at', { ascending: false, nullsFirst: false })
     .order('id', { ascending: false })
-    .limit(32);
+    .limit(12);
     
   const newArrivals = (latestProducts || []).map(rowToProduct);
 
