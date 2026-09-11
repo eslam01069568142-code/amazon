@@ -115,7 +115,7 @@ export interface DbSchema {
 // ── Row-to-model converters ────────────────────────────────────────────
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function rowToProduct(row: any): Product {
+export function rowToProduct(row: any): Product {
   return {
     id: row.id,
     originalUrl: row.original_url,

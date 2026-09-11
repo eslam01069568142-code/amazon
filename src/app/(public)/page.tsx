@@ -2,7 +2,7 @@ import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
 import HomepageHero from '@/components/HomepageHero';
 import HomepageProductGrid from '@/components/HomepageProductGrid';
-import { getDb } from '@/data/db';
+import { getDb, supabaseAdmin, rowToProduct } from '@/data/db';
 import { Tag, Zap, ArrowLeft, Clock, Shirt, HeartPulse, Dumbbell, Smartphone, Home as HomeIcon, Gamepad2, Briefcase, Car, Sparkles, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { permanentRedirect } from 'next/navigation';
@@ -213,10 +213,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
   }
   finalDailyDeals = finalDailyDeals.slice(0, targetCount);
 
-  // -- B. Automatic New Arrivals --
-  const newArrivals = [...db.products]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 16);
+  // -- B. Automatic New Arrivals (Live direct fetch for maximum freshness) --
+  const { data: latestProducts } = await supabaseAdmin
+    .from('products')
+    .select('*, product_offers(*)')
+    .order('created_at', { ascending: false })
+    .limit(16);
+    
+  const newArrivals = (latestProducts || []).map(rowToProduct);
 
   // -- C. Automatic Category Sections --
   const categorySections = enabledSections

@@ -55,9 +55,9 @@ async function delay(ms) {
 }
 
 function getRandomDelay() {
-  // 4 to 7 minutes in ms
-  const min = 4 * 60 * 1000;
-  const max = 7 * 60 * 1000;
+  // 8 to 18 minutes in ms
+  const min = 8 * 60 * 1000;
+  const max = 18 * 60 * 1000;
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
@@ -214,18 +214,22 @@ async function run() {
       console.log(`Link: ${prod.url}`);
 
       // Insert into products
-      await supabase.from('products').insert({
+      const { error: insertErr } = await supabase.from('products').insert({
         id: productId,
         title: prod.title,
         description: prod.title,
         price: prod.price.toString(),
-        originalPrice: prod.price.toString(),
+        original_price: prod.price.toString(),
         image: prod.image,
         category: target.id,
         rating: '0',
-        originalUrl: prod.url,
-        createdAt: new Date().toISOString()
+        original_url: prod.url,
+        created_at: new Date().toISOString()
       });
+
+      if (insertErr) {
+         console.error('Insert Error:', insertErr.message);
+      }
 
       // Insert into product_offers
       await supabase.from('product_offers').insert({
