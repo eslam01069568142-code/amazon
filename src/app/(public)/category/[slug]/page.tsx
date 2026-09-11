@@ -5,7 +5,8 @@ import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params, searchParams }: { params: Promise<{ slug: string }>, searchParams: Promise<{ sub?: string }> }): Promise<Metadata> {
   const resolvedParams = await params;

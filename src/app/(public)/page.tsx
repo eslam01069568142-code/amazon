@@ -9,7 +9,8 @@ import { permanentRedirect } from 'next/navigation';
 import { generateSlug } from '@/utils/slugs';
 import type { Metadata } from 'next';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function getCategoryTheme(title: string, category: string) {
   const t = (title + ' ' + category).toLowerCase();
@@ -215,7 +216,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
   // -- B. Automatic New Arrivals --
   const newArrivals = [...db.products]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 12);
+    .slice(0, 16);
 
   // -- C. Automatic Category Sections --
   const categorySections = enabledSections
