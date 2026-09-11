@@ -217,8 +217,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
   const { data: latestProducts } = await supabaseAdmin
     .from('products')
     .select('*, product_offers(*)')
-    .order('created_at', { ascending: false })
-    .limit(16);
+    .order('created_at', { ascending: false, nullsFirst: false })
+    .order('id', { ascending: false })
+    .limit(32);
     
   const newArrivals = (latestProducts || []).map(rowToProduct);
 
