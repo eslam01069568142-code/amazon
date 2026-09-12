@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import { Suspense } from 'react';
-import CategorySlider from './CategorySlider';
+import CategoryDrawer from './CategoryDrawer';
 import styles from './Header.module.css';
 import { supabaseAdmin } from '@/data/db';
 import { unstable_cache } from 'next/cache';
@@ -96,7 +96,7 @@ export default async function Header() {
       <div className={styles.navBarWrapper}>
         <div className={`container ${styles.navBarInner}`}>
           <Suspense fallback={<div className={styles.navBarSkeleton} />}>
-            <CategorySlider sections={catSections} />
+            <CategoryDrawer sections={catSections} />
           </Suspense>
         </div>
       </div>
