@@ -200,16 +200,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Link href={`/product/${product.id}/${generateSlug(product.title)}`} className="product-card-link-wrapper">
         <div className="product-card-image-box">
           <div className="product-card-badge-container">
-            {discountPct !== null && (
-              <span className="product-card-discount-tag">
-                وفر {discountPct}%
-              </span>
-            )}
-            {currPriceNum !== null && origPriceNum !== null && origPriceNum > currPriceNum && (
-              <span className="product-card-compare-tag">
+            {currPriceNum !== null && origPriceNum !== null && origPriceNum > currPriceNum ? (
+              <span className="product-card-discount-tag" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', whiteSpace: 'nowrap' }}>
                 وفر {Math.round(origPriceNum - currPriceNum)} جنيه
               </span>
-            )}
+            ) : discountPct !== null ? (
+              <span className="product-card-discount-tag" style={{ whiteSpace: 'nowrap' }}>
+                وفر {discountPct}%
+              </span>
+            ) : null}
           </div>
           <img 
             src={product.image} 
@@ -224,10 +223,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
           
           <div className="product-card-meta">
-            <div className="product-card-rating-badge">
-              <Star size={12} fill="currentColor" />
-              <span style={{ color: '#64748b' }}>{product.rating || '4.5'}</span>
-            </div>
+            {parseFloat(product.rating || '0') > 0 ? (
+              <div className="product-card-rating-badge">
+                <Star size={12} fill="currentColor" />
+                <span style={{ color: '#64748b' }}>{product.rating}</span>
+              </div>
+            ) : (
+              <div className="product-card-rating-badge" style={{ color: '#059669', background: '#d1fae5', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem' }}>
+                <span style={{ color: '#047857' }}>جديد ✨</span>
+              </div>
+            )}
             <div className="product-card-store-badges">
               <span className="store-chip chip-amazon">
                 <span style={{ fontSize: '10px' }}>📦</span> أمازون مصر
