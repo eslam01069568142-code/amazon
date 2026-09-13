@@ -26,20 +26,53 @@ export const searchProducts = (products: Product[], query: string) => {
 
   const queryTokens = normalizedQuery.split(' ').filter(t => t.length > 0);
 
-  return products.filter(p => {
+  const scoredProducts = products.map(p => {
     const title = normalizeArabicSearch(p.title);
     const category = p.category ? normalizeArabicSearch(p.category) : '';
     const description = p.description ? normalizeArabicSearch(p.description) : '';
     const combined = `${title} ${category} ${description}`;
 
-    // Direct match
-    if (combined.includes(normalizedQuery)) return true;
+    let score = 0;
 
-    // Tokenized match (all search tokens present in product text)
-    if (queryTokens.length > 1) {
-      return queryTokens.every(token => combined.includes(token));
+    // 1. Exact phrase match
+    if (combined.includes(normalizedQuery)) {
+       const isStandalone = new RegExp(`(^|\\s)${normalizedQuery}(\\s|$)`).test(combined);
+       score += isStandalone ? 100 : 50;
     }
 
-    return false;
+    // 2. Tokenized match
+    if (queryTokens.length > 0) {
+      let exactTokens = 0;
+      let partialTokens = 0;
+      let allTokensMatch = true;
+
+      for (const token of queryTokens) {
+        const isExact = new RegExp(`(^|\\s)${token}(\\s|$)`).test(combined);
+        const isPartial = combined.includes(token);
+
+        if (isExact) {
+          exactTokens++;
+        } else if (isPartial && token.length >= 4) {
+          // Allow substring matches only for tokens of length >= 4
+          // to prevent short tokens (like "ماي", "واي") from false positives 
+          // inside completely unrelated words (like "مايكرو", "وايفون").
+          partialTokens++;
+        } else {
+          allTokensMatch = false;
+          break; // Optimization: if one token fails, the whole search fails
+        }
+      }
+
+      if (allTokensMatch) {
+         score += (exactTokens * 10) + (partialTokens * 5);
+      }
+    }
+
+    return { product: p, score };
   });
+
+  return scoredProducts
+    .filter(sp => sp.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(sp => sp.product);
 };
