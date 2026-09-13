@@ -53,8 +53,8 @@ export default function CategoryDrawer({ sections = [] }: { sections?: any[] }) 
         منتجات ماي واي
       </Link>
       
-      {mounted && drawerOpen && createPortal(
-        <div className="fixed inset-0 z-[99999] overflow-hidden">
+      {mounted && drawerOpen && (
+        <div className="fixed inset-0 z-[99999] overflow-hidden" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999 }}>
           {/* Dark Backdrop */}
           <div 
             className="absolute inset-0 bg-black/60 transition-opacity duration-300 ease-in-out opacity-100"
@@ -64,7 +64,8 @@ export default function CategoryDrawer({ sections = [] }: { sections?: any[] }) 
           
           {/* Drawer Panel */}
           <div 
-            className="absolute top-0 right-0 bottom-0 w-full max-w-[680px] h-screen h-[100dvh] bg-white shadow-2xl z-[100000] flex flex-col transform translate-x-0 transition-transform duration-300 ease-in-out"
+            className="absolute top-0 right-0 bottom-0 w-full max-w-[680px] h-[100dvh] bg-white shadow-2xl flex flex-col transform translate-x-0 transition-transform duration-300 ease-in-out"
+            style={{ zIndex: 100000 }}
             dir="rtl"
           >
             {/* Header */}
@@ -142,7 +143,7 @@ export default function CategoryDrawer({ sections = [] }: { sections?: any[] }) 
             </div>
           </div>
         </div>
-      , document.body)}
+      )}
     </>
   );
 }

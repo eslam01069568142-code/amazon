@@ -1,0 +1,272 @@
+[
+  {
+    "asin": "B0GBLBS2KQ",
+    "url": "https://www.amazon.eg/dp/B0GBLBS2KQ?language=ar_AE",
+    "status": "completed",
+    "startTime": "2026-09-12T23:50:01.542Z",
+    "endTime": "2026-09-12T23:50:03.607Z",
+    "result": "Added as prod_d5ce9ec468f80705 to category cat_0896edaf0787",
+    "error": null
+  },
+  {
+    "asin": "B0DWKCBK7F",
+    "url": "https://www.amazon.eg/dp/B0DWKCBK7F?language=ar_AE",
+    "status": "completed",
+    "startTime": "2026-09-13T00:00:46.643Z",
+    "endTime": "2026-09-13T00:00:49.660Z",
+    "result": "Added as prod_2808459a85a664c4 to category cat_dda64458e9b4",
+    "error": null
+  },
+  {
+    "asin": "B0923162JM",
+    "url": "https://www.amazon.eg/dp/B0923162JM?language=ar_AE",
+    "status": "completed",
+    "startTime": "2026-09-13T00:10:38.950Z",
+    "endTime": "2026-09-13T00:10:41.489Z",
+    "result": "Added as prod_2d236754099835bb to category cat_0896edaf0787",
+    "error": null
+  },
+  {
+    "asin": "B098TXPYXV",
+    "url": "https://www.amazon.eg/dp/B098TXPYXV?language=ar_AE",
+    "status": "failed",
+    "startTime": "2026-09-13T01:43:48.755Z",
+    "endTime": "2026-09-13T01:43:51.119Z",
+    "result": null,
+    "error": "Price not found"
+  },
+  {
+    "asin": "B0F6LJ7GNR",
+    "url": "https://www.amazon.eg/dp/B0F6LJ7GNR?language=ar_AE",
+    "status": "completed",
+    "startTime": "2026-09-13T00:22:54.297Z",
+    "endTime": "2026-09-13T00:22:57.282Z",
+    "result": "Added as prod_a76420aa419a8e2e to category cat_0896edaf0787",
+    "error": null
+  },
+  {
+    "asin": "B09233KRCB",
+    "url": "https://www.amazon.eg/dp/B09233KRCB?language=ar_AE",
+    "status": "failed",
+    "startTime": "2026-09-13T01:53:12.367Z",
+    "endTime": "2026-09-13T01:53:27.464Z",
+    "result": null,
+    "error": "timeout of 15000ms exceeded"
+  },
+  {
+    "asin": "B09MHD2JFB",
+    "url": "https://www.amazon.eg/dp/B09MHD2JFB?language=ar_AE",
+    "status": "completed",
+    "startTime": "2026-09-13T00:37:07.689Z",
+    "endTime": "2026-09-13T00:37:10.817Z",
+    "result": "Added as prod_06803d4b7b786ccd to category cat_0896edaf0787",
+    "error": null
+  },
+  {
+    "asin": "B0922Z7QGG",
+    "url": "https://www.amazon.eg/dp/B0922Z7QGG?language=ar_AE",
+    "status": "failed",
+    "startTime": "2026-09-13T01:58:37.044Z",
+    "endTime": "2026-09-13T01:58:52.056Z",
+    "result": null,
+    "error": "timeout of 15000ms exceeded"
+  },
+  {
+    "asin": "B09231MGRQ",
+    "url": "https://www.amazon.eg/dp/B09231MGRQ?language=ar_AE",
+    "status": "completed",
+    "startTime": "2026-09-13T00:58:10.161Z",
+    "endTime": "2026-09-13T00:58:13.201Z",
+    "result": "Added as prod_11729a0ea8451567 to category cat_0896edaf0787",
+    "error": null
+  },
+  {
+    "asin": "B0922ZYJZ6",
+    "url": "https://www.amazon.eg/dp/B0922ZYJZ6?language=ar_AE",
+    "status": "failed",
+    "startTime": "2026-09-13T02:06:44.549Z",
+    "endTime": "2026-09-13T02:06:44.563Z",
+    "result": null,
+    "error": "getaddrinfo ENOTFOUND www.amazon.eg"
+  },
+  {
+    "asin": "B0922Z1SN1",
+    "url": "https://www.amazon.eg/dp/B0922Z1SN1?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "034943588X",
+    "url": "https://www.amazon.eg/dp/034943588X?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "0198863128",
+    "url": "https://www.amazon.eg/dp/0198863128?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0GCKT3HW3",
+    "url": "https://www.amazon.eg/dp/B0GCKT3HW3?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0CVBNHPB7",
+    "url": "https://www.amazon.eg/dp/B0CVBNHPB7?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B09232WWW5",
+    "url": "https://www.amazon.eg/dp/B09232WWW5?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B091JCRCQQ",
+    "url": "https://www.amazon.eg/dp/B091JCRCQQ?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B098TXJQP8",
+    "url": "https://www.amazon.eg/dp/B098TXJQP8?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0922V5QNW",
+    "url": "https://www.amazon.eg/dp/B0922V5QNW?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0F6LR4CCZ",
+    "url": "https://www.amazon.eg/dp/B0F6LR4CCZ?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0GH3CXVMQ",
+    "url": "https://www.amazon.eg/dp/B0GH3CXVMQ?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0GHLTCXKY",
+    "url": "https://www.amazon.eg/dp/B0GHLTCXKY?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0GXQ9B8C3",
+    "url": "https://www.amazon.eg/dp/B0GXQ9B8C3?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B09231F6YQ",
+    "url": "https://www.amazon.eg/dp/B09231F6YQ?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B092313MRW",
+    "url": "https://www.amazon.eg/dp/B092313MRW?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B09231SFH2",
+    "url": "https://www.amazon.eg/dp/B09231SFH2?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B09231TMRS",
+    "url": "https://www.amazon.eg/dp/B09231TMRS?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B09231V9ZZ",
+    "url": "https://www.amazon.eg/dp/B09231V9ZZ?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B0922Z9P8P",
+    "url": "https://www.amazon.eg/dp/B0922Z9P8P?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  },
+  {
+    "asin": "B092321K3X",
+    "url": "https://www.amazon.eg/dp/B092321K3X?language=ar_AE",
+    "status": "pending",
+    "startTime": null,
+    "endTime": null,
+    "result": null,
+    "error": null
+  }
+]
