@@ -723,6 +723,7 @@ export default function AdminDashboard() {
     { id: 'الرئيسية', icon: '🏠', label: 'الرئيسية' },
     { id: 'المنتجات', icon: '📦', label: 'المنتجات' },
     { id: 'استيراد المنتجات', icon: '⬇️', label: 'استيراد المنتجات' },
+    { id: 'أتمتة الاستيراد', icon: '🤖', label: 'أتمتة الاستيراد', isLink: true, href: '/admin/automation' },
     { id: 'المتاجر', icon: '🏪', label: 'المتاجر' },
     { id: 'التصنيفات', icon: '📑', label: 'التصنيفات' },
     { id: 'الإعدادات', icon: '⚙️', label: 'الإعدادات' },
@@ -741,7 +742,13 @@ export default function AdminDashboard() {
             {TABS.map(tab => (
               <li key={tab.id} style={{ width: '100%' }}>
                 <button
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    if (tab.isLink) {
+                      window.location.href = tab.href!;
+                    } else {
+                      setActiveTab(tab.id);
+                    }
+                  }}
                   style={{
                     width: '100%', textAlign: 'right', padding: '0.85rem 1rem',
                     background: activeTab === tab.id ? '#eff6ff' : 'transparent',
