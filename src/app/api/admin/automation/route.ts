@@ -73,7 +73,6 @@ export async function POST(req: Request) {
         .from('automation_state')
         .update({
           status: 'stopped',
-          locked_at: null,           // release stale lock so next Start works
           updated_at: new Date().toISOString(),
           // current_section_id  — intentionally NOT reset
           // current_page        — intentionally NOT reset

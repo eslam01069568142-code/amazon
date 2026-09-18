@@ -218,7 +218,7 @@ export default function AutomationDashboard() {
             أتمتة استيراد المنتجات
           </h1>
           <p className="text-gray-500 text-xs">
-            يستورد 3 منتجات لكل فئة فرعية · انتظار عشوائي 2–20 دقيقة بين كل منتج
+            يستورد 3 منتجات لكل فئة فرعية · انتظار عشوائي 5–12 دقيقة بين كل منتج
           </p>
         </div>
         <div className={`flex items-center gap-2 px-4 py-2 rounded-full border font-bold text-sm ${display.color}`}>

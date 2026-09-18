@@ -115,8 +115,8 @@ export async function GET(req: Request) {
       }).eq('id', 'singleton');
     };
 
-    // Calculate random delay between 2 and 20 minutes
-    const randomDelay = Math.floor(Math.random() * (20 - 2 + 1)) + 2;
+    // Calculate random delay between 5 and 12 minutes
+    const randomDelay = Math.floor(Math.random() * (12 - 5 + 1)) + 5;
 
     // 5. Fetch Sections to determine order
     const { data: sections } = await supabaseAdmin
