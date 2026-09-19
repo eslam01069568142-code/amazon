@@ -1,0 +1,1213 @@
+[
+  {
+    "product_id": "prod_B0922Y9YHL",
+    "title": "عطر سبورتي نايت، أو دي تواليت رجالي، 30 مل",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_B05wkDpcm",
+    "title": "كاميرا مراقبة خارجية هيكفيجن 2 ميجابكسل Full HD عدسة 3.6 مم - DS-2CE16D0T-EXIPF",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_1c6ec295b34e39e0",
+    "title": "ماسك مقوي للشعر بالصبار وبروتينات الزبادي من ألو إيفا - 250 جرام",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0e7M9UEB",
+    "title": "كاميرا ذكية c200 من تابو بزاوية 360 درجة بخاصية الواي فاي والإمالة بدقة 1080 بكسل - أبيض، لاسلكي",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_90a0a6502ca3f4bf",
+    "title": "لعبة قول أو اعمل - جيب من قول أميم",
+    "old_category": "cat_fj0r4ax73",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_33c3116812761aa4",
+    "title": "لعبة مضمار تسلق السلالم الكهربائية للاطفال من كيدولوجي، العاب على شكل بطة دوارة مع اضواء وامضة وموسيقى للاطفال الصغار الاولاد والبنات (3 شرائح بطة)",
+    "old_category": "cat_nsexgbpk6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0HGLZC97K",
+    "title": "منظم متعدد الاستخدام – وحدة ترتيب للمطبخ والحمام وغرف النوم والميكاب والكريمات والأدوات المنزلية | حل عملي لتنظيم المساحات",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0922Z7YGH",
+    "title": "عطر اكسبلوجن رجالي من ماي واي، 65.0 ملليلتر",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_852c3301ed738104",
+    "title": "منظف بخار 8 في 1 SK-13082، سعة 1500 مل 3500 وات من سوكاني",
+    "old_category": "cat_kbp8na6k6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_1022c191783155f0",
+    "title": "لعبة الأرنب المشاكس نوتي باني للأطفال، تعمل بالموسيقى والأصوات المرحة، أرنب راقص تفاعلي، لعبة حيوان إلكترونية لطيفة، ممتعة للأولاد والبنات والصغار من كيدز زون",
+    "old_category": "cat_nsexgbpk6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0f1EXjTd",
+    "title": "شاحن باور بانك JR-PBF12 بقوة 10000 ميلي امبير في الساعة مع شحن سريع 22.5 وات ومخرج 2.4 امبير و3 منافذ (2 USB-A و1 USB-C) ومؤشر ليد من جوي رووم، أبيض",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0H6W1LLDJ",
+    "title": "حامل موبايل مغناطيسي للسيارة، حامل موبايل عالمي يدور 360 درجة، حامل معدني مع قاعدة لاصقة، قبضة قوية بيد واحدة لموبايل ايفون واندرويد، EH-256",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_2de0afc19de3e9fa",
+    "title": "فرشاة تنظيف صالون السيارة، فرشاة تنظيف السيارة بشعيرات ناعمة، أداة تنظيف داخلية للسيارة لتنظيف السيارة من الداخل والخارج، من جلد سكايلايت، فرشاة غبار من امرولز، قطعتان (أسود)",
+    "old_category": "cat_dvuxkdjve",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B01eA1lBj",
+    "title": "باور بانك جديد مدمج من باسيوس جامب ستارتر وباور مع معزز بطارية 10000 ميلي أمبير في الساعة تيار 1000 لجميع السيارات - أسود USB النوع C عدد المنافذ: 2",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_2d833912f84d5760",
+    "title": "لعبة بوب ات برو للأطفال والكبار، لعبة بوب فيدجيت للحمل باليد بالضغط السريع مع 4 أوضاع، أحجية الكترونية محمولة للسفر للأولاد والبنات من غزال",
+    "old_category": "cat_nsexgbpk6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_c7e8be4144b5cf1f",
+    "title": "فرشاة جسم من الألياف الطبيعية للتقشير الجاف وتنشيط الدورة الدموية وعلاج السيلوليت",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_36bbfcc1c1d9adef",
+    "title": "Generic Unisex-Adults 0 Kitchenette Guanti (pack of 1)",
+    "old_category": "cat_kbp8na6k6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0gOU6SB9",
+    "title": "كولمان من تانك، 16 لتر - فضي ميتاليك‎",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B08ucZlF5",
+    "title": "خلاط لبن كهربائي، صانع رغوة محمول مع شحن USB للاستمتاع بدون جهد للقهوة واللاتيه والكابتشينو",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_7b07cfaae2de1748",
+    "title": "شاحن من أنكر بتقنية راسUSB Type-C، متوافق مع الأجهزة اللوحية وآيفون وسامسونج وبيكسل، بمنفذ واحد",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_4b468f610190f1dc",
+    "title": "مكيف جلوري سبليت انفرتر تبريد فقط بغاز تبريد R32 مزود بخاصية الواي فاي بتقنية البلازما الباردة+ وضاغط استوائي T3 يتناسب مع درجات الحرارة المرتفعة بدون حامل من جري، لون أبيض، موديل GWC12ATBXB-K6DNA1A",
+    "old_category": "cat_kbp8na6k6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0H8TJRQ98",
+    "title": "خلاط كهربائي ذكي متعدد الوظائف بقوة خارقة 4500 واط بسعة 2 لتر، خلاط فائق السرعة بشفرات ستانلس ستيل ووعاء مقاوم للكسر مضاد لـ BPA",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_0c99ad0bfe949397",
+    "title": "فرشاة مساج فروة الرأس السيليكون للشامبو والتقشير - لتقليل القشرة وتحفيز نمو الشعر",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0dKZfCzx",
+    "title": "سماعات أذن لاسلكية ايربودز برو 3، مع ميزة إلغاء الضوضاء النشط، مستشعر معدل نبضات القلب، دعم السمع، تقنية البلوتوث وصوت ثلاثي الأبعاد، علبة شحن USB نوع سي مقاومة للغبار والعرق والماء من آبل",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0aKbDc8I",
+    "title": "موصل فيديو ذكر بي ان سي - ابيض - 10 قطع، لكاميرا",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0CN5MRZFC",
+    "title": "كريم من كولاجرا للترطيب والتنعيم، 200 مل",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0egEhZz8",
+    "title": "بخاخ عطر ايسنس للنساء من فوج - 120 مل",
+    "old_category": "cat_o6r080tvi",
+    "current_valid_category": "cat_756a54bd3bfb",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_7c76ff9f80057d4e",
+    "title": "لوشن فازلين بزبدة الكاكاو 200 مل",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B04pvvHVb",
+    "title": "بادة ماوس مربعة بحافة مخيطة من نسيج فاخر قابلة للغسل مع قماش ليكرا مطاطية وغير قابلة للانزلاق للاب توب والكمبيوتر الشخصي من اتنريسيت، مقاس 26 × 21 × 1 سم، متعددة الألوان",
+    "old_category": "cat_accessories",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0go07muW",
+    "title": "بوكسر رجالي متعدد الألوان - 5 قطع، من دايس",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_db7d94cd994bfc61",
+    "title": "سبت غسيل دائري قابل للطي من البامبو الطبيعي بغطاء من تراد فيرست، سبت غسيل وسلة تخزين من الخوص، سلة ملابس، ديكور منزلي (طبيعي)",
+    "old_category": "cat_2zjelnsdg",
+    "current_valid_category": "cat_661052da666a",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B00EdLVHx",
+    "title": "ميكروفون لافالير لاسلكي لارك M2 من هوليلاند، 2TX+3RX للكاميرا وآيفون وأندرويد والكمبيوتر، هاي فاي 48 kHz/24 بت، مدة 40 ساعة ونطاق 300 متر، ENC ، من هولي فيو، أسود، أحادى",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0F6YD1DZ4",
+    "title": "شاحن من بلكِن بمنفذ USB متوافق مع آيفون 16 و15 و14 وسامسونج S25 وبيكسل 9 بمنفذ واحد بقدرة 45 واط مع شحن سريع وتصميم مدمج",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_9aa4a8b201da0dd1",
+    "title": "ميزان من بلندورا بشاشة LCD مصنوع من البلاستيك باللون الفضي بسعة قصوى 50.0 كيلوجرامات لقياس الوزن",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0DZ5GBX3T",
+    "title": "مجموعه العنايه ماى واى بينك شيفون لنعومه وتعطير الجسم 3 قطع لوشن وشاور ومعطر",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B00pfllDS",
+    "title": "تيشرت برقبة بولو للرجال من ال سي وايكيكي",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0gNTqXn0",
+    "title": "عطر بخاخ ماركو للرجال من فوج - 120 مل",
+    "old_category": "cat_o6r080tvi",
+    "current_valid_category": "cat_756a54bd3bfb",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B07fQ2kmb",
+    "title": "عطر للنساء سبراي ديناميك من فوج، 120 مل",
+    "old_category": "cat_o6r080tvi",
+    "current_valid_category": "cat_756a54bd3bfb",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0dzZ4hDA",
+    "title": "تي شيرت بقصة عادية ورقبة دائرية للرجال من موباكو، موديل ST100",
+    "old_category": "cat_dby0c7bhh",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B06LJ6V0K",
+    "title": "بخاخ عطر بوكيت من فوج - رويال 17 مل",
+    "old_category": "cat_o6r080tvi",
+    "current_valid_category": "cat_756a54bd3bfb",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_d159cf88bae5d54a",
+    "title": "100 كوب بلاستيك شفاف استعمال مرة واحدة سعة 190 مل - للمنازل والشركات",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_9f6cf6b00cce1fb2",
+    "title": "خطاف تخزين من منال وينكي مصنوع من خشب ومعدن بمقاس 30 سم × 14 سم × 8 سم لون أسود",
+    "old_category": "cat_2zjelnsdg",
+    "current_valid_category": "cat_661052da666a",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_d5613cb550dae6f3",
+    "title": "منظم أدراج المطبخ للمعالق والشوك والسكاكين قابل للتمدد والتعديل من لايف ويت - بلاستيك - مقاس كبير - أسود",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B08Othd0L",
+    "title": "سماعة بلوتوث لاسلكية P9، تدعم صوت ستيريو نقي وبطاقة ذاكرة (اسود)",
+    "old_category": "cat_audio",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B06aLgZ35",
+    "title": "حامل أجهزة إلكترونية محمول من موناديكوس متوافق مع الحواسيب المحمولة قابل للتعديل والطي مع تبريد من سبيكة ألومنيوم فضي",
+    "old_category": "cat_accessories",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_fea6a1c340651179",
+    "title": "QBED طقم ملاية سرير استيك – ملاية مرتبة مطاط مع 2 خداديات – قماش ناعم ومريح – مناسب لجميع المراتب (أبيض, 180*200*30)",
+    "old_category": "cat_2zjelnsdg",
+    "current_valid_category": "cat_661052da666a",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B03OqWwdh",
+    "title": "حامل موبايل معدني قابل للطي P1، تصميم أنيق مع دوران 360 درجة لعرض مثالي، يناسب جميع الاجهزة المحمولة، صغير الحجم ومحمول - مثالي للدراسة أو العمل أو مشاهدة المحتوى في أي مكان.",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B06TutROA",
+    "title": "بلوزة أساسية للرجال DM 119 S/S22 من دايس، 3 قطع",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0cM89635",
+    "title": "بيترايس منظم سفر 7 في 1 للسفر والغسيل ومستحضرات التجميل والامتعة شنط مكياج مكعبات تعبئة مع شنطة احذية اسود نايلون",
+    "old_category": "cat_6d04c5ft6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_dad52be92375a8a9",
+    "title": "Best Love Microfiber Kitchen Towel Set - 5 Pieces",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B03i2DyC2",
+    "title": "فرش متعددة الوظائف مزودة بموزع للصابون بشعيرات ناعمة لتنظيف الأحذية وغسيل الملابس وتنظيف البلاط وللأعمال المنزلية للحمام والمطبخ من جيكووت، قطعة واحدة",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B08gRuikj",
+    "title": "شرابات دي اس ام ميني سوكيت للرجال من دايس (عبوة من 4 قطع)",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0ey6T7LJ",
+    "title": "حمالة صدر لاصقة غير مرئية لرفع الصدر، حمالة صدر ذاتية الالتصاق بدون حمالات مع أغطية مصنوعة من السيليكون الناعم والقابل لإعادة الاستخدام من امفلاور",
+    "old_category": "cat_oxh8hivt8",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0gfsjqtU",
+    "title": "ميكروفون لاسلكي مغناطيسي صغير لارك A1 بدقة 48 كيلو هرتز/24 بت وخاصية إلغاء الضوضاء الذكية بـ3 مستويات ليوتيوب والمدونات الصوتية والفيديو، لآيفون 15/16 واندرويد من هولي لاند، أسود، 2TX وUSB نوع سي RX",
+    "old_category": "cat_audio",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0DB2VB4KN",
+    "title": "حامل يثبت على الحائط - للشرشوبة والمقشة - رف تخزين للجراج ومنظم أدوات الحديقة بـ5 أوضاع و6 خطافات للمنزل والمطبخ والحديقة والأدوات وتنظيم الجراج متعدد الألوان",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B085987BG7",
+    "title": "حامل أجهزة إلكترونية متنقلة من يو جرين يناسب الهواتف 10-18 سم متوافق مع الهواتف الذكية، أسود، قفل تلقائي وتشغيل بيد واحدة",
+    "old_category": "cat_dvuxkdjve",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_771abfcfd9fb3756",
+    "title": "موبايل نوكيا 105 بشريحتين اتصال، 4 ميجابايت، شبكة الجيل الثاني 2G - لون اسود",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_46d5872918219701",
+    "title": "دايسبنطلون DW113/02 W17 لجينجز ليكرا طويل سادة للنساء من دايس، قطعة واحدة",
+    "old_category": "cat_ouk0kv2k7",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_a6aa294f688c9c39",
+    "title": "مجموعة فرش مكياج بمقبض احترافي من ماك بلس مع حافظة جلد، عبوة من 32 قطعة، لون (ذهبي)",
+    "old_category": "cat_1fcbcb0752d8",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_538a749594d87453",
+    "title": "إضاءة سيلفي بـ60 لمبة ليد وبطارية قابلة لإعادة الشحن بسعة 2200mAh مع 7 أوضاع إضاءة و10 مستويات سطوع بتصميم محمول يُثبت بمشبك على الموبايل أو التابلت أو اللاب بتوب، مناسبة للمكالمات والتصوير من انوتين",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B03Io7z0k",
+    "title": "شنطة ظهر قابلة للتوسيع 27 لتر من رحالا، شنطة لاب توب مقاومة للماء 17 بوصة مع منفذ USB، شنطة ظهر خفيفة الوزن متعددة الجيوب للرجال والنساء، مثالية للمكتب والمدرسة والسفر RAL2201 - أسود",
+    "old_category": "cat_backpacks",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_bf6faed1d28d5982",
+    "title": "جاكيت رياضي ضيق للنساء بسوستة كاملة بأكمام طويلة وياقة قائمة سريع الجفاف مناسب لليوجا والجري والتمارين الرياضية",
+    "old_category": "cat_ouk0kv2k7",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0hMmkNz7",
+    "title": "بنطلون جينز بأرجل واسعة بقصة برميلية",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_c623af72d2369400",
+    "title": "قلم حبر جاف سائل من روتو، 0.7 ملم، ازرق - عبوة من 12 قطعة",
+    "old_category": "cat_dby0c7bhh",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0D1VGDCNF",
+    "title": "فريش مقلاة هوائية ميكانيكية 1800 واط، سعة 7 لتر، أسود",
+    "old_category": "cat_aaf0fbe22f26",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B02NXGcVl",
+    "title": "قميص كلاسيكي للرجال من وايت ايجل",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0ex9ZvDi",
+    "title": "شنطة سفر دفل قابلة للطي بسعة كبيرة وخفيفة الوزن ومقاومة للماء ة للتوسيع للامتعة بقسم منفصل للاستخدام الجاف والرطب وصالة الالعاب الرياضية للنساء والرجال ارجواني فاتح من دوجونز البوليستر قماش",
+    "old_category": "cat_62fdle3jq",
+    "current_valid_category": "cat_c4163a986941",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B04Z5QETZ",
+    "title": "بلسم الفيف هيالورون بيور مرطب للشعر الدهني من لوريال باريس، 360 مل",
+    "old_category": "cat_r826y1abx",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_aa0debdd9b4d4e26",
+    "title": "ساعة ذكية 2R OSW-30 بشاشة HD عالية الدقة 1.39 بوصة مكالمات عبر البلوتوث، تتبع معدل ضربات القلب ونسبة الأكسجين في الدم (اس بي او 2)، أكثر من 120 وضع رياضي، مقاومة للماء بمعيار IP68 من اورايمو، أسود | Features 1.39\" HD screen, 120+ sports modes, heart rate monitor, quick SMS reply, and 1-year warranty.",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0C5W77C3G",
+    "title": "كريم لليد والوجه من لونا مرطب، مناسب لجميع أنواع البشرة، 160 جرام",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_d361ad010a8f05ca",
+    "title": "براية اقلام رصاص بفتحة واحدة من ديلي R00200",
+    "old_category": "cat_9pyqkxiit",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0burCJFX",
+    "title": "رحالا شنطة كروس مقاومة للماء 20 سم XB00070 - أسود ، للكبار من الجنسين",
+    "old_category": "cat_travelcross",
+    "current_valid_category": "cat_c4163a986941",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_7f21c44e64d52c64",
+    "title": "واقي سيارة 3 في 1 من فريدا، راسبيري ايس كريم - 300 مل",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0dHXH3Cp",
+    "title": "شارمين ملابس داخلية للنساء 3 قطع في العبوة الوان متنوعة 4 مقاس XL ألوان قطن",
+    "old_category": "cat_bd52801767a6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B04xofJI2",
+    "title": "موبايل شاومي ريدمي 15C، ذاكرة 256 جيجا، 8 جيجا رام، أسود غامق",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0fWNXdiu",
+    "title": "جل استحمام 3 في 1 للرجال من نيفيا، غسول الجسم باور فريش 24 ساعة بتاثير منعش برائحة الحمضيات، 250 مل",
+    "old_category": "cat_r826y1abx",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B00dxCZrl",
+    "title": "صلصال سحري يجف بالهواء من ريزنور، صلصال ناعم وخفيف مع أدوات نحت، اكسسوارات تزيين الحيوانات، الحرف الفنية للأطفال، أفضل هدية للأولاد والبنات من سن 3-12 سنة، عبوة من 12 قطعة",
+    "old_category": "cat_6k6saayuh",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0FSXVHHVQ",
+    "title": "رف تخزين مصنوع من بلاستيك لتنظيم أدوات التنظيف و تخزين المكانس و الممسحات و تنظيم المنزل، رمادي",
+    "old_category": "cat_u310yd1w3",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_e3292ae85b36d751",
+    "title": "مبراة اقلام رصاص بفتحة واحدة مع علبة من ديلي e0574",
+    "old_category": "cat_9pyqkxiit",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_6f6f9d525c682081",
+    "title": "فرشاة تنظيف الزجاج الأمامي للسيارة وإزالة الشحوم من سيليرفلور، فرشاة تنظيف زجاج السيارة مقاومة للمطر، 120 مل، منظف زجاج السيارة، طلاء سائل كاره للماء، ملحقات تنظيف زجاج السيارة",
+    "old_category": "cat_dvuxkdjve",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B01F5lEf4",
+    "title": "طقم فانلة قطن بدون أكمام برقبة دائرية للرجال من 3 قطع دايس",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0DF2S2599",
+    "title": "حامل موبايل مغناطيسي قوي دوران 360 درجة متوافق مع آيفون وسامسونج - أسود",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0G4RY6B3X",
+    "title": "بخاخ حريمى بودى سبرى او دى تواليت معطر للجسم 125ml من ماى واى (بينك)",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_057087e7fc0d1fdf",
+    "title": "طقم دامبل هالك - مطاط صلب 5 كجم × 2 قطعة – إجمالي 10 كجم – لامع ومعطر – أثقال تدريب منزلي وجيم",
+    "old_category": "cat_gnkssf8aq",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_937d7130f6e2d817",
+    "title": "عبوة حبر لطابعة كانون لون اسود - [pg445]",
+    "old_category": "cat_fmbmubvnt",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B05ckTzf3",
+    "title": "كاميرا مراقبة خارجية سلكية هايكفيجن DS-2CE16D0T-LPFS بدقة 2 ميجابكسل وإضاءة مزدوجة وميكروفون مدمج - أبيض",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0GDYF5N69",
+    "title": "عطر حريمى او دى برفان 35ml من ماى واى (درة)",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B01eJ4ymr",
+    "title": "باور بانك للسيارة وستارتر لحالات الطوارئ، الحل المثالي للسفر من زين",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0B1B64D1R",
+    "title": "قلاية رقمية سعة 5.8 لتر من بلاك اند ديكر، لون أسود، موديل AF700-B5",
+    "old_category": "cat_aaf0fbe22f26",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_1cc08c0baf391c5b",
+    "title": "دامبل أوزان للتمارين الرياضية من كول بيبي- لون وردي، 1 كجم - 2 قطعة",
+    "old_category": "cat_gnkssf8aq",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_61b570db2ce5a410",
+    "title": "طابعة متعددة الوظائف بيكسما من كانون، G3410",
+    "old_category": "cat_fmbmubvnt",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_b3ebe7730c2dcda4",
+    "title": "عوامات بتصميم نودلز من الفوم مصممة كأداة مساعدة قوية ومرنة للسباحة ضرورية للشعور بالثقة في حمام السباحة للأطفال والبالغين من ال ان دي جيفتس، عبوة من قطعتين",
+    "old_category": "cat_jiacjmtx3",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_ec46e5afbbce5c40",
+    "title": "سيروم لوريال باريس الفيف إكسترا أورديناري أويل للشعر الجاف - 100 مل",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0iRS2iro",
+    "title": "كاميرا مراقبة خارجية هايكفيجن 2 ميجابكسل بإضاءة مزدوجة وميكروفون مدمج - أبيض",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_ba79d6299881fb2c",
+    "title": "طقم دامبل - 5 كجم ( عدد 2 قطعة ) مطاط غير قابل للكسر",
+    "old_category": "cat_gnkssf8aq",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0cUmNmve",
+    "title": "فلتر مياه 5 مراحل بلس من تانك باور، ضمان لمدة عام",
+    "old_category": "cat_aaf0fbe22f26",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B07tOqgxL",
+    "title": "ماء الذهب فريشي R183 سترونج ويث يو أو دي بارفيوم للرجال 50 مل",
+    "old_category": "cat_o6r080tvi",
+    "current_valid_category": "cat_756a54bd3bfb",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_f38e7c6eef10b453",
+    "title": "طابعة ميار جراي MG2541S، 2-P",
+    "old_category": "cat_fmbmubvnt",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B09231BSPF",
+    "title": "عطر تيندر للنساء 55 ملليلتر من ماي واي - او دي تواليت",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_bd75d2e8f75c1bd5",
+    "title": "زجاجة مشط توزيع زيوت وصبغة الشعر مع فرشاة مساج فروة الرأس (ألوان متعددة)",
+    "old_category": "cat_bwoqca3kt",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_0c4bccc166200b75",
+    "title": "مصباح ليد بسلسلة مفاتيح بتقنية COB، مصباح مغناطيسي صغير، أدوات مصغرة بسلسلة مفاتيح تشمل مفك براغي، فتاحة زجاجات، ولاعة نار، وغيرها، مثالي للتخييم والمشي في الهواء الطلق من كليرهيل، لون أزرق",
+    "old_category": "cat_jiacjmtx3",
+    "current_valid_category": "cat_6a64bea6eb28",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0C4BGL492",
+    "title": "خلاط لصنع السموذي من كينوود مع مطحنة ومفرمة، وظيفة سحق الثلج، 2 لتر، 500 واط، BLP15 16.360bk اسود - ضمان دولي",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B09q1FGDR",
+    "title": "اديداس حذاء ادفانتج بيس 2.0 سي وايت/ابيض/كربون للرجال",
+    "old_category": "cat_hfskvya0h",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B04M8FvJl",
+    "title": "مشغل سيارة محمول مع ضاغط هواء، 1000 امبير 150 باوند لكل انش مربع",
+    "old_category": "cat_a6s6tp65d",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0DCBB2YTR",
+    "title": "باور بانك من أنكر 25000 مللي امبير بمنفذ USB-C و USB-A مع شحن سريع و كابل مدمج للابتوب و الهاتف الذكي 4 منافذ أسود",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_85e1f33d96ff4d7d",
+    "title": "جهاز تنظيف أسنان لاسلكي محمول، جهاز تنظيف الأسنان بالماء قابل لإعادة الشحن، 3 أوضاع و4 أطراف، مقاوم للماء بدرجة IPX7، جهاز تنظيف الأسنان بالماء للمنزل والسفر متعدد الألوان",
+    "old_category": "cat_r826y1abx",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B06fS593c",
+    "title": "كاميرا مراقبة داخلية ذكية CP1 Pro بدقة 3 ميجابكسل وواي فاي وتغطية بانورامية 360 درجة، رؤية ليلية ملونة وكشف الحركة البشرية تلقائي، صوت ثنائي الاتجاه وتدعم بطاقة SD من ايزفيز، لون أبيض",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0azHWIbf",
+    "title": "صندوق ثلج من تانك",
+    "old_category": "cat_6d04c5ft6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B08BNWNKWF",
+    "title": "شنطة تنظيم كابلات السفر والاكسسوارات الإلكترونية، شنطة تنظيم أسلاك محمولة للكابلات والشاحن والموبايل وUSB وبطاقة اس دي وسماعات الأذن وغيرها من الاغراض، لون أسود",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0922WPWYV",
+    "title": "ماي واي ايسينشيال لل رجال 55 مل - او دى تواليت",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_2affb470929061d0",
+    "title": "طقم أقلام جاف ستيدتلر ستيك 430M - لون أزرق (عبوة 10 أقلام)",
+    "old_category": "cat_dby0c7bhh",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B09zHAgMZ",
+    "title": "مزيل عرق بخاخ من ماء الذهب برائحة الحمضيات للرجال، سعة 100 مليلتر، نضارة طويلة الأمد",
+    "old_category": "cat_o6r080tvi",
+    "current_valid_category": "cat_756a54bd3bfb",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_c2dd8d1b16982b78",
+    "title": "Staedtler Stick 430M-5 Ballpoint Pen - Pack Of 10 - Green | Cap & clip, pressure compensation prevents leaks – smooth colour writing – Art.-Nr. 430 M-5",
+    "old_category": "cat_bbam1301v",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0hVl3kRf",
+    "title": "أداة خفق اللبن قابلة لإعادة الشحن وتعمل بـ3 سرعات قابلة للتعديل - لصنع القهوة واللاتيه والكابتشينو مع مضرب إضافي للبيض",
+    "old_category": "cat_c4tky0yxa",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0922YS777",
+    "title": "ماي واي برينسيس لل نساء 50 مل - او دى تواليت",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_B0BGKL7N6S",
+    "title": "حامل أجهزة إلكترونية متنقلة من إمفوكس بحجم العلكة متوافق مع آيفون و سامسونج جالاكسي، أحمر، دوران 360 درجة ومغناطيسي",
+    "old_category": "cat_dvuxkdjve",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_b695046cfe02face",
+    "title": "مينتراحذاء المشي سي ايه اي واير للرجال من مينترا",
+    "old_category": "cat_5kv8y47df",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B083JKYLZK",
+    "title": "خلاط يدوي كويك ميكس من كينوود 450 واط - فضي HMP30.A0SI",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B031pEI63",
+    "title": "رينج لايت 26 سم مع حامل ثلاثي القوائم بطول 2.1 م، حلقة ليد احترافية بثلاثة ألوان من انلاند ساوندز",
+    "old_category": "cat_accessories",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B09232VYNM",
+    "title": "عطر للنساء شذى، أو دي تواليت للمرأة، 30 مل",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_0fcec93c177dc952",
+    "title": "معطر جو اير او معلق للسيارة، اكسسوارات السيارات من جودرج، رائحة كول اكوا (7.5 جم)",
+    "old_category": "cat_dvuxkdjve",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_4b1d6f8f5b3d1cb4",
+    "title": "لعبة كريتيف للاطفال بتصميم فك واسنان التمساح الذي يعض الاصبع لعبة مسلية",
+    "old_category": "cat_fj0r4ax73",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B00AwPQ5S",
+    "title": "ميكروفون لاسلكي مع خاصية تقليل الضوضاء وقابل لإعادة الشحن لمصممي الفيديوهات وتدوين الفيديو والغناء لتسجيل الكاميرا والموبايل تصميم لافالير محمول متوافق مع الهواتف الذكية (Q8)",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_3a289e3e1ceb38ff",
+    "title": "طقم أقلام جاف ستيدلر 430 سن متوسط 0.5 مم - حبر أخضر - 3 أقلام",
+    "old_category": "cat_dby0c7bhh",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_54552eb917c34483",
+    "title": "سترة للمهندسين عاكسة للسلامة بلونين أصفر وكحلي مع سحاب",
+    "old_category": "cat_955651762abe",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_70dc88b4a2f7f039",
+    "title": "خيمة متعددة الألوان مع 50 كرة",
+    "old_category": "cat_fj0r4ax73",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "prod_B0GW5W2LTT",
+    "title": "باور بانك من أنكر 10000 مللي امبير بمنفذ USB-C مع شحن لاسلكي و شاشة و حامل قابل للطي للهاتف الذكي",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B09231B5J9",
+    "title": "عطر ماي واي سبيشال للنساء 50 مل - او دى تواليت",
+    "old_category": "cat_mtnxvq39",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "My Way",
+    "action": "AUTO-SAFE",
+    "reason": "My Way product re-categorized to Health & Beauty"
+  },
+  {
+    "product_id": "prod_1ee54892fc121f87",
+    "title": "VOCH GALA100 Strips Double Sided Tape for Fashion and Clothes, Waterproof Fashion Clothing Tape, Fabric Tape to Skin, Strong Adhesive Body Tape, Clear Transparent for All Skin Shades",
+    "old_category": "cat_hbxqqz95p",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  },
+  {
+    "product_id": "noon_N47028320A",
+    "title": "تسوق بلاك اند ديكر وماكينة صنع قهوة - بكوب واحد 125 ml 350 W DCM25N-B5 أسود/أبيض أونلاين في مصر",
+    "old_category": "cat_mfufmoad0",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0CWP5WHGG",
+    "title": "كريم للكعب من مويست-1 لترطيب البشرة الجافة بعمق وتقشير الخلايا الميتة وتقليل الاحمرار والحكة، مناسب للبشرة الجافة، 100 جرام",
+    "old_category": "cat_g3n6vkljv",
+    "current_valid_category": "cat_56295eb8e5c3",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_b577da284399cee3",
+    "title": "معطر جو اير او معلق للسيارة، اكسسوارات السيارات من جودرج اير، رائحة زهرة الورود (7.5 جم)",
+    "old_category": "cat_dvuxkdjve",
+    "current_valid_category": "cat_dc0a18738cc2",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_c73c6926b6a8d1ab",
+    "title": "لوازم خياطة محمولة تحتوي على شريط قياس لين ومقص وخيط وإبرة خياطة، مجموعة خياطة محمولة للكريسماس للجدة والأم والبالغين والأطفال والمبتدئين والمسافرين والطوارئ من كيدزون (حجم كبير L)",
+    "old_category": "cat_b9af786a4c81",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0bIfcr44",
+    "title": "باور بانك من أورايمو بسعة 27000 مللي أمبير ببطارية ليثيوم مع 4 منافذ USB تايب A متوافق مع الهواتف و الساعات الذكية و السماعات باللون الأسود",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B08trqkOf",
+    "title": "كاميرا مراقبة داخلية MC210 بدقة 2K 3 ميجابكسل، كاميرا مراقبة تي بي-لينك لحيوانات أليفة وأطفال، بخاصية الكشف الذكي، رؤية ليلية، تغطية كاملة، صوت ثنائي اتجاه، تحكم عبر تطبيق، جوجل هوم/اليكسا من ميركوسيس",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B02BUI4H5",
+    "title": "باور بانك من جيه ار بسعة 10000 مللي أمبير ببطارية ليثيوم آيون ومنفذ USB تايب C مع شحن مغناطيسي سريع للهواتف الذكية باللون الأسود",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0iotv1MY",
+    "title": "حامل موبايل دوار 360° للمكتب من لينوك، قابل للطي ومحمول، حامل تابلت قابل للتعديل لجميع الموبايلات وآيفون واي باد",
+    "old_category": "cat_uzhhuoj5g",
+    "current_valid_category": "cat_1be31da10c3f",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0a08C4fE",
+    "title": "خزان الثلج، مبرد بلاستيكي معزول، خالي من البيسفينول ايه، مانع للتسرب - ضمان لمدة عام",
+    "old_category": "cat_b9af786a4c81",
+    "current_valid_category": "cat_9171ea6beb76",
+    "brand": "Unknown",
+    "action": "AUTO-SAFE",
+    "reason": "Direct mapping from old ID to new section"
+  },
+  {
+    "product_id": "prod_B0bx3pSYA",
+    "title": "خراطيش فلتر مياه باور من تانك - 5 مراحل بالإضافة إلى عبوة اقتصادية",
+    "old_category": "cat_6d04c5ft6",
+    "brand": "Unknown",
+    "action": "DO-NOT-TOUCH",
+    "reason": "No valid category found"
+  }
+]

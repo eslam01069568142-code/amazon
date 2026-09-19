@@ -1,0 +1,62 @@
+warning: in the working copy of 'src/app/admin/automation/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/api/admin/automation/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/api/cron/importer/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'vercel.json', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/src/app/admin/automation/page.tsx b/src/app/admin/automation/page.tsx[m
+[1mindex 67a521a..dac17a2 100644[m
+[1m--- a/src/app/admin/automation/page.tsx[m
+[1m+++ b/src/app/admin/automation/page.tsx[m
+[36m@@ -428,3 +428,4 @@[m [mexport default function AutomationDashboard() {[m
+     </div>[m
+   );[m
+ }[m
+[41m+[m
+[1mdiff --git a/src/app/api/admin/automation/route.ts b/src/app/api/admin/automation/route.ts[m
+[1mindex 6715dd7..0bc54e0 100644[m
+[1m--- a/src/app/api/admin/automation/route.ts[m
+[1m+++ b/src/app/api/admin/automation/route.ts[m
+[36m@@ -73,7 +73,6 @@[m [mexport async function POST(req: Request) {[m
+         .from('automation_state')[m
+         .update({[m
+           status: 'stopped',[m
+[31m-          locked_at: null,           // release stale lock so next Start works[m
+           updated_at: new Date().toISOString(),[m
+           // current_section_id  — intentionally NOT reset[m
+           // current_page        — intentionally NOT reset[m
+[36m@@ -135,3 +134,4 @@[m [mexport async function POST(req: Request) {[m
+     return NextResponse.json({ error: 'Server error' }, { status: 500 });[m
+   }[m
+ }[m
+[41m+[m
+[1mdiff --git a/src/app/api/cron/importer/route.ts b/src/app/api/cron/importer/route.ts[m
+[1mindex 44da7b8..186822f 100644[m
+[1m--- a/src/app/api/cron/importer/route.ts[m
+[1m+++ b/src/app/api/cron/importer/route.ts[m
+[36m@@ -115,8 +115,7 @@[m [mexport async function GET(req: Request) {[m
+       }).eq('id', 'singleton');[m
+     };[m
+ [m
+[31m-    // Calculate random delay between 2 and 20 minutes[m
+[31m-    const randomDelay = Math.floor(Math.random() * (20 - 2 + 1)) + 2;[m
+[32m+[m[32m    // Calculate random delay between 5 and 12 minutes`r`n    const randomDelay = Math.floor(Math.random() * (12 - 5 + 1)) + 5;[m
+ [m
+     // 5. Fetch Sections to determine order[m
+     const { data: sections } = await supabaseAdmin[m
+[36m@@ -262,3 +261,4 @@[m [mexport async function GET(req: Request) {[m
+     return NextResponse.json({ error: 'Server error' }, { status: 500 });[m
+   }[m
+ }[m
+[41m+[m
+[1mdiff --git a/vercel.json b/vercel.json[m
+[1mindex ae5aabc..4ff3fd3 100644[m
+[1m--- a/vercel.json[m
+[1m+++ b/vercel.json[m
+[36m@@ -3,6 +3,7 @@[m
+     {[m
+       "path": "/api/cron/update-prices",[m
+       "schedule": "0 3 * * *"[m
+[31m-    }[m
+[32m+[m[32m    },`r`n    {`r`n      "path": "/api/cron/importer",`r`n      "schedule": "*/5 * * * *"`r`n    }[m
+   ][m
+ }[m
+[41m+[m

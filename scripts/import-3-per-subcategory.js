@@ -229,7 +229,15 @@ async function run() {
 
         // We found a valid unique product!
         totalProcessed++;
-        const productId = generateId();
+        const productId = prod.asin ? 'prod_' + prod.asin : generateId();
+
+        // Safe Upsert Check
+        const { data: existingProd } = await supabase.from('products').select('id').eq('id', productId).single();
+        if (existingProd) {
+           // Skip insertion, just log
+           console.log(`[Skipped: Duplicate ASIN ${prod.asin}]`);
+           continue;
+        }
 
         // Log immediately
         console.log(`[فئة: ${target.title} - ${importedForTarget + 1}/${target.neededCount} Products Added]`);

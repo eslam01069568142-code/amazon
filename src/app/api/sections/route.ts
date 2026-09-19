@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/data/db';
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { checkAdminAuth } from '@/utils/auth';
 
 export async function GET() {
   const { data, error } = await supabaseAdmin
@@ -27,6 +28,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    if (!(await checkAdminAuth())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const body = await req.json();
 
     // Get current max order

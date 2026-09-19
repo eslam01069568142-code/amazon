@@ -8,7 +8,7 @@ async function runBackfill() {
 
   // 1. Get Tracking ID
   const { data: settingsData } = await supabase.from('settings').select('*').single();
-  const trackingId = settingsData?.tracking_id || 'bkam09-21';
+  const trackingId = settingsData?.tracking_id || 'bkamelnahar0b-21';
 
   function getAmazonProductUrl(product, trackingId) {
     try {

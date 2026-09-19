@@ -2,9 +2,13 @@ import { NextResponse } from 'next/server';
 import * as cheerio from 'cheerio';
 import { supabaseAdmin } from '@/data/db';
 import { getHighResImageUrl } from '@/utils/image';
+import { checkAdminAuth } from '@/utils/auth';
 
 export async function POST(req: Request) {
   try {
+    if (!(await checkAdminAuth())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { url } = await req.json();
     if (!url || typeof url !== 'string') {
       return NextResponse.json({ success: false, error: 'Invalid URL provided' }, { status: 400 });

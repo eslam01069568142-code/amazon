@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/data/db';
 import { GoogleGenAI } from '@google/genai';
+import { checkAdminAuth } from '@/utils/auth';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
+    if (!(await checkAdminAuth())) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const body = await req.json();
     const { title, description, store, metadata } = body;
 
