@@ -1,12 +1,1 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/update-prices",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/cron/importer",
-      "schedule": "*/5 * * * *"
-    }
-  ]
-}
+{"crons":[{"path":"/api/admin/automation","schedule":"0 0 * * *"}]}
