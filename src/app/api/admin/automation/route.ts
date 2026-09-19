@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/data/db';
-import { checkAdminAuth } from '@/utils/auth';
+import { checkAdminAuth } from '@/lib/auth';
 
 // ─── Helper: write a log entry (silent on failure) ───────────────────────────
 async function log(level: string, message: string) {
